@@ -31,9 +31,11 @@ const applyConversationPolicy = (
 	input: GenerateConsultationInput,
 ): ConsultationResponse => {
 	const userTurns = input.messages.filter((message) => message.role === 'user').length;
+	const firstUserMessage = input.messages.find((message) => message.role === 'user')?.content || '';
+	const firstTurnIsBrief = firstUserMessage.length < 180;
 	const firstTurnNeedsDetails = userTurns === 1
 		&& response.phase === 'diagnosis'
-		&& response.diagnosis.missing_information.length > 0;
+		&& (firstTurnIsBrief || response.diagnosis.missing_information.length > 0);
 
 	if (response.phase !== 'discovery' && !firstTurnNeedsDetails) return response;
 
