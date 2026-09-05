@@ -1,0 +1,181 @@
+---
+import BrandMark from './BrandMark.astro';
+---
+
+<section class="chat-card" aria-labelledby="chat-title">
+	<div class="chat-topbar">
+		<div class="chat-agent">
+			<BrandMark compact />
+			<span class="status"><span aria-hidden="true"></span>AI相談室</span>
+		</div>
+		<span class="private-note">入力内容は画面を閉じると消えます</span>
+	</div>
+
+	<div class="chat-heading">
+		<p class="eyebrow">業務改善AIコンシェルジュ</p>
+		<h2 id="chat-title">この作業、自動化できますか？</h2>
+		<p>普段やっている面倒な作業を、そのまま話してください。</p>
+	</div>
+
+	<div class="suggestion-list" aria-label="相談例">
+		<button type="button" class="suggestion">毎月のExcel集計を楽にしたい</button>
+		<button type="button" class="suggestion">データ入力を自動化したい</button>
+		<button type="button" class="suggestion">AIで何ができるか相談したい</button>
+	</div>
+
+	<div class="messages" id="chat-messages" role="log" aria-live="polite" aria-relevant="additions">
+		<div class="message assistant">
+			<span class="message-icon" aria-hidden="true">工</span>
+			<div class="bubble">こんにちは。いま時間がかかっている作業や、面倒に感じていることを教えてください。ざっくりした内容で大丈夫です。</div>
+		</div>
+	</div>
+
+	<form class="chat-form" id="chat-form">
+		<label class="sr-only" for="chat-input">相談内容</label>
+		<textarea id="chat-input" name="message" rows="2" maxlength="1000" placeholder="例：毎月20個のExcelを1つにまとめています" required></textarea>
+		<button class="send-button" type="submit" aria-label="相談内容を送信">
+			<span>送る</span>
+			<svg viewBox="0 0 20 20" aria-hidden="true"><path d="m3 10 13-6-4.2 12-2.4-4.1L3 10Zm6.4 1.9L16 4" /></svg>
+		</button>
+	</form>
+	<p class="chat-caption">個人情報・機密情報は入力しないでください。</p>
+</section>
+
+<script>
+	type ChatRole = 'user' | 'assistant';
+	type ChatMessage = { role: ChatRole; content: string };
+
+	const form = document.querySelector<HTMLFormElement>('#chat-form');
+	const input = document.querySelector<HTMLTextAreaElement>('#chat-input');
+	const messagesElement = document.querySelector<HTMLDivElement>('#chat-messages');
+	const suggestions = document.querySelectorAll<HTMLButtonElement>('.suggestion');
+	const conversation: ChatMessage[] = [];
+
+	const addMessage = (role: ChatRole, content: string, pending = false) => {
+		if (!messagesElement) return null;
+		const row = document.createElement('div');
+		row.className = `message ${role}${pending ? ' pending' : ''}`;
+		const bubble = document.createElement('div');
+		bubble.className = 'bubble';
+		bubble.textContent = content;
+
+		if (role === 'assistant') {
+			const icon = document.createElement('span');
+			icon.className = 'message-icon';
+			icon.setAttribute('aria-hidden', 'true');
+			icon.textContent = '工';
+			row.append(icon);
+		}
+
+		row.append(bubble);
+		messagesElement.append(row);
+		messagesElement.scrollTo({ top: messagesElement.scrollHeight, behavior: 'smooth' });
+		return row;
+	};
+
+	const sendMessage = async (value: string) => {
+		if (!form || !input || !value.trim()) return;
+		const message = value.trim();
+		conversation.push({ role: 'user', content: message });
+		addMessage('user', message);
+		input.value = '';
+		input.disabled = true;
+		const submit = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+		if (submit) submit.disabled = true;
+		const pending = addMessage('assistant', '考えています…', true);
+
+		try {
+			const controller = new AbortController();
+			const timeout = window.setTimeout(() => controller.abort(), 30000);
+			const response = await fetch('/api/chat', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ messages: conversation.slice(-8) }),
+				signal: controller.signal,
+			});
+			window.clearTimeout(timeout);
+			const data = (await response.json()) as { reply?: string; error?: string };
+			if (!response.ok || !data.reply) throw new Error(data.error || '応答を取得できませんでした。');
+			pending?.remove();
+			conversation.push({ role: 'assistant', content: data.reply });
+			addMessage('assistant', data.reply);
+		} catch (error) {
+			pending?.remove();
+			const text = error instanceof DOMException && error.name === 'AbortError'
+				? '応答に時間がかかっています。少し時間をおいて、もう一度お試しください。'
+				: error instanceof Error
+					? error.message
+					: 'ただいま相談室を利用できません。少し時間をおいてお試しください。';
+			addMessage('assistant', text);
+		} finally {
+			input.disabled = false;
+			if (submit) submit.disabled = false;
+			input.focus();
+		}
+	};
+
+	form?.addEventListener('submit', (event) => {
+		event.preventDefault();
+		void sendMessage(input?.value || '');
+	});
+
+	input?.addEventListener('keydown', (event) => {
+		if (event.key === 'Enter' && !event.shiftKey) {
+			event.preventDefault();
+			form?.requestSubmit();
+		}
+	});
+
+	suggestions.forEach((button) => {
+		button.addEventListener('click', () => {
+			if (!input) return;
+			input.value = button.textContent?.trim() || '';
+			input.focus();
+		});
+	});
+
+	document.querySelectorAll<HTMLElement>('[data-focus-chat]').forEach((element) => {
+		element.addEventListener('click', () => window.setTimeout(() => input?.focus(), 450));
+	});
+</script>
+
+<style>
+	.chat-card { position: relative; z-index: 1; width: min(100%, 36.5rem); padding: 1.1rem; border: 1px solid rgb(66 47 57 / 10%); border-radius: 28px; background: rgb(255 255 255 / 88%); box-shadow: 0 28px 80px rgb(83 52 67 / 14%), 0 2px 10px rgb(83 52 67 / 5%); backdrop-filter: blur(18px); }
+	.chat-topbar, .chat-agent, .status, .chat-form { display: flex; align-items: center; }
+	.chat-topbar { justify-content: space-between; gap: 1rem; padding: 0.2rem 0.2rem 1rem; border-bottom: 1px solid var(--line); }
+	.chat-agent { gap: 0.8rem; }
+	.status { gap: 0.38rem; font-size: 0.72rem; font-weight: 700; color: var(--ink-soft); }
+	.status span { width: 0.46rem; height: 0.46rem; border-radius: 50%; background: #54aa78; box-shadow: 0 0 0 3px rgb(84 170 120 / 12%); }
+	.private-note { font-size: 0.68rem; color: var(--muted); }
+	.chat-heading { padding: 1.45rem 0.35rem 1rem; }
+	.chat-heading h2 { margin: 0.25rem 0 0.45rem; font-size: clamp(1.35rem, 2.5vw, 1.75rem); letter-spacing: -0.035em; }
+	.chat-heading p:last-child { margin: 0; font-size: 0.88rem; color: var(--ink-soft); }
+	.suggestion-list { display: flex; gap: 0.45rem; overflow-x: auto; padding: 0 0.35rem 0.9rem; scrollbar-width: none; }
+	.suggestion-list::-webkit-scrollbar { display: none; }
+	.suggestion { flex: 0 0 auto; padding: 0.58rem 0.75rem; border: 1px solid var(--pink-200); border-radius: 999px; background: var(--pink-50); color: var(--ink-soft); font: inherit; font-size: 0.72rem; cursor: pointer; transition: border-color 160ms ease, background 160ms ease, transform 160ms ease; }
+	.suggestion:hover { border-color: var(--pink-400); background: var(--pink-100); transform: translateY(-1px); }
+	.messages { display: flex; min-height: 9rem; max-height: 15.5rem; flex-direction: column; gap: 0.85rem; overflow-y: auto; padding: 1rem 0.35rem; border-top: 1px solid var(--line); }
+	.message { display: flex; align-items: flex-end; gap: 0.55rem; }
+	.message.user { justify-content: flex-end; }
+	.message-icon { display: grid; width: 1.75rem; height: 1.75rem; flex: 0 0 auto; place-items: center; border-radius: 9px; background: var(--pink-100); color: var(--pink-700); font-size: 0.68rem; font-weight: 800; }
+	.bubble { max-width: 82%; padding: 0.8rem 0.95rem; border-radius: 16px 16px 16px 5px; background: #f7f4f5; color: var(--ink-soft); font-size: 0.81rem; line-height: 1.72; white-space: pre-wrap; }
+	.user .bubble { border-radius: 16px 16px 5px 16px; background: var(--ink); color: #fff; }
+	.pending .bubble { color: var(--muted); }
+	.chat-form { gap: 0.65rem; padding: 0.55rem; border: 1px solid var(--line-strong); border-radius: 18px; background: #fff; box-shadow: 0 6px 20px rgb(60 42 51 / 5%); transition: border-color 160ms ease, box-shadow 160ms ease; }
+	.chat-form:focus-within { border-color: var(--pink-400); box-shadow: 0 0 0 4px rgb(222 117 159 / 10%); }
+	.chat-form textarea { min-height: 2.7rem; max-height: 7rem; flex: 1; resize: vertical; border: 0; outline: 0; background: transparent; color: var(--ink); font: inherit; font-size: 0.82rem; line-height: 1.55; }
+	.chat-form textarea::placeholder { color: #a99da3; }
+	.send-button { display: inline-flex; min-height: 2.65rem; align-items: center; gap: 0.4rem; padding: 0.65rem 0.85rem; border: 0; border-radius: 13px; background: var(--ink); color: #fff; font: inherit; font-size: 0.77rem; font-weight: 700; cursor: pointer; transition: transform 160ms ease, background 160ms ease; }
+	.send-button:hover { background: var(--pink-700); transform: translateY(-1px); }
+	.send-button:disabled { cursor: wait; opacity: 0.55; transform: none; }
+	.send-button svg { width: 1rem; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.6; }
+	.chat-caption { margin: 0.55rem 0 0; text-align: center; font-size: 0.66rem; color: var(--muted); }
+
+	@media (max-width: 560px) {
+		.chat-card { padding: 0.8rem; border-radius: 22px; }
+		.private-note { display: none; }
+		.chat-heading { padding-inline: 0.15rem; }
+		.bubble { max-width: 88%; }
+		.send-button span { display: none; }
+	}
+</style>

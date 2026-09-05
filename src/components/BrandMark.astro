@@ -1,0 +1,27 @@
+---
+interface Props {
+	compact?: boolean;
+}
+
+const { compact = false } = Astro.props;
+---
+
+<span class:list={['brand', { compact }]}>
+	<span class="brand-mark" aria-hidden="true">
+		<svg viewBox="0 0 40 40" role="img">
+			<path d="M10 16 13.5 8l6.2 5.2L26.4 8l3.7 8v12.5c0 2.8-2.3 5.1-5.1 5.1H15c-2.8 0-5.1-2.3-5.1-5.1V16Z" fill="currentColor" />
+			<circle cx="16" cy="22" r="1.6" fill="#fff" />
+			<circle cx="24" cy="22" r="1.6" fill="#fff" />
+			<path d="M17 27c1.8 1.4 4.2 1.4 6 0" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="1.7" />
+		</svg>
+	</span>
+	<span class="brand-name">やみちゃ工房</span>
+</span>
+
+<style>
+	.brand { display: inline-flex; align-items: center; gap: 0.65rem; color: var(--ink); font-weight: 760; letter-spacing: 0.04em; white-space: nowrap; }
+	.brand-mark { display: grid; width: 2.5rem; height: 2.5rem; place-items: center; border-radius: 12px; background: var(--pink-100); color: var(--pink-600); }
+	.brand-mark svg { width: 1.9rem; height: 1.9rem; }
+	.compact .brand-mark { width: 2.15rem; height: 2.15rem; border-radius: 10px; }
+	.compact .brand-mark svg { width: 1.65rem; height: 1.65rem; }
+</style>

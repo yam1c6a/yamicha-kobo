@@ -1,46 +1,34 @@
-# Astro Starter Kit: Basics
+# やみちゃ工房 公式サイト
+
+Astro + Cloudflare Workers で構築した「やみちゃ工房」の公式サイトです。
+
+## ローカル起動
 
 ```sh
-npm create astro@latest -- --template basics
+npm ci
+Copy-Item .dev.vars.example .dev.vars
+npm run dev
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+AIチャットを使う場合は、`.dev.vars` の `OPENAI_API_KEY` を実際の値へ置き換えてください。`.dev.vars` は Git の管理対象外です。
 
-## 🚀 Project Structure
+## Cloudflare の設定
 
-Inside of your Astro project, you'll see the following folders and files:
+本番用の API キーは、コードや `wrangler.jsonc` に記載せず、Workers の Secret として登録します。
 
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
+```sh
+npx wrangler secret put OPENAI_API_KEY
 ```
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+利用モデルを変更する場合は、Cloudflare の環境変数 `OPENAI_MODEL` を設定してください。未設定時は `gpt-5-mini` を使用します。
 
-## 🧞 Commands
+## コマンド
 
-All commands are run from the root of the project, from a terminal:
+| コマンド | 内容 |
+| --- | --- |
+| `npm run dev` | ローカル開発サーバーを起動 |
+| `npm run build` | 本番用ビルドを作成 |
+| `npm run preview` | 本番用ビルドをローカル確認 |
+| `npm run deploy` | ビルド後に Cloudflare Workers へデプロイ |
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+GitHub の `main` ブランチへの push を起点に、既存の Cloudflare 自動デプロイが実行されます。
