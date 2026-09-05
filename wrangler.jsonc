@@ -4,6 +4,19 @@
 	"compatibility_flags": ["global_fetch_strictly_public"],
 	"name": "yamicha-kobo",
 	"main": "@astrojs/cloudflare/entrypoints/server",
+	"ai": {
+		"binding": "AI"
+	},
+	"ratelimits": [
+		{
+			"name": "CHAT_RATE_LIMIT",
+			"namespace_id": "2790501",
+			"simple": {
+				"limit": 8,
+				"period": 60
+			}
+		}
+	],
 	"assets": {
 		"directory": "./dist",
 		"binding": "ASSETS"

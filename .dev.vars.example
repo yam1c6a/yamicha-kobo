@@ -1,3 +1,6 @@
-OPENAI_API_KEY=replace_with_your_api_key
-# Optional: defaults to gpt-5-mini
-OPENAI_MODEL=gpt-5-mini
+# Optional overrides. Workers AI does not require an API key in application code.
+AI_PROVIDER=workers-ai
+WORKERS_AI_MODEL=@cf/meta/llama-3.1-8b-instruct-fast
+
+# Optional: route Workers AI through an existing AI Gateway.
+# AI_GATEWAY_ID=default

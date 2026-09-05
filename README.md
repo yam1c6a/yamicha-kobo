@@ -2,25 +2,52 @@
 
 Astro + Cloudflare Workers で構築した「やみちゃ工房」の公式サイトです。
 
+## 構成
+
+```text
+ブラウザ
+  ↓ POST /api/chat
+Cloudflare Worker（入力検証・利用制限）
+  ↓ AI binding
+Cloudflare Workers AI
+```
+
+ブラウザからAIへ直接接続せず、モデル名やAI呼び出しは `src/services/ai/` に集約しています。会話はv1ではサーバーへ永続保存しません。
+
 ## ローカル起動
 
 ```sh
 npm ci
-Copy-Item .dev.vars.example .dev.vars
 npm run dev
 ```
 
-AIチャットを使う場合は、`.dev.vars` の `OPENAI_API_KEY` を実際の値へ置き換えてください。`.dev.vars` は Git の管理対象外です。
+Workers AIのローカル呼び出しにはCloudflareアカウントへのログインが必要で、ローカル開発でもWorkers AIの利用量に加算されます。静的ページはNode環境で事前生成するため、本番ビルドにCloudflare APIトークンは不要です。
 
 ## Cloudflare の設定
 
-本番用の API キーは、コードや `wrangler.jsonc` に記載せず、Workers の Secret として登録します。
+`wrangler.jsonc` に以下を設定しています。
 
-```sh
-npx wrangler secret put OPENAI_API_KEY
-```
+- Workers AI binding: `AI`
+- Rate Limiting binding: `CHAT_RATE_LIMIT`（同一IPあたり8リクエスト/60秒）
 
-利用モデルを変更する場合は、Cloudflare の環境変数 `OPENAI_MODEL` を設定してください。未設定時は `gpt-5-mini` を使用します。
+既定モデルは `@cf/meta/llama-3.1-8b-instruct-fast` です。変更する場合はCloudflareの環境変数 `WORKERS_AI_MODEL` を設定します。モデル名はクライアントへ送信されません。
+
+AI Gatewayを利用する場合は、CloudflareでGatewayを用意し、環境変数 `AI_GATEWAY_ID` にGateway IDを設定します。未設定時はWorkers AIを直接呼び出します。会話内容をキャッシュ・ログ保存しないよう、Gateway経由でも `skipCache: true` と `collectLog: false` を指定しています。
+
+## チャットの利用制限
+
+- 1回の入力: 800文字まで
+- 1相談: ユーザー発言6回まで
+- 会話全体: 6,000文字まで
+- リクエスト本文: 16KBまで
+- 同一IP: 8リクエスト/60秒（Cloudflareロケーション単位）
+- 同一オリジン確認、メッセージ順序・型のサーバー検証
+
+最終診断は画面表示とは別に構造化データとしてブラウザ内で保持し、`yamicha:consultation-updated` と `yamicha:consultation-handoff` イベントで将来の問い合わせ画面へ渡せます。「この内容で相談する」を押した場合のみ、同一タブの `sessionStorage` に引き継ぎデータを保存します。
+
+## AI providerの変更
+
+共通入口は `src/services/ai/consultation.ts` の `generateConsultationResponse()` です。Geminiなどを追加する場合は `src/services/ai/providers/` にproviderを実装し、`consultation.ts` のprovider一覧へ登録します。APIキーが必要なproviderでは、Cloudflare Secretsからサーバー側だけで読み取ってください。
 
 ## コマンド
 

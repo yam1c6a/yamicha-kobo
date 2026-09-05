@@ -8,13 +8,13 @@ import BrandMark from './BrandMark.astro';
 			<BrandMark compact />
 			<span class="status"><span aria-hidden="true"></span>AI相談室</span>
 		</div>
-		<span class="private-note">入力内容は画面を閉じると消えます</span>
+		<span class="private-note">会話はサーバーに保存しません</span>
 	</div>
 
 	<div class="chat-heading">
 		<p class="eyebrow">業務改善AIコンシェルジュ</p>
 		<h2 id="chat-title">この作業、自動化できますか？</h2>
-		<p>普段やっている面倒な作業を、そのまま話してください。</p>
+		<p>いま行っている作業を、普段の言葉で教えてください。</p>
 	</div>
 
 	<div class="suggestion-list" aria-label="相談例">
@@ -26,38 +26,119 @@ import BrandMark from './BrandMark.astro';
 	<div class="messages" id="chat-messages" role="log" aria-live="polite" aria-relevant="additions">
 		<div class="message assistant">
 			<span class="message-icon" aria-hidden="true">工</span>
-			<div class="bubble">こんにちは。いま時間がかかっている作業や、面倒に感じていることを教えてください。ざっくりした内容で大丈夫です。</div>
+			<div class="bubble">こんにちは。時間がかかっている作業や、面倒に感じていることを教えてください。必要なことを少しずつ伺い、合う改善方法を一緒に整理します。</div>
 		</div>
 	</div>
 
+	<div class="consultation-cta" id="consultation-cta" hidden>
+		<div><strong>この内容なら、やみちゃ工房に相談できます。</strong><span id="cta-message">AIとの会話と診断内容を引き継げます。</span></div>
+		<button type="button" id="handoff-button">この内容で相談する<span aria-hidden="true">→</span></button>
+	</div>
+
+	<p class="chat-notice" id="chat-notice" role="alert" hidden></p>
+
 	<form class="chat-form" id="chat-form">
 		<label class="sr-only" for="chat-input">相談内容</label>
-		<textarea id="chat-input" name="message" rows="2" maxlength="1000" placeholder="例：毎月20個のExcelを1つにまとめています" required></textarea>
+		<textarea id="chat-input" name="message" rows="2" maxlength="800" placeholder="例：毎月20個のExcelを1つにまとめています" required></textarea>
 		<button class="send-button" type="submit" aria-label="相談内容を送信">
 			<span>送る</span>
 			<svg viewBox="0 0 20 20" aria-hidden="true"><path d="m3 10 13-6-4.2 12-2.4-4.1L3 10Zm6.4 1.9L16 4" /></svg>
 		</button>
 	</form>
-	<p class="chat-caption">個人情報・機密情報は入力しないでください。</p>
+
+	<div class="chat-meta">
+		<span id="turn-status">あと6回相談できます</span>
+		<span id="character-count">0 / 800</span>
+	</div>
+	<p class="safety-note"><span aria-hidden="true">!</span><strong>個人情報、パスワード、顧客情報、社外秘などの機密情報は入力しないでください。</strong></p>
 </section>
 
 <script>
 	type ChatRole = 'user' | 'assistant';
 	type ChatMessage = { role: ChatRole; content: string };
+	type Diagnosis = {
+		category: string;
+		current_process: string[];
+		problems: string[];
+		recommended_solution: string[];
+		automation_methods: string[];
+		ai_required: 'recommended' | 'partially_recommended' | 'not_required' | 'undetermined';
+		ai_reason: string;
+		expected_effects: string[];
+		difficulty: 'low' | 'medium' | 'high' | 'undetermined';
+		missing_information: string[];
+	};
+	type ConsultationState = {
+		version: 1;
+		sessionId: string;
+		messages: ChatMessage[];
+		diagnosis: Diagnosis | null;
+		phase: 'discovery' | 'diagnosis' | 'out_of_scope';
+	};
+	type ChatResponse = {
+		message?: { role: 'assistant'; content: string };
+		phase?: ConsultationState['phase'];
+		questions?: string[];
+		diagnosis?: Diagnosis | null;
+		cta?: { show: boolean; message: string };
+		limits?: { turnsRemaining: number; maxTurns: number };
+		error?: string;
+		code?: string;
+	};
 
+	const MAX_TURNS = 6;
 	const form = document.querySelector<HTMLFormElement>('#chat-form');
 	const input = document.querySelector<HTMLTextAreaElement>('#chat-input');
 	const messagesElement = document.querySelector<HTMLDivElement>('#chat-messages');
+	const submit = form?.querySelector<HTMLButtonElement>('button[type="submit"]');
 	const suggestions = document.querySelectorAll<HTMLButtonElement>('.suggestion');
-	const conversation: ChatMessage[] = [];
+	const notice = document.querySelector<HTMLParagraphElement>('#chat-notice');
+	const turnStatus = document.querySelector<HTMLSpanElement>('#turn-status');
+	const characterCount = document.querySelector<HTMLSpanElement>('#character-count');
+	const cta = document.querySelector<HTMLDivElement>('#consultation-cta');
+	const ctaMessage = document.querySelector<HTMLSpanElement>('#cta-message');
+	const handoffButton = document.querySelector<HTMLButtonElement>('#handoff-button');
+	const sessionId = typeof crypto.randomUUID === 'function'
+		? crypto.randomUUID()
+		: `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+	const state: ConsultationState = { version: 1, sessionId, messages: [], diagnosis: null, phase: 'discovery' };
 
-	const addMessage = (role: ChatRole, content: string, pending = false) => {
+	const emitState = (eventName = 'yamicha:consultation-updated') => {
+		window.dispatchEvent(new CustomEvent(eventName, { detail: structuredClone(state) }));
+	};
+
+	const setNotice = (message = '', kind: 'error' | 'info' = 'error') => {
+		if (!notice) return;
+		notice.textContent = message;
+		notice.className = `chat-notice ${kind}`;
+		notice.hidden = !message;
+	};
+
+	const setLoading = (loading: boolean) => {
+		if (input) input.disabled = loading;
+		if (submit) submit.disabled = loading;
+		suggestions.forEach((button) => { button.disabled = loading; });
+	};
+
+	const addMessage = (role: ChatRole, content: string, questions: string[] = []) => {
 		if (!messagesElement) return null;
 		const row = document.createElement('div');
-		row.className = `message ${role}${pending ? ' pending' : ''}`;
+		row.className = `message ${role}`;
 		const bubble = document.createElement('div');
 		bubble.className = 'bubble';
-		bubble.textContent = content;
+		const text = document.createElement('p');
+		text.textContent = content;
+		bubble.append(text);
+
+		if (questions.length) {
+			const list = document.createElement('ol');
+			questions.forEach((question) => {
+				const item = document.createElement('li');
+				item.textContent = question;
+				list.append(item);
+			});
+			bubble.append(list);
+		}
 
 		if (role === 'assistant') {
 			const icon = document.createElement('span');
@@ -66,57 +147,169 @@ import BrandMark from './BrandMark.astro';
 			icon.textContent = '工';
 			row.append(icon);
 		}
-
 		row.append(bubble);
 		messagesElement.append(row);
 		messagesElement.scrollTo({ top: messagesElement.scrollHeight, behavior: 'smooth' });
 		return row;
 	};
 
+	const addPendingMessage = () => {
+		if (!messagesElement) return null;
+		const row = document.createElement('div');
+		row.className = 'message assistant pending';
+		row.innerHTML = '<span class="message-icon" aria-hidden="true">工</span><div class="bubble"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span><span class="sr-only">回答を考えています</span></div>';
+		messagesElement.append(row);
+		messagesElement.scrollTo({ top: messagesElement.scrollHeight, behavior: 'smooth' });
+		return row;
+	};
+
+	const labelMap = {
+		current_process: '現在の業務',
+		problems: '業務上の問題点',
+		recommended_solution: 'おすすめの改善方法',
+		automation_methods: '自動化できそうな部分・手段',
+		expected_effects: '期待できる効果',
+		missing_information: '実装前に確認したいこと',
+	} as const;
+
+	const addDiagnosis = (diagnosis: Diagnosis) => {
+		if (!messagesElement) return;
+		const card = document.createElement('article');
+		card.className = 'diagnosis-card';
+		const header = document.createElement('div');
+		header.className = 'diagnosis-header';
+		const heading = document.createElement('strong');
+		heading.textContent = '業務改善の整理結果';
+		const category = document.createElement('span');
+		category.textContent = diagnosis.category || '業務改善';
+		header.append(heading, category);
+		card.append(header);
+
+		(Object.keys(labelMap) as Array<keyof typeof labelMap>).forEach((key) => {
+			const values = diagnosis[key];
+			if (!values.length) return;
+			const section = document.createElement('section');
+			const title = document.createElement('h3');
+			title.textContent = labelMap[key];
+			const list = document.createElement('ul');
+			values.forEach((value) => {
+				const item = document.createElement('li');
+				item.textContent = value;
+				list.append(item);
+			});
+			section.append(title, list);
+			card.append(section);
+		});
+
+		const assessment = document.createElement('div');
+		assessment.className = 'diagnosis-assessment';
+		const aiLabels = { recommended: 'AIの利用がおすすめ', partially_recommended: '一部だけAIが有効', not_required: '生成AIは不要', undetermined: '条件によって判断' };
+		const difficultyLabels = { low: '低め', medium: '標準', high: '高め', undetermined: '要確認' };
+		const ai = document.createElement('div');
+		ai.innerHTML = '<span>AIを使う必要性</span>';
+		const aiStrong = document.createElement('strong');
+		aiStrong.textContent = aiLabels[diagnosis.ai_required];
+		ai.append(aiStrong);
+		if (diagnosis.ai_reason) {
+			const reason = document.createElement('p');
+			reason.textContent = diagnosis.ai_reason;
+			ai.append(reason);
+		}
+		const difficulty = document.createElement('div');
+		difficulty.innerHTML = '<span>実装難易度</span>';
+		const difficultyStrong = document.createElement('strong');
+		difficultyStrong.textContent = difficultyLabels[diagnosis.difficulty];
+		difficulty.append(difficultyStrong);
+		assessment.append(ai, difficulty);
+		card.append(assessment);
+		messagesElement.append(card);
+		messagesElement.scrollTo({ top: messagesElement.scrollHeight, behavior: 'smooth' });
+	};
+
+	const updateLimits = (remaining: number) => {
+		if (turnStatus) turnStatus.textContent = remaining > 0 ? `あと${remaining}回相談できます` : 'この相談の会話上限に達しました';
+		if (remaining === 0 && input && submit) {
+			input.disabled = true;
+			input.placeholder = '新しい相談はページを再読み込みして始められます';
+			submit.disabled = true;
+			suggestions.forEach((button) => { button.disabled = true; });
+		}
+	};
+
+	const buildAssistantHistory = (content: string, questions: string[]) =>
+		questions.length
+			? `${content}\n\n確認したこと:\n${questions.map((question) => `- ${question}`).join('\n')}`
+			: content;
+
 	const sendMessage = async (value: string) => {
 		if (!form || !input || !value.trim()) return;
-		const message = value.trim();
-		conversation.push({ role: 'user', content: message });
-		addMessage('user', message);
+		const userTurns = state.messages.filter((message) => message.role === 'user').length;
+		if (userTurns >= MAX_TURNS) {
+			setNotice('この相談の会話上限に達しました。新しい相談はページを再読み込みして始められます。');
+			return;
+		}
+
+		setNotice();
+		if (cta) cta.hidden = true;
+		const content = value.trim();
+		state.messages.push({ role: 'user', content });
+		addMessage('user', content);
 		input.value = '';
-		input.disabled = true;
-		const submit = form.querySelector<HTMLButtonElement>('button[type="submit"]');
-		if (submit) submit.disabled = true;
-		const pending = addMessage('assistant', '考えています…', true);
+		if (characterCount) characterCount.textContent = '0 / 800';
+		setLoading(true);
+		const pending = addPendingMessage();
+		const controller = new AbortController();
+		const timeout = window.setTimeout(() => controller.abort(), 30000);
 
 		try {
-			const controller = new AbortController();
-			const timeout = window.setTimeout(() => controller.abort(), 30000);
 			const response = await fetch('/api/chat', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ messages: conversation.slice(-8) }),
+				body: JSON.stringify({ sessionId: state.sessionId, messages: state.messages }),
 				signal: controller.signal,
 			});
-			window.clearTimeout(timeout);
-			const data = (await response.json()) as { reply?: string; error?: string };
-			if (!response.ok || !data.reply) throw new Error(data.error || '応答を取得できませんでした。');
+			const data = (await response.json()) as ChatResponse;
+			if (!response.ok || !data.message) throw new Error(data.error || '応答を取得できませんでした。');
+
 			pending?.remove();
-			conversation.push({ role: 'assistant', content: data.reply });
-			addMessage('assistant', data.reply);
+			state.messages.push({
+				role: 'assistant',
+				content: buildAssistantHistory(data.message.content, data.questions || []),
+			});
+			state.phase = data.phase || 'discovery';
+			state.diagnosis = data.diagnosis || null;
+			addMessage('assistant', data.message.content, data.questions || []);
+			if (state.diagnosis) addDiagnosis(state.diagnosis);
+
+			if (cta && data.cta?.show) {
+				cta.hidden = false;
+				if (ctaMessage) ctaMessage.textContent = data.cta.message || 'AIとの会話と診断内容を引き継げます。';
+			}
+			updateLimits(data.limits?.turnsRemaining ?? Math.max(0, MAX_TURNS - userTurns - 1));
+			emitState();
 		} catch (error) {
 			pending?.remove();
-			const text = error instanceof DOMException && error.name === 'AbortError'
+			state.messages.pop();
+			const message = error instanceof DOMException && error.name === 'AbortError'
 				? '応答に時間がかかっています。少し時間をおいて、もう一度お試しください。'
-				: error instanceof Error
-					? error.message
-					: 'ただいま相談室を利用できません。少し時間をおいてお試しください。';
-			addMessage('assistant', text);
+				: error instanceof Error ? error.message : 'ただいま相談室を利用できません。';
+			setNotice(message);
 		} finally {
-			input.disabled = false;
-			if (submit) submit.disabled = false;
-			input.focus();
+			window.clearTimeout(timeout);
+			if (state.messages.filter((message) => message.role === 'user').length < MAX_TURNS) {
+				setLoading(false);
+				input.focus();
+			}
 		}
 	};
 
 	form?.addEventListener('submit', (event) => {
 		event.preventDefault();
 		void sendMessage(input?.value || '');
+	});
+
+	input?.addEventListener('input', () => {
+		if (characterCount) characterCount.textContent = `${input.value.length} / 800`;
 	});
 
 	input?.addEventListener('keydown', (event) => {
@@ -130,8 +323,20 @@ import BrandMark from './BrandMark.astro';
 		button.addEventListener('click', () => {
 			if (!input) return;
 			input.value = button.textContent?.trim() || '';
+			if (characterCount) characterCount.textContent = `${input.value.length} / 800`;
 			input.focus();
 		});
+	});
+
+	handoffButton?.addEventListener('click', () => {
+		try {
+			sessionStorage.setItem('yamicha_consultation_handoff_v1', JSON.stringify(state));
+		} catch {
+			// The state is still available through the custom event when session storage is unavailable.
+		}
+		emitState('yamicha:consultation-handoff');
+		setNotice('相談内容をこのタブ内で引き継ぎました。', 'info');
+		document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' });
 	});
 
 	document.querySelectorAll<HTMLElement>('[data-focus-chat]').forEach((element) => {
@@ -140,27 +345,58 @@ import BrandMark from './BrandMark.astro';
 </script>
 
 <style>
-	.chat-card { position: relative; z-index: 1; width: min(100%, 36.5rem); padding: 1.1rem; border: 1px solid rgb(66 47 57 / 10%); border-radius: 28px; background: rgb(255 255 255 / 88%); box-shadow: 0 28px 80px rgb(83 52 67 / 14%), 0 2px 10px rgb(83 52 67 / 5%); backdrop-filter: blur(18px); }
-	.chat-topbar, .chat-agent, .status, .chat-form { display: flex; align-items: center; }
+	.chat-card { position: relative; z-index: 1; width: min(100%, 36.5rem); padding: 1.1rem; border: 1px solid rgb(66 47 57 / 10%); border-radius: 28px; background: rgb(255 255 255 / 90%); box-shadow: 0 28px 80px rgb(83 52 67 / 14%), 0 2px 10px rgb(83 52 67 / 5%); backdrop-filter: blur(18px); }
+	.chat-topbar, .chat-agent, .status, .chat-form, .chat-meta { display: flex; align-items: center; }
 	.chat-topbar { justify-content: space-between; gap: 1rem; padding: 0.2rem 0.2rem 1rem; border-bottom: 1px solid var(--line); }
 	.chat-agent { gap: 0.8rem; }
 	.status { gap: 0.38rem; font-size: 0.72rem; font-weight: 700; color: var(--ink-soft); }
 	.status span { width: 0.46rem; height: 0.46rem; border-radius: 50%; background: #54aa78; box-shadow: 0 0 0 3px rgb(84 170 120 / 12%); }
 	.private-note { font-size: 0.68rem; color: var(--muted); }
-	.chat-heading { padding: 1.45rem 0.35rem 1rem; }
+	.chat-heading { padding: 1.35rem 0.35rem 0.9rem; }
 	.chat-heading h2 { margin: 0.25rem 0 0.45rem; font-size: clamp(1.35rem, 2.5vw, 1.75rem); letter-spacing: -0.035em; }
 	.chat-heading p:last-child { margin: 0; font-size: 0.88rem; color: var(--ink-soft); }
-	.suggestion-list { display: flex; gap: 0.45rem; overflow-x: auto; padding: 0 0.35rem 0.9rem; scrollbar-width: none; }
+	.suggestion-list { display: flex; gap: 0.45rem; overflow-x: auto; padding: 0 0.35rem 0.8rem; scrollbar-width: none; }
 	.suggestion-list::-webkit-scrollbar { display: none; }
 	.suggestion { flex: 0 0 auto; padding: 0.58rem 0.75rem; border: 1px solid var(--pink-200); border-radius: 999px; background: var(--pink-50); color: var(--ink-soft); font: inherit; font-size: 0.72rem; cursor: pointer; transition: border-color 160ms ease, background 160ms ease, transform 160ms ease; }
 	.suggestion:hover { border-color: var(--pink-400); background: var(--pink-100); transform: translateY(-1px); }
-	.messages { display: flex; min-height: 9rem; max-height: 15.5rem; flex-direction: column; gap: 0.85rem; overflow-y: auto; padding: 1rem 0.35rem; border-top: 1px solid var(--line); }
+	.suggestion:disabled { cursor: wait; opacity: 0.55; transform: none; }
+	.messages { display: flex; min-height: 8.5rem; max-height: 20rem; flex-direction: column; gap: 0.85rem; overflow-y: auto; padding: 1rem 0.35rem; border-top: 1px solid var(--line); scroll-behavior: smooth; }
 	.message { display: flex; align-items: flex-end; gap: 0.55rem; }
 	.message.user { justify-content: flex-end; }
 	.message-icon { display: grid; width: 1.75rem; height: 1.75rem; flex: 0 0 auto; place-items: center; border-radius: 9px; background: var(--pink-100); color: var(--pink-700); font-size: 0.68rem; font-weight: 800; }
-	.bubble { max-width: 82%; padding: 0.8rem 0.95rem; border-radius: 16px 16px 16px 5px; background: #f7f4f5; color: var(--ink-soft); font-size: 0.81rem; line-height: 1.72; white-space: pre-wrap; }
+	.bubble { max-width: 84%; padding: 0.8rem 0.95rem; border-radius: 16px 16px 16px 5px; background: #f7f4f5; color: var(--ink-soft); font-size: 0.81rem; line-height: 1.72; }
+	.bubble p { margin: 0; white-space: pre-wrap; }
+	.bubble ol { margin: 0.65rem 0 0; padding-left: 1.3rem; }
+	.bubble li + li { margin-top: 0.35rem; }
 	.user .bubble { border-radius: 16px 16px 5px 16px; background: var(--ink); color: #fff; }
-	.pending .bubble { color: var(--muted); }
+	.pending .bubble { display: flex; gap: 0.28rem; padding-block: 1rem; }
+	.typing-dot { width: 0.36rem; height: 0.36rem; border-radius: 50%; background: var(--pink-400); animation: typing 1s infinite ease-in-out; }
+	.typing-dot:nth-child(2) { animation-delay: 140ms; }
+	.typing-dot:nth-child(3) { animation-delay: 280ms; }
+	@keyframes typing { 0%, 60%, 100% { opacity: 0.35; transform: translateY(0); } 30% { opacity: 1; transform: translateY(-3px); } }
+	.diagnosis-card { margin-left: 2.3rem; padding: 1rem; border: 1px solid var(--pink-200); border-radius: 18px; background: #fffafb; color: var(--ink-soft); }
+	.diagnosis-header { display: flex; align-items: center; justify-content: space-between; gap: 0.8rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--line); }
+	.diagnosis-header strong { color: var(--ink); font-size: 0.86rem; }
+	.diagnosis-header span { padding: 0.3rem 0.5rem; border-radius: 999px; background: var(--pink-100); color: var(--pink-700); font-size: 0.6rem; }
+	.diagnosis-card section { padding-top: 0.8rem; }
+	.diagnosis-card h3 { margin: 0 0 0.35rem; color: var(--pink-700); font-size: 0.68rem; }
+	.diagnosis-card ul { margin: 0; padding-left: 1.05rem; font-size: 0.73rem; line-height: 1.65; }
+	.diagnosis-assessment { display: grid; grid-template-columns: 1fr 0.65fr; gap: 0.55rem; margin-top: 0.9rem; }
+	.diagnosis-assessment > div { padding: 0.75rem; border-radius: 12px; background: #f5f1f3; }
+	.diagnosis-assessment span, .diagnosis-assessment strong { display: block; }
+	.diagnosis-assessment span { color: var(--muted); font-size: 0.58rem; }
+	.diagnosis-assessment strong { margin-top: 0.22rem; color: var(--ink); font-size: 0.72rem; }
+	.diagnosis-assessment p { margin: 0.3rem 0 0; font-size: 0.64rem; line-height: 1.55; }
+	.consultation-cta { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin: 0.6rem 0.35rem 0.9rem 2.65rem; padding: 0.85rem; border-radius: 15px; background: var(--pink-100); }
+	.consultation-cta[hidden] { display: none; }
+	.consultation-cta strong, .consultation-cta span { display: block; }
+	.consultation-cta strong { font-size: 0.72rem; }
+	.consultation-cta div > span { margin-top: 0.2rem; color: var(--muted); font-size: 0.6rem; }
+	.consultation-cta button { flex: 0 0 auto; padding: 0.6rem 0.75rem; border: 0; border-radius: 10px; background: var(--ink); color: #fff; font: inherit; font-size: 0.65rem; font-weight: 700; cursor: pointer; }
+	.chat-notice { margin: 0.55rem 0.35rem; padding: 0.65rem 0.75rem; border-radius: 10px; font-size: 0.69rem; line-height: 1.55; }
+	.chat-notice[hidden] { display: none; }
+	.chat-notice.error { background: #fff0f0; color: #9b3f49; }
+	.chat-notice.info { background: #edf7f1; color: #397858; }
 	.chat-form { gap: 0.65rem; padding: 0.55rem; border: 1px solid var(--line-strong); border-radius: 18px; background: #fff; box-shadow: 0 6px 20px rgb(60 42 51 / 5%); transition: border-color 160ms ease, box-shadow 160ms ease; }
 	.chat-form:focus-within { border-color: var(--pink-400); box-shadow: 0 0 0 4px rgb(222 117 159 / 10%); }
 	.chat-form textarea { min-height: 2.7rem; max-height: 7rem; flex: 1; resize: vertical; border: 0; outline: 0; background: transparent; color: var(--ink); font: inherit; font-size: 0.82rem; line-height: 1.55; }
@@ -169,13 +405,19 @@ import BrandMark from './BrandMark.astro';
 	.send-button:hover { background: var(--pink-700); transform: translateY(-1px); }
 	.send-button:disabled { cursor: wait; opacity: 0.55; transform: none; }
 	.send-button svg { width: 1rem; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.6; }
-	.chat-caption { margin: 0.55rem 0 0; text-align: center; font-size: 0.66rem; color: var(--muted); }
+	.chat-meta { justify-content: space-between; padding: 0.45rem 0.35rem 0; color: var(--muted); font-size: 0.59rem; }
+	.safety-note { display: flex; align-items: flex-start; gap: 0.45rem; margin: 0.45rem 0.35rem 0; color: #7c606b; font-size: 0.61rem; line-height: 1.5; }
+	.safety-note span { display: grid; width: 1rem; height: 1rem; flex: 0 0 auto; place-items: center; border-radius: 50%; background: var(--pink-100); color: var(--pink-700); font-size: 0.62rem; font-weight: 800; }
 
 	@media (max-width: 560px) {
 		.chat-card { padding: 0.8rem; border-radius: 22px; }
 		.private-note { display: none; }
 		.chat-heading { padding-inline: 0.15rem; }
-		.bubble { max-width: 88%; }
+		.bubble { max-width: 89%; }
 		.send-button span { display: none; }
+		.diagnosis-card { margin-left: 0; }
+		.diagnosis-assessment { grid-template-columns: 1fr; }
+		.consultation-cta { align-items: stretch; flex-direction: column; margin-left: 0.35rem; }
+		.consultation-cta button { width: 100%; }
 	}
 </style>

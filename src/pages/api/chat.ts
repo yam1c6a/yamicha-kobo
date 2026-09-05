@@ -1,123 +1,155 @@
 import type { APIRoute } from 'astro';
 import { env } from 'cloudflare:workers';
+import { generateConsultationResponse } from '../../services/ai/consultation';
+import type { AIEnvironment, ChatMessage } from '../../services/ai/types';
 
 export const prerender = false;
 
-type ChatMessage = {
-	role: 'user' | 'assistant';
-	content: string;
+const MAX_MESSAGE_CHARS = 800;
+const MAX_ASSISTANT_MESSAGE_CHARS = 1_600;
+const MAX_USER_TURNS = 6;
+const MAX_MESSAGES = MAX_USER_TURNS * 2 - 1;
+const MAX_TOTAL_CHARS = 6_000;
+const MAX_BODY_BYTES = 16_000;
+
+type ChatRequest = {
+	messages?: unknown;
+	sessionId?: unknown;
 };
 
-type OpenAIResponse = {
-	output_text?: string;
-	output?: Array<{
-		type?: string;
-		content?: Array<{ type?: string; text?: string }>;
-	}>;
-	error?: { message?: string };
+type RateLimitBinding = {
+	limit(options: { key: string }): Promise<{ success: boolean }>;
 };
 
-const instructions = `あなたは「やみちゃ工房」の業務改善AIコンシェルジュです。
-相談者の面倒な作業を聞き、実務的な改善方法を日本語で提案してください。
+type RuntimeEnvironment = AIEnvironment & {
+	CHAT_RATE_LIMIT?: RateLimitBinding;
+};
 
-方針:
-- AI導入を目的にせず、通常のプログラム、Excel、既存サービスも含めて適切な方法を選ぶ
-- 最初は相談内容を短く整理し、自動化の可能性と理由を伝える
-- 情報が足りない場合は、一度に最大2問だけ具体的な追加質問をする
-- 十分な情報があれば「現状」「改善案」「確認したいこと」を簡潔に示す
-- 根拠のない削減時間、価格、納期は断定しない
-- 法律・税務・医療などの専門判断は行わない
-- 個人情報や機密情報を追加で求めない
-- やみちゃ工房への相談につながる内容なら、最後に「この内容なら、やみちゃ工房でご相談いただけます。」と自然に案内する
-- 1回の返答は350文字程度まで。Markdownの見出しは使わず、読みやすい短い段落か箇条書きにする`;
-
-const json = (body: Record<string, unknown>, status = 200) =>
+const json = (body: Record<string, unknown>, status = 200, headers?: Record<string, string>) =>
 	new Response(JSON.stringify(body), {
 		status,
 		headers: {
 			'Content-Type': 'application/json; charset=utf-8',
 			'Cache-Control': 'no-store',
 			'X-Content-Type-Options': 'nosniff',
+			...headers,
 		},
 	});
 
-const extractText = (data: OpenAIResponse) => {
-	if (data.output_text?.trim()) return data.output_text.trim();
-	return data.output
-		?.flatMap((item) => item.content ?? [])
-		.find((item) => item.type === 'output_text' && item.text)
-		?.text?.trim();
+const validateMessages = (value: unknown): { messages?: ChatMessage[]; error?: string } => {
+	if (!Array.isArray(value) || value.length === 0) return { error: '相談内容を入力してください。' };
+	if (value.length > MAX_MESSAGES) return { error: 'この相談で利用できる会話回数に達しました。' };
+
+	const messages: ChatMessage[] = [];
+	let totalChars = 0;
+	let userTurns = 0;
+
+	for (let index = 0; index < value.length; index += 1) {
+		const message = value[index];
+		const expectedRole = index % 2 === 0 ? 'user' : 'assistant';
+		if (
+			typeof message !== 'object' ||
+			message === null ||
+			(message as { role?: unknown }).role !== expectedRole ||
+			typeof (message as { content?: unknown }).content !== 'string'
+		) {
+			return { error: '会話データの形式が正しくありません。' };
+		}
+
+		const content = (message as { content: string }).content.trim();
+		const maxChars = expectedRole === 'user' ? MAX_MESSAGE_CHARS : MAX_ASSISTANT_MESSAGE_CHARS;
+		if (!content || content.length > maxChars) {
+			return { error: expectedRole === 'user'
+				? `1回の入力は${MAX_MESSAGE_CHARS}文字以内にしてください。`
+				: '会話データの形式が正しくありません。' };
+		}
+
+		totalChars += content.length;
+		if (expectedRole === 'user') userTurns += 1;
+		messages.push({ role: expectedRole, content });
+	}
+
+	if (messages.at(-1)?.role !== 'user') return { error: '新しい相談内容を入力してください。' };
+	if (userTurns > MAX_USER_TURNS) return { error: 'この相談で利用できる会話回数に達しました。' };
+	if (totalChars > MAX_TOTAL_CHARS) return { error: '会話が長くなったため、新しい相談としてやり直してください。' };
+	return { messages };
+};
+
+const isSameOriginRequest = (request: Request) => {
+	const fetchSite = request.headers.get('sec-fetch-site');
+	if (fetchSite === 'cross-site') return false;
+	const origin = request.headers.get('origin');
+	return !origin || origin === new URL(request.url).origin;
 };
 
 export const POST: APIRoute = async ({ request }) => {
+	if (!isSameOriginRequest(request)) return json({ error: 'このサイトから送信してください。', code: 'INVALID_ORIGIN' }, 403);
 	if (!request.headers.get('content-type')?.includes('application/json')) {
-		return json({ error: '送信形式が正しくありません。' }, 415);
+		return json({ error: '送信形式が正しくありません。', code: 'INVALID_CONTENT_TYPE' }, 415);
 	}
 
-	let body: { messages?: unknown };
+	const contentLength = Number(request.headers.get('content-length') || 0);
+	if (contentLength > MAX_BODY_BYTES) return json({ error: '送信内容が大きすぎます。', code: 'PAYLOAD_TOO_LARGE' }, 413);
+
+	const runtimeEnv = env as unknown as RuntimeEnvironment;
+	const ipAddress = request.headers.get('cf-connecting-ip') || 'local-development';
+	if (runtimeEnv.CHAT_RATE_LIMIT) {
+		const rateLimit = await runtimeEnv.CHAT_RATE_LIMIT.limit({ key: ipAddress });
+		if (!rateLimit.success) {
+			return json(
+				{ error: '短時間の利用回数が上限に達しました。1分ほど待ってからお試しください。', code: 'RATE_LIMITED' },
+				429,
+				{ 'Retry-After': '60' },
+			);
+		}
+	}
+
+	let body: ChatRequest;
 	try {
 		body = await request.json();
 	} catch {
-		return json({ error: '相談内容を読み取れませんでした。' }, 400);
+		return json({ error: '相談内容を読み取れませんでした。', code: 'INVALID_JSON' }, 400);
 	}
 
-	if (!Array.isArray(body.messages)) {
-		return json({ error: '相談内容を入力してください。' }, 400);
+	if (
+		body.sessionId !== undefined &&
+		(typeof body.sessionId !== 'string' || !/^[a-zA-Z0-9-]{16,80}$/.test(body.sessionId))
+	) {
+		return json({ error: 'セッション情報が正しくありません。', code: 'INVALID_SESSION' }, 400);
 	}
 
-	const messages = body.messages
-		.slice(-8)
-		.filter(
-			(message): message is ChatMessage =>
-				typeof message === 'object' &&
-				message !== null &&
-				(message.role === 'user' || message.role === 'assistant') &&
-				typeof message.content === 'string' &&
-				message.content.trim().length > 0 &&
-				message.content.length <= 1000,
-		)
-		.map((message) => ({ role: message.role, content: message.content.trim() }));
+	const validation = validateMessages(body.messages);
+	if (!validation.messages) return json({ error: validation.error, code: 'INVALID_MESSAGES' }, 400);
 
-	if (messages.length === 0 || messages[messages.length - 1]?.role !== 'user') {
-		return json({ error: '相談内容を入力してください。' }, 400);
-	}
-
-	const runtimeEnv = env as unknown as {
-		OPENAI_API_KEY?: string;
-		OPENAI_MODEL?: string;
-	};
-
-	if (!runtimeEnv.OPENAI_API_KEY) {
-		return json({ error: 'AI相談室は現在準備中です。環境設定後にご利用いただけます。' }, 503);
-	}
-
+	const userTurns = validation.messages.filter((message) => message.role === 'user').length;
 	try {
-		const response = await fetch('https://api.openai.com/v1/responses', {
-			method: 'POST',
-			headers: {
-				Authorization: `Bearer ${runtimeEnv.OPENAI_API_KEY}`,
-				'Content-Type': 'application/json',
+		const result = await generateConsultationResponse({ messages: validation.messages, env: runtimeEnv });
+		return json({
+			message: {
+				id: crypto.randomUUID(),
+				role: 'assistant',
+				content: result.reply,
+				createdAt: new Date().toISOString(),
 			},
-			body: JSON.stringify({
-				model: runtimeEnv.OPENAI_MODEL || 'gpt-5-mini',
-				instructions,
-				input: messages,
-				max_output_tokens: 700,
-				store: false,
-			}),
+			phase: result.phase,
+			questions: result.questions,
+			diagnosis: result.phase === 'diagnosis' ? result.diagnosis : null,
+			cta: result.cta,
+			limits: {
+				turnsUsed: userTurns,
+				turnsRemaining: Math.max(0, MAX_USER_TURNS - userTurns),
+				maxTurns: MAX_USER_TURNS,
+			},
 		});
-
-		const data = (await response.json()) as OpenAIResponse;
-		if (!response.ok) {
-			console.error('OpenAI API error', response.status, data.error?.message);
-			return json({ error: 'ただいまAI相談室が混み合っています。少し時間をおいてお試しください。' }, 502);
-		}
-
-		const reply = extractText(data);
-		if (!reply) return json({ error: '回答を作成できませんでした。もう一度お試しください。' }, 502);
-		return json({ reply });
 	} catch (error) {
-		console.error('Chat request failed', error);
-		return json({ error: 'ただいまAI相談室に接続できません。少し時間をおいてお試しください。' }, 502);
+		const message = error instanceof Error ? error.message : String(error);
+		console.error('Workers AI consultation failed', message);
+		if (/3036|free allocation|daily allocation|quota/i.test(message)) {
+			return json({ error: '本日のAI利用枠に達しました。明日以降にもう一度お試しください。', code: 'AI_DAILY_LIMIT' }, 503);
+		}
+		if (/binding is not configured/i.test(message)) {
+			return json({ error: 'AI相談室の接続設定を確認しています。しばらくしてからお試しください。', code: 'AI_NOT_CONFIGURED' }, 503);
+		}
+		return json({ error: 'ただいまAI相談室に接続できません。少し時間をおいてお試しください。', code: 'AI_UNAVAILABLE' }, 502);
 	}
 };
