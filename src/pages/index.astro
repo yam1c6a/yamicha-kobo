@@ -14,7 +14,7 @@ const services = [
 const demos = [
 	{ status: '公開中', active: true, category: 'AI CONSULTANT', title: '業務改善AIコンシェルジュ', text: '面倒な作業を入力すると、AIが内容を整理し、改善方法や自動化の可能性をご案内します。', label: 'このページで試す' },
 	{ status: 'Coming Soon', active: false, category: 'ACCOUNTING AI', title: '請求書 → 経理処理AI', text: '請求書から取引先・金額・税を抽出し、確認できる仕訳候補へつなげるデモです。', label: '準備中' },
-	{ status: 'Coming Soon', active: false, category: 'DATA CLEANING', title: 'CSV救済AI', text: '日付や金額、表記揺れが混在したデータを解析し、安全に整えるデモです。', label: '準備中' },
+	{ status: 'Coming Soon', active: false, category: 'INQUIRY AI', title: 'メール・問い合わせ仕分けAI', text: 'メールや問い合わせ文を内容・緊急度ごとに仕分けし、不足情報の確認や返信案づくりを支援するデモです。', label: '準備中' },
 ];
 ---
 
@@ -100,7 +100,7 @@ const demos = [
 				<div class="demo-grid">
 					{demos.map((demo, index) => (
 						<article class:list={['demo-card', { active: demo.active }]}>
-							<div class="demo-preview" aria-hidden="true"><span class="demo-number">0{index + 1}</span><div class="demo-symbol">{index === 0 ? '⌁' : index === 1 ? '¥' : '↹'}</div><span class:list={['demo-status', { live: demo.active }]}>{demo.status}</span></div>
+							<div class="demo-preview" aria-hidden="true"><span class="demo-number">0{index + 1}</span><div class="demo-symbol">{index === 0 ? '⌁' : index === 1 ? '¥' : '✉'}</div><span class:list={['demo-status', { live: demo.active }]}>{demo.status}</span></div>
 							<div class="demo-content"><p class="demo-category">{demo.category}</p><h3>{demo.title}</h3><p>{demo.text}</p>{demo.active ? <a href="#consult" data-focus-chat>{demo.label}<span aria-hidden="true">→</span></a> : <span class="disabled-link" aria-label={`${demo.title}は準備中です`}>{demo.label}</span>}</div>
 						</article>
 					))}
