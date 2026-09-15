@@ -29,11 +29,7 @@ import BrandMark from './BrandMark.astro';
 			<div class="bubble">こんにちは。時間がかかっている作業や、面倒に感じていることを教えてください。必要なことを少しずつ伺い、合う改善方法を一緒に整理します。</div>
 		</div>
 	</div>
-
-	<div class="consultation-cta" id="consultation-cta" hidden>
-		<div><strong>この内容なら、やみちゃ工房に相談できます。</strong><span id="cta-message">AIとの会話と診断内容を引き継げます。</span></div>
-		<button type="button" id="handoff-button">この内容で相談する<span aria-hidden="true">→</span></button>
-	</div>
+	<p class="consultation-note" id="consultation-note" hidden>この内容なら、やみちゃ工房に相談できます。</p>
 
 	<p class="chat-notice" id="chat-notice" role="alert" hidden></p>
 
@@ -80,7 +76,7 @@ import BrandMark from './BrandMark.astro';
 		phase?: ConsultationState['phase'];
 		questions?: string[];
 		diagnosis?: Diagnosis | null;
-		cta?: { show: boolean; message: string };
+		cta?: { show: boolean };
 		limits?: { turnsRemaining: number; maxTurns: number };
 		error?: string;
 		code?: string;
@@ -95,9 +91,7 @@ import BrandMark from './BrandMark.astro';
 	const notice = document.querySelector<HTMLParagraphElement>('#chat-notice');
 	const turnStatus = document.querySelector<HTMLSpanElement>('#turn-status');
 	const characterCount = document.querySelector<HTMLSpanElement>('#character-count');
-	const cta = document.querySelector<HTMLDivElement>('#consultation-cta');
-	const ctaMessage = document.querySelector<HTMLSpanElement>('#cta-message');
-	const handoffButton = document.querySelector<HTMLButtonElement>('#handoff-button');
+	const consultationNote = document.querySelector<HTMLParagraphElement>('#consultation-note');
 	const sessionId = typeof crypto.randomUUID === 'function'
 		? crypto.randomUUID()
 		: `${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -107,10 +101,10 @@ import BrandMark from './BrandMark.astro';
 		window.dispatchEvent(new CustomEvent(eventName, { detail: structuredClone(state) }));
 	};
 
-	const setNotice = (message = '', kind: 'error' | 'info' = 'error') => {
+	const setNotice = (message = '') => {
 		if (!notice) return;
 		notice.textContent = message;
-		notice.className = `chat-notice ${kind}`;
+		notice.className = 'chat-notice error';
 		notice.hidden = !message;
 	};
 
@@ -250,7 +244,7 @@ import BrandMark from './BrandMark.astro';
 		}
 
 		setNotice();
-		if (cta) cta.hidden = true;
+		if (consultationNote) consultationNote.hidden = true;
 		const content = value.trim();
 		state.messages.push({ role: 'user', content });
 		addMessage('user', content);
@@ -280,11 +274,8 @@ import BrandMark from './BrandMark.astro';
 			state.diagnosis = data.diagnosis || null;
 			addMessage('assistant', data.message.content, data.questions || []);
 			if (state.diagnosis) addDiagnosis(state.diagnosis);
+			if (consultationNote && data.cta?.show) consultationNote.hidden = false;
 
-			if (cta && data.cta?.show) {
-				cta.hidden = false;
-				if (ctaMessage) ctaMessage.textContent = data.cta.message || 'AIとの会話と診断内容を引き継げます。';
-			}
 			updateLimits(data.limits?.turnsRemaining ?? Math.max(0, MAX_TURNS - userTurns - 1));
 			emitState();
 		} catch (error) {
@@ -326,17 +317,6 @@ import BrandMark from './BrandMark.astro';
 			if (characterCount) characterCount.textContent = `${input.value.length} / 800`;
 			input.focus();
 		});
-	});
-
-	handoffButton?.addEventListener('click', () => {
-		try {
-			sessionStorage.setItem('yamicha_consultation_handoff_v1', JSON.stringify(state));
-		} catch {
-			// The state is still available through the custom event when session storage is unavailable.
-		}
-		emitState('yamicha:consultation-handoff');
-		setNotice('相談内容をこのタブ内で引き継ぎました。', 'info');
-		document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' });
 	});
 
 	document.querySelectorAll<HTMLElement>('[data-focus-chat]').forEach((element) => {
@@ -387,16 +367,11 @@ import BrandMark from './BrandMark.astro';
 	.diagnosis-assessment span { color: var(--muted); font-size: 0.58rem; }
 	.diagnosis-assessment strong { margin-top: 0.22rem; color: var(--ink); font-size: 0.72rem; }
 	.diagnosis-assessment p { margin: 0.3rem 0 0; font-size: 0.64rem; line-height: 1.55; }
-	.consultation-cta { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin: 0.6rem 0.35rem 0.9rem 2.65rem; padding: 0.85rem; border-radius: 15px; background: var(--pink-100); }
-	.consultation-cta[hidden] { display: none; }
-	.consultation-cta strong, .consultation-cta span { display: block; }
-	.consultation-cta strong { font-size: 0.72rem; }
-	.consultation-cta div > span { margin-top: 0.2rem; color: var(--muted); font-size: 0.6rem; }
-	.consultation-cta button { flex: 0 0 auto; padding: 0.6rem 0.75rem; border: 0; border-radius: 10px; background: var(--ink); color: #fff; font: inherit; font-size: 0.65rem; font-weight: 700; cursor: pointer; }
+	.consultation-note { margin: 0.6rem 0.35rem 0.9rem 2.65rem; padding: 0.7rem 0.85rem; border-left: 3px solid var(--pink-400); border-radius: 10px; background: var(--pink-50); color: var(--ink-soft); font-size: 0.7rem; font-weight: 700; }
+	.consultation-note[hidden] { display: none; }
 	.chat-notice { margin: 0.55rem 0.35rem; padding: 0.65rem 0.75rem; border-radius: 10px; font-size: 0.69rem; line-height: 1.55; }
 	.chat-notice[hidden] { display: none; }
 	.chat-notice.error { background: #fff0f0; color: #9b3f49; }
-	.chat-notice.info { background: #edf7f1; color: #397858; }
 	.chat-form { gap: 0.65rem; padding: 0.55rem; border: 1px solid var(--line-strong); border-radius: 18px; background: #fff; box-shadow: 0 6px 20px rgb(60 42 51 / 5%); transition: border-color 160ms ease, box-shadow 160ms ease; }
 	.chat-form:focus-within { border-color: var(--pink-400); box-shadow: 0 0 0 4px rgb(222 117 159 / 10%); }
 	.chat-form textarea { min-height: 2.7rem; max-height: 7rem; flex: 1; resize: vertical; border: 0; outline: 0; background: transparent; color: var(--ink); font: inherit; font-size: 0.82rem; line-height: 1.55; }
@@ -417,7 +392,6 @@ import BrandMark from './BrandMark.astro';
 		.send-button span { display: none; }
 		.diagnosis-card { margin-left: 0; }
 		.diagnosis-assessment { grid-template-columns: 1fr; }
-		.consultation-cta { align-items: stretch; flex-direction: column; margin-left: 0.35rem; }
-		.consultation-cta button { width: 100%; }
+		.consultation-note { margin-left: 0.35rem; }
 	}
 </style>
