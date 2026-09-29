@@ -1,0 +1,31 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="スプレッドシート編集ツール｜やみちゃ工房" description="スプレッドシート編集ツールの用途とGoogleスプレッドシート連携について説明します。">
+  <main class="tool-page">
+    <article class="tool-card">
+      <p class="eyebrow">GOOGLE SHEETS INTEGRATION</p>
+      <h1>スプレッドシート編集ツール</h1>
+      <p>このツールは、Googleスプレッドシートの内容を確認し、指定された変更を反映するためのものです。表の内容を扱う作業で、Googleアカウントとの連携を使用します。</p>
+
+      <h2>Google連携の目的</h2>
+      <p>対象のスプレッドシートを読み取り、編集内容を反映するために、Googleスプレッドシートへのアクセスを求めます。実際に許可を求める権限は、Googleの同意画面に表示されます。</p>
+
+      <h2>このページについて</h2>
+      <p>このページはツールの用途を説明する公開ページです。このページ上でGoogleアカウントへの接続やスプレッドシートの編集は行いません。</p>
+
+      <p class="back-link"><a href="/">やみちゃ工房のトップページへ</a></p>
+    </article>
+  </main>
+</Layout>
+
+<style>
+  .tool-page { min-height: 100vh; padding: clamp(2rem, 7vw, 5rem) 1rem; }
+  .tool-card { max-width: 780px; margin: 0 auto; padding: clamp(1.5rem, 5vw, 3.5rem); border: 1px solid var(--line-strong); border-radius: 1.5rem; background: var(--surface); box-shadow: 0 18px 48px rgb(48 41 45 / 7%); line-height: 1.85; }
+  h1 { margin: .4rem 0 1.5rem; font-size: clamp(2rem, 6vw, 3.4rem); }
+  h2 { margin: 2.2rem 0 .5rem; font-size: 1.3rem; }
+  p { margin: 0 0 1rem; }
+  a { color: var(--pink-700); }
+  .back-link { margin-top: 2.5rem; }
+</style>
