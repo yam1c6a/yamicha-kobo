@@ -1,0 +1,40 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="プライバシーポリシー｜YAMIOS" description="YAMIOSのGoogle連携に関するプライバシーポリシーです。">
+  <main class="yamios-page">
+    <article class="yamios-card">
+      <p><a href="/yamios/">YAMIOSの説明に戻る</a></p>
+      <p class="eyebrow">PRIVACY POLICY</p>
+      <h1>プライバシーポリシー</h1>
+      <p>このページは、個人用AIアシスタントYAMIOSにおけるGoogleユーザーデータの取扱いを説明します。</p>
+
+      <h2>取得する情報と目的</h2>
+      <p>Google Driveでは、資料検索と質問への回答のために閲覧権限を求めます。実際の検索では設定された資料フォルダから関連ファイルを探し、必要な内容の抜粋を取得します。Google Calendarでは、予定の表示・提案と、利用者が依頼した予定の作成・変更・削除のために予定の読み書き権限を求めます。</p>
+
+      <h2>保存と外部サービスへの送信</h2>
+      <p>Googleへの再接続に必要な認可情報は、YAMIOSを実行するPC内に保存します。取得した資料の抜粋や予定の内容は、画面への表示や回答の作成に使います。質問への回答を外部AIモデルで生成する場合、回答に必要な資料の抜粋、予定の内容、会話内容が、選択されたモデルの提供者へ送信されることがあります。会話履歴には、これらの情報を含む回答がPC内に保存される場合があります。</p>
+
+      <h2>利用範囲と共有</h2>
+      <p>Googleユーザーデータを広告の表示・配信や販売のために利用しません。上記の回答生成に必要な外部AIサービスとGoogle APIを除き、YAMIOSがGoogleユーザーデータを第三者へ送信する機能はありません。</p>
+
+      <h2>接続解除と削除</h2>
+      <p>Googleアカウントの接続は、<a href="https://myaccount.google.com/connections">Googleアカウントの権限管理画面</a>から取り消せます。PC内の認可情報や会話履歴は、YAMIOSの管理者が保存データを削除することで消去できます。接続を取り消した後は、該当するGoogle連携機能を利用できなくなります。</p>
+
+      <h2>問い合わせ</h2>
+      <p>データの取扱いに関する問い合わせは、<a href="mailto:yam1c6a@gmail.com">yam1c6a@gmail.com</a>へお送りください。</p>
+      <p class="updated">最終更新日：2026年9月29日</p>
+    </article>
+  </main>
+</Layout>
+
+<style>
+  .yamios-page { min-height: 100vh; padding: clamp(2rem, 7vw, 5rem) 1rem; }
+  .yamios-card { max-width: 780px; margin: 0 auto; padding: clamp(1.5rem, 5vw, 3.5rem); border: 1px solid var(--line-strong); border-radius: 1.5rem; background: var(--surface); box-shadow: 0 18px 48px rgb(48 41 45 / 7%); line-height: 1.85; }
+  h1 { margin: .4rem 0 1.5rem; font-size: clamp(1.9rem, 6vw, 3rem); }
+  h2 { margin: 2.2rem 0 .5rem; font-size: 1.3rem; }
+  p { margin: 0 0 1rem; }
+  a { color: var(--pink-700); }
+  .updated { margin-top: 2.5rem; color: var(--muted); font-size: .9rem; }
+</style>

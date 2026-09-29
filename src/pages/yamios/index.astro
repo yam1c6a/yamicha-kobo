@@ -1,0 +1,33 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="YAMIOS｜Google連携について" description="YAMIOSのGoogle連携と利用するデータについて説明します。">
+  <main class="yamios-page">
+    <article class="yamios-card">
+      <p class="eyebrow">GOOGLE INTEGRATION</p>
+      <h1>YAMIOS</h1>
+      <p>YAMIOSは、個人の会話、予定、資料の参照をPC上でまとめるAIアシスタントです。このページはGoogle連携の説明用です。チャットやダッシュボードをインターネットに公開するものではありません。</p>
+
+      <h2>Google Drive連携</h2>
+      <p>Google Driveへの閲覧権限を使い、質問に関連する資料を検索して一部の内容を取得します。YAMIOSからGoogle Driveのファイルを変更・削除しません。</p>
+
+      <h2>Google Calendar連携</h2>
+      <p>予定の閲覧と、利用者が依頼した予定の作成・変更・削除のために、Google Calendarの予定への読み書き権限を使います。</p>
+
+      <h2>データの取扱い</h2>
+      <p>Googleとの認可情報はYAMIOSを動かすPCに保存します。質問への回答に必要な場合、取得した資料の抜粋や予定の内容が、YAMIOSで選択された外部AIモデルの提供者へ送信されることがあります。詳しくは<a href="/yamios/privacy/">プライバシーポリシー</a>をご覧ください。</p>
+      <p class="back-link"><a href="/">やみちゃ工房のトップページへ</a></p>
+    </article>
+  </main>
+</Layout>
+
+<style>
+  .yamios-page { min-height: 100vh; padding: clamp(2rem, 7vw, 5rem) 1rem; }
+  .yamios-card { max-width: 780px; margin: 0 auto; padding: clamp(1.5rem, 5vw, 3.5rem); border: 1px solid var(--line-strong); border-radius: 1.5rem; background: var(--surface); box-shadow: 0 18px 48px rgb(48 41 45 / 7%); line-height: 1.85; }
+  h1 { margin: .4rem 0 1.5rem; font-size: clamp(2.4rem, 7vw, 4rem); }
+  h2 { margin: 2.2rem 0 .5rem; font-size: 1.3rem; }
+  p { margin: 0 0 1rem; }
+  a { color: var(--pink-700); }
+  .back-link { margin-top: 2.5rem; }
+</style>
