@@ -1,0 +1,40 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="プライバシーポリシー｜スプレッドシート編集ツール" description="スプレッドシート編集ツールによるGoogleユーザーデータの取扱いについて説明します。">
+  <main class="tool-page">
+    <article class="tool-card">
+      <p><a href="/spreadsheet-editor/">スプレッドシート編集ツールの説明に戻る</a></p>
+      <p class="eyebrow">PRIVACY POLICY</p>
+      <h1>プライバシーポリシー</h1>
+      <p>このポリシーは、やみちゃ工房の「スプレッドシート編集ツール」におけるGoogleユーザーデータの取扱い方針を説明します。ツールは現在未提供であり、現時点でGoogleアカウントの認可情報やスプレッドシートの内容を取得・保存していません。</p>
+
+      <h2>取得する情報と利用目的</h2>
+      <p>提供開始後は、利用者がGoogleアカウントで許可した範囲で、編集対象のスプレッドシートを特定する情報、シート名、セルの内容、およびGoogleとの接続に必要な認可情報を扱います。これらはスプレッドシートの内容を確認し、利用者が指定した編集を反映する目的に限って使用します。</p>
+
+      <h2>保存</h2>
+      <p>編集結果は利用者のGoogleスプレッドシートに保存します。ツール側にスプレッドシートの内容の恒久的なコピーを保存せず、認可情報は接続に必要な範囲でツールを実行する端末内に保存する方針です。この公開ページ自体はGoogleアカウントへの接続やスプレッドシートの取得を行いません。</p>
+
+      <h2>共有と利用範囲</h2>
+      <p>取得したGoogleユーザーデータを広告、販売、AIモデルの学習には利用しません。指定された編集に必要なGoogle APIとの通信を除き、スプレッドシートの内容を第三者へ提供しない方針です。</p>
+
+      <h2>接続解除と削除</h2>
+      <p>Googleアカウントの接続は、<a href="https://myaccount.google.com/connections">Googleアカウントの権限管理画面</a>から取り消せます。提供開始時には、端末に保存した認可情報の削除方法をツール内またはこのページで案内します。</p>
+
+      <h2>変更と問い合わせ</h2>
+      <p>実装やデータの取扱いがこの方針と異なる場合は、ツールの提供前にポリシーを更新します。お問い合わせは、Googleの同意画面に表示されるユーザーサポートメールへお送りください。</p>
+      <p class="updated">最終更新日：2026年9月29日</p>
+    </article>
+  </main>
+</Layout>
+
+<style>
+  .tool-page { min-height: 100vh; padding: clamp(2rem, 7vw, 5rem) 1rem; }
+  .tool-card { max-width: 780px; margin: 0 auto; padding: clamp(1.5rem, 5vw, 3.5rem); border: 1px solid var(--line-strong); border-radius: 1.5rem; background: var(--surface); box-shadow: 0 18px 48px rgb(48 41 45 / 7%); line-height: 1.85; }
+  h1 { margin: .4rem 0 1.5rem; font-size: clamp(1.9rem, 6vw, 3rem); }
+  h2 { margin: 2.2rem 0 .5rem; font-size: 1.3rem; }
+  p { margin: 0 0 1rem; }
+  a { color: var(--pink-700); }
+  .updated { margin-top: 2.5rem; color: var(--muted); font-size: .9rem; }
+</style>
