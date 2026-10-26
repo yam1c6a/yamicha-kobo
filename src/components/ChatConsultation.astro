@@ -372,9 +372,9 @@ import BrandMark from './BrandMark.astro';
 	.chat-notice { margin: 0.55rem 0.35rem; padding: 0.65rem 0.75rem; border-radius: 10px; font-size: 0.69rem; line-height: 1.55; }
 	.chat-notice[hidden] { display: none; }
 	.chat-notice.error { background: #fff0f0; color: #9b3f49; }
-	.chat-form { gap: 0.65rem; padding: 0.55rem; border: 1px solid var(--line-strong); border-radius: 18px; background: #fff; box-shadow: 0 6px 20px rgb(60 42 51 / 5%); transition: border-color 160ms ease, box-shadow 160ms ease; }
+	.chat-form { width: 100%; min-width: 0; gap: 0.65rem; padding: 0.55rem; border: 1px solid var(--line-strong); border-radius: 18px; background: #fff; box-shadow: 0 6px 20px rgb(60 42 51 / 5%); transition: border-color 160ms ease, box-shadow 160ms ease; }
 	.chat-form:focus-within { border-color: var(--pink-400); box-shadow: 0 0 0 4px rgb(222 117 159 / 10%); }
-	.chat-form textarea { min-height: 2.7rem; max-height: 7rem; flex: 1; resize: vertical; border: 0; outline: 0; background: transparent; color: var(--ink); font: inherit; font-size: 0.82rem; line-height: 1.55; }
+	.chat-form textarea { width: 100%; min-width: 0; min-height: 2.7rem; max-height: 7rem; flex: 1 1 auto; resize: vertical; border: 0; outline: 0; background: transparent; color: var(--ink); font: inherit; font-size: 0.82rem; line-height: 1.55; }
 	.chat-form textarea::placeholder { color: #a99da3; }
 	.send-button { display: inline-flex; min-height: 2.65rem; align-items: center; gap: 0.4rem; padding: 0.65rem 0.85rem; border: 0; border-radius: 13px; background: var(--ink); color: #fff; font: inherit; font-size: 0.77rem; font-weight: 700; cursor: pointer; transition: transform 160ms ease, background 160ms ease; }
 	.send-button:hover { background: var(--pink-700); transform: translateY(-1px); }
@@ -388,8 +388,15 @@ import BrandMark from './BrandMark.astro';
 		.chat-card { padding: 0.8rem; border-radius: 22px; }
 		.private-note { display: none; }
 		.chat-heading { padding-inline: 0.15rem; }
-		.bubble { max-width: 89%; }
-		.send-button span { display: none; }
+		.suggestion-list { flex-direction: column; overflow-x: visible; padding-inline: 0.15rem; }
+		.suggestion { width: 100%; flex-basis: auto; white-space: normal; text-align: left; line-height: 1.5; }
+		.messages { min-width: 0; padding-inline: 0.15rem; }
+		.message { width: 100%; min-width: 0; gap: 0.45rem; }
+		.bubble { min-width: 0; max-width: calc(100% - 2.2rem); padding: 0.72rem 0.8rem; overflow-wrap: anywhere; word-break: break-word; }
+		.user .bubble { max-width: 92%; }
+		.diagnosis-header { align-items: flex-start; flex-direction: column; }
+		.chat-form { gap: 0.45rem; padding: 0.45rem; }
+		.send-button { width: 4rem; flex: 0 0 4rem; justify-content: center; padding-inline: 0.5rem; }
 		.diagnosis-card { margin-left: 0; }
 		.diagnosis-assessment { grid-template-columns: 1fr; }
 		.consultation-note { margin-left: 0.35rem; }
