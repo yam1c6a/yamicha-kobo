@@ -1,0 +1,138 @@
+---
+const projects = [
+  {
+    year: '2026', duration: '3か月', category: 'AI・業務自動化',
+    title: 'ECサイト運営のAI管理・自動化システム',
+    overview: 'ECサイト運営に必要な情報と操作をまとめる管理システム。AI連携と通常のプログラムを組み合わせて、日々の運営業務を支援します。',
+    role: '1名体制で要件整理・設計・実装・テスト・運用',
+    details: ['管理画面、外部API連携、SQLiteによるデータ管理を実装。', 'Playwrightを用いたブラウザ自動化とAI連携を実装。'],
+    tech: ['Python', 'FastAPI', 'JavaScript', 'SQLite', 'Jinja2', 'Playwright'],
+  },
+  {
+    year: '2026', duration: '6か月', category: 'AI基盤',
+    title: 'AIエージェントの実行・制御基盤',
+    overview: 'AIエージェント、ツール、記憶、ワークフローをつなぐ実行基盤。処理の制御と管理画面を一体で開発しました。',
+    role: '1名体制で要件整理・設計・実装・テスト・運用',
+    details: ['エージェントと外部ツールを連携させる処理を設計・実装。', 'JavaScriptとNode.jsで管理画面・サーバーを開発。'],
+    tech: ['JavaScript', 'Node.js', 'HTML', 'CSS'],
+  },
+  {
+    year: '2025', duration: '6か月', category: '対話・記憶管理',
+    title: '対話・記憶管理システム',
+    overview: 'ローカルLLMと連携し、会話の文脈や長期記憶を保持するシステム。記憶の更新や利用範囲を扱う仕組みを開発しました。',
+    role: '1名体制で要件整理・設計・実装・テスト・運用',
+    details: ['会話履歴・長期記憶の永続化、訂正・忘却を実装。', 'LLM連携部と判断・記憶管理部を分離し、確認済みフィードバックを対話に反映。'],
+    tech: ['Python', 'SQLite', 'Ollama'],
+  },
+  {
+    year: '2024年ごろ', duration: '約6か月', category: 'AI・文書管理',
+    title: 'AIを活用した公開文書管理システム',
+    overview: '公開文書の検索・分類・要約などにAIを活用する文書管理システムを開発しました。',
+    role: '設計・画面開発・AI連携・データベース処理など開発全工程',
+    details: ['Pythonによるシステム開発と、PostgreSQLによるデータ管理を担当。', '画面とAI機能、データベース処理を含めて開発。'],
+    tech: ['Python', 'PostgreSQL'],
+  },
+  {
+    year: '2010年開始', duration: '10年以上・保守を含む', category: 'GIS・長期保守',
+    title: '地理空間データの世代管理システム',
+    overview: '地理空間データの変更履歴を管理するシステム。開発と長期保守に携わりました。',
+    role: '10名規模のチームでPM・設計・実装・保守',
+    details: ['顧客との要件調整、進捗管理、作業割り振り、品質管理を担当。', 'PM業務と並行して設計・実装にも従事。'],
+    tech: ['C++'],
+  },
+  {
+    year: '2010年開始', duration: '約3年', category: 'GIS・アプリ開発',
+    title: 'GISビューアアプリケーション',
+    overview: '地理空間情報を扱うビューアアプリケーションの開発を担当しました。',
+    role: '5名規模のチームでPM・設計・実装',
+    details: ['顧客との要件調整、進捗管理、作業割り振り、品質管理を担当。', 'C++を用いた設計・実装にも従事。'],
+    tech: ['C++'],
+  },
+  {
+    year: '2007年ごろ開始', duration: '約2年', category: '業務システム',
+    title: '経理システム',
+    overview: '経理システムのフロントエンドとバックエンドを開発しました。',
+    role: '設計・実装・テスト',
+    details: ['PHP・JavaScript・Oracleを使用。', '画面側とサーバー側の双方の設計・実装・テストを担当。'],
+    tech: ['PHP', 'JavaScript', 'Oracle Database'],
+  },
+  {
+    year: '2004年ごろ開始', duration: '約10か月', category: 'ゲーム・移植',
+    title: '海外ゲームのPC向け移植',
+    overview: '海外ゲームの日本語化とPC向け移植に伴うプログラム修正を担当しました。',
+    role: '日本語化・画面と入力処理の修正・不具合対応',
+    details: ['C++による画面表示・入力処理の調整。', '動作不具合の調査・修正を担当。'],
+    tech: ['C++'],
+  },
+];
+const skills = [
+  { name: 'アプリケーション・Web開発', text: 'C++ / Python / JavaScript / PHP / HTML / CSS' },
+  { name: 'サーバー・データベース', text: 'FastAPI / Node.js / Jinja2 / Oracle / PostgreSQL / SQLite' },
+  { name: 'AI連携・自動化', text: 'ローカルLLM連携 / Ollama / 外部API連携 / Playwright' },
+  { name: 'プロジェクト推進', text: '最大10名規模のPM / 顧客との要件調整 / 進捗・品質管理 / 長期保守' },
+];
+---
+
+<section class="section portfolio-section" id="works" aria-labelledby="portfolio-heading">
+  <div class="shell">
+    <div class="section-heading">
+      <p class="eyebrow">SELECTED WORKS</p>
+      <h2 id="portfolio-heading">開発から保守まで。<br />これまでの実績。</h2>
+      <p>C++によるアプリケーション開発から、業務システム、AI連携・自動化まで。案件ごとの担当範囲と使用技術を紹介します。</p>
+    </div>
+    <p class="portfolio-note">過去の担当案件と自主開発の実績を掲載しています。発注元・サービス固有名・画面・詳細仕様は公開せず、概要を紹介しています。</p>
+    <div class="portfolio-grid">
+      {projects.map((project, index) => (
+        <article class="portfolio-card">
+          <div class="portfolio-meta"><span>{project.category}</span><span>{String(index + 1).padStart(2, '0')}</span></div>
+          <h3>{project.title}</h3>
+          <p class="portfolio-period">{project.year} / {project.duration}</p>
+          <p class="portfolio-overview">{project.overview}</p>
+          <dl class="portfolio-role"><dt>担当範囲</dt><dd>{project.role}</dd></dl>
+          <details class="portfolio-details">
+            <summary>担当内容を見る</summary>
+            <ul>{project.details.map((detail) => <li>{detail}</li>)}</ul>
+          </details>
+          <ul class="portfolio-tech" aria-label="使用技術">{project.tech.map((tech) => <li>{tech}</li>)}</ul>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<section class="section skills-section" id="skills" aria-labelledby="skills-heading">
+  <div class="shell skills-grid">
+    <div class="section-heading"><p class="eyebrow">SKILLS</p><h2 id="skills-heading">実装する力と、<br />進める力。</h2><p>1名でのシステム開発と、チームでのプロジェクト推進。その両方の経験を活かします。</p></div>
+    <dl class="skill-list">{skills.map((skill) => <div><dt>{skill.name}</dt><dd>{skill.text}</dd></div>)}</dl>
+  </div>
+</section>
+
+<style>
+  .portfolio-section { background: #faf8f9; }
+  .portfolio-note { max-width: 54rem; margin: -1rem 0 2rem; color: var(--muted); font-size: .78rem; line-height: 1.9; }
+  .portfolio-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
+  .portfolio-card { display: flex; flex-direction: column; min-width: 0; padding: clamp(1.5rem, 3vw, 2.25rem); border: 1px solid var(--line-strong); border-radius: 22px; background: #fff; }
+  .portfolio-meta { display: flex; justify-content: space-between; gap: 1rem; color: var(--pink-700); font-size: .7rem; font-weight: 700; }
+  .portfolio-meta span:last-child { color: var(--muted); font-family: Manrope, sans-serif; }
+  .portfolio-card h3 { margin: 1.25rem 0 .65rem; font-size: clamp(1.15rem, 2vw, 1.4rem); line-height: 1.6; overflow-wrap: anywhere; }
+  .portfolio-period { margin: 0 0 1.2rem; color: var(--muted); font-size: .75rem; }
+  .portfolio-overview { margin: 0; color: var(--ink-soft); font-size: .85rem; line-height: 1.95; }
+  .portfolio-role { margin: 1.5rem 0 1rem; padding-top: 1rem; border-top: 1px solid var(--line); }
+  .portfolio-role dt { margin-bottom: .4rem; color: var(--muted); font-size: .7rem; }
+  .portfolio-role dd { margin: 0; font-size: .8rem; line-height: 1.9; }
+  .portfolio-details { margin-bottom: 1.5rem; color: var(--ink-soft); font-size: .8rem; }
+  .portfolio-details summary { width: fit-content; padding: .45rem 0; color: var(--pink-700); cursor: pointer; font-weight: 600; }
+  .portfolio-details summary:focus-visible { outline: 2px solid var(--pink-700); outline-offset: 4px; }
+  .portfolio-details ul { margin: .7rem 0 0; padding-left: 1.2rem; line-height: 1.9; }
+  .portfolio-details li + li { margin-top: .4rem; }
+  .portfolio-tech { display: flex; flex-wrap: wrap; gap: .4rem; margin: auto 0 0; padding: 0; list-style: none; }
+  .portfolio-tech li { padding: .35rem .55rem; border-radius: 5px; background: var(--pink-50); color: var(--ink-soft); font-size: .7rem; }
+  .skills-section { background: #fff; }
+  .skills-grid { display: grid; grid-template-columns: .85fr 1.15fr; gap: clamp(2rem, 7vw, 6rem); }
+  .skill-list { margin: 0; }
+  .skill-list div { padding: 1.4rem 0; border-top: 1px solid var(--line-strong); }
+  .skill-list div:last-child { border-bottom: 1px solid var(--line-strong); }
+  .skill-list dt { margin-bottom: .7rem; font-size: .95rem; font-weight: 700; }
+  .skill-list dd { margin: 0; color: var(--ink-soft); font-size: .85rem; line-height: 1.95; }
+  @media (max-width: 780px) { .portfolio-grid, .skills-grid { grid-template-columns: 1fr; } }
+</style>

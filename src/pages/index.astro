@@ -2,6 +2,7 @@
 import BrandMark from '../components/BrandMark.astro';
 import ChatConsultation from '../components/ChatConsultation.astro';
 import Layout from '../layouts/Layout.astro';
+import Portfolio from '../components/Portfolio.astro';
 import '../styles/home.css';
 
 const services = [
@@ -18,12 +19,12 @@ const demos = [
 ];
 ---
 
-<Layout>
+<Layout title="やみちゃ工房｜開発実績とスキル" description="C++によるアプリケーション開発・長期保守、最大10名規模のPM、AI連携・業務自動化の開発実績を紹介するポートフォリオです。">
 	<header class="site-header">
 		<div class="shell header-inner">
 			<a class="logo-link" href="#top" aria-label="やみちゃ工房 ホーム"><BrandMark /></a>
 			<nav aria-label="メインナビゲーション">
-				<a href="#services">できること</a><a href="#works">制作事例</a><a href="#demo">デモ</a><a href="#about">私たちについて</a>
+				<a href="#services">できること</a><a href="#works">開発実績</a><a href="#skills">スキル</a><a href="#demo">デモ</a><a href="#about">工房について</a>
 			</nav>
 			<a class="header-cta" href="#consult" data-focus-chat>相談する<span aria-hidden="true">↗</span></a>
 		</div>
@@ -34,15 +35,15 @@ const demos = [
 			<div class="hero-decoration decoration-one" aria-hidden="true"></div><div class="hero-decoration decoration-two" aria-hidden="true"></div>
 			<div class="shell hero-grid">
 				<div class="hero-copy">
-					<p class="hero-kicker"><span aria-hidden="true"></span>AI × SYSTEM × AUTOMATION</p>
-					<h1>面倒な仕事を、<br /><em>仕組み</em>に変える。</h1>
-					<p class="hero-lead">AI・システム開発・業務自動化を組み合わせて、<br class="desktop-only" />日々の「これ、もっと楽にならない？」を解決します。</p>
+					<p class="hero-kicker"><span aria-hidden="true"></span>SYSTEM DEVELOPMENT & AI</p>
+					<h1>業務を知り、<br /><em>仕組み</em>をつくる。</h1>
+					<p class="hero-lead">C++の開発・長期保守から、AI連携・業務自動化まで。<br class="desktop-only" />設計・実装と、最大10名規模のPM経験を活かします。</p>
 					<div class="hero-actions">
-						<a class="button button-primary" href="#consult" data-focus-chat>AIに相談してみる<span aria-hidden="true">→</span></a>
-						<a class="button button-secondary" href="#works">制作・導入事例を見る</a>
+						<a class="button button-primary" href="#works">開発実績を見る<span aria-hidden="true">→</span></a>
+						<a class="button button-secondary" href="#consult" data-focus-chat>AIに相談してみる</a>
 					</div>
 					<div class="hero-points" aria-label="やみちゃ工房の特徴">
-						<span><i aria-hidden="true">✓</i>ざっくりした相談から</span><span><i aria-hidden="true">✓</i>AIありきにしない提案</span>
+						<span><i aria-hidden="true">✓</i>開発から長期保守まで</span><span><i aria-hidden="true">✓</i>要件調整・チーム運営にも対応</span>
 					</div>
 				</div>
 				<div class="hero-chat"><div class="orbit orbit-one" aria-hidden="true"></div><div class="orbit orbit-two" aria-hidden="true"></div><ChatConsultation /></div>
@@ -71,28 +72,7 @@ const demos = [
 			</div>
 		</section>
 
-		<section class="section work-section" id="works">
-			<div class="shell">
-				<div class="work-heading">
-					<div class="section-heading"><p class="eyebrow">WORKS</p><h2>実際の業務で、<br />使えるものを。</h2></div>
-					<p>見栄えだけでなく、現場で迷わず使えて、仕事が前に進むことを大切にしています。</p>
-				</div>
-				<article class="featured-work">
-					<div class="work-visual" aria-hidden="true">
-						<div class="document-stack doc-back"><span></span><span></span><span></span></div>
-						<div class="document-stack doc-front"><div class="doc-head"><i></i><span>PUBLIC DOCUMENT</span></div><div class="doc-line wide"></div><div class="doc-line"></div><div class="doc-line short"></div><div class="doc-classification"><span>AI</span><i></i><i></i><i></i></div></div>
-						<div class="scan-line"></div><div class="visual-label">DOCUMENT<br />INTELLIGENCE</div>
-					</div>
-					<div class="work-content">
-						<div class="work-meta"><span class="case-label">導入事例</span><span>AI SYSTEM DEVELOPMENT</span></div>
-						<h3>官公庁向け<br />公開文書管理AIシステム</h3>
-						<p>大量の公開文書をAIで処理し、整理・分類・管理を支援するシステムを開発しました。</p>
-						<dl><div><dt>担当範囲</dt><dd>要件整理 / 設計 / AI機能 / システム開発</dd></div><div><dt>技術要素</dt><dd>文書解析 / AI分類 / 検索 / データ管理</dd></div></dl>
-						<p class="confidential">※守秘義務および情報保護のため、発注元・画面・詳細仕様等は公開していません。</p>
-					</div>
-				</article>
-			</div>
-		</section>
+		<Portfolio />
 
 		<section class="section demo-section" id="demo">
 			<div class="shell">
@@ -118,11 +98,11 @@ const demos = [
 
 		<section class="section about-section" id="about">
 			<div class="shell about-grid">
-				<div class="about-title"><p class="eyebrow">ABOUT US</p><h2>小さなIT工房だから、<br />柔軟に。</h2><div class="about-mark" aria-hidden="true"><img src="/ym-logo.png" alt="" /><i></i></div></div>
+				<div class="about-title"><p class="eyebrow">ABOUT</p><h2>小さなIT工房だから、<br />柔軟に。</h2><div class="about-mark" aria-hidden="true"><img src="/ym-logo.png" alt="" /><i></i></div></div>
 				<div class="about-content">
 					<p class="about-lead">やみちゃ工房は、AI・システム開発・業務改善の技術を活用して、日々の業務をよりシンプルにする仕組みをつくるIT工房です。</p>
-					<p>文書管理、データ処理、定型業務の自動化、AIを活用した業務支援など、現場で実際に使える仕組みづくりを大切にしています。</p><p>大掛かりなシステムだけでなく、「この作業だけ何とかしたい」といった小さな課題にも柔軟に対応します。</p>
-					<dl class="business-info"><div><dt>事業内容</dt><dd>AI活用支援・システム開発・業務自動化</dd></div><div><dt>対応領域</dt><dd>文書管理 / データ処理 / バックオフィス業務</dd></div><div><dt>ご相談</dt><dd>まだ仕様が決まっていない段階から対応</dd></div></dl>
+					<p>ゲームのPC向け移植、経理システム、GIS関連アプリケーションの開発・保守を経験。近年はAIを活用した文書管理や、対話・記憶管理、エージェント基盤、EC運営支援の開発に取り組んでいます。</p><p>大掛かりなシステムだけでなく、「この作業だけ何とかしたい」といった小さな課題にも柔軟に対応します。</p>
+					<dl class="business-info"><div><dt>事業内容</dt><dd>AI活用支援・システム開発・業務自動化</dd></div><div><dt>対応領域</dt><dd>既存システムの開発・保守 / AI連携 / 業務自動化 / PM</dd></div><div><dt>ご相談</dt><dd>まだ仕様が決まっていない段階から対応</dd></div></dl>
 				</div>
 			</div>
 		</section>
@@ -136,7 +116,7 @@ const demos = [
 	</main>
 
 	<footer>
-		<div class="shell footer-main"><div class="footer-brand"><BrandMark /><p>面倒な仕事を、仕組みに変える。</p></div><nav aria-label="フッターナビゲーション"><a href="#services">できること</a><a href="#works">制作事例</a><a href="#demo">デモ</a><a href="#philosophy">考え方</a><a href="#about">私たちについて</a></nav></div>
+		<div class="shell footer-main"><div class="footer-brand"><BrandMark /><p>面倒な仕事を、仕組みに変える。</p></div><nav aria-label="フッターナビゲーション"><a href="#services">できること</a><a href="#works">開発実績</a><a href="#skills">スキル</a><a href="#demo">デモ</a><a href="#philosophy">考え方</a><a href="#about">工房について</a></nav></div>
 		<div class="shell footer-bottom"><small>© {new Date().getFullYear()} Yamicha Kobo</small><a href="#top">ページ上部へ ↑</a></div>
 	</footer>
 </Layout>
