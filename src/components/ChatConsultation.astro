@@ -50,6 +50,7 @@ import BrandMark from './BrandMark.astro';
 </section>
 
 <script>
+	import { buildAssistantHistory } from '../services/ai/consultation-history';
 	type ChatRole = 'user' | 'assistant';
 	type ChatMessage = { role: ChatRole; content: string };
 	type Diagnosis = {
@@ -230,11 +231,6 @@ import BrandMark from './BrandMark.astro';
 		}
 	};
 
-	const buildAssistantHistory = (content: string, questions: string[]) =>
-		questions.length
-			? `${content}\n\n確認したこと:\n${questions.map((question) => `- ${question}`).join('\n')}`
-			: content;
-
 	const sendMessage = async (value: string) => {
 		if (!form || !input || !value.trim()) return;
 		const userTurns = state.messages.filter((message) => message.role === 'user').length;
@@ -268,7 +264,7 @@ import BrandMark from './BrandMark.astro';
 			pending?.remove();
 			state.messages.push({
 				role: 'assistant',
-				content: buildAssistantHistory(data.message.content, data.questions || []),
+				content: buildAssistantHistory(data.message.content, data.questions || [], data.diagnosis),
 			});
 			state.phase = data.phase || 'discovery';
 			state.diagnosis = data.diagnosis || null;

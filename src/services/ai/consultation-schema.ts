@@ -4,7 +4,7 @@ export const consultationResponseSchema = {
 	properties: {
 		phase: { type: 'string', enum: ['discovery', 'diagnosis', 'out_of_scope'] },
 		reply: { type: 'string' },
-		questions: { type: 'array', items: { type: 'string' }, maxItems: 3 },
+		questions: { type: 'array', items: { type: 'string' }, maxItems: 1 },
 		diagnosis: {
 			type: 'object',
 			additionalProperties: false,
