@@ -29,7 +29,7 @@ import BrandMark from './BrandMark.astro';
 			<div class="bubble">こんにちは。時間がかかっている作業や、面倒に感じていることを教えてください。必要なことを少しずつ伺い、合う改善方法を一緒に整理します。</div>
 		</div>
 	</div>
-	<p class="consultation-note" id="consultation-note" hidden>この内容なら、やみちゃ工房に相談できます。</p>
+	<div class="consultation-note" id="consultation-note" hidden><span>この内容なら、やみちゃ工房に相談できます。</span><a class="consultation-link" href="#contact">この内容で相談する<span aria-hidden="true"> →</span></a></div>
 
 	<p class="chat-notice" id="chat-notice" role="alert" hidden></p>
 
@@ -92,7 +92,7 @@ import BrandMark from './BrandMark.astro';
 	const notice = document.querySelector<HTMLParagraphElement>('#chat-notice');
 	const turnStatus = document.querySelector<HTMLSpanElement>('#turn-status');
 	const characterCount = document.querySelector<HTMLSpanElement>('#character-count');
-	const consultationNote = document.querySelector<HTMLParagraphElement>('#consultation-note');
+	const consultationNote = document.querySelector<HTMLDivElement>('#consultation-note');
 	const sessionId = typeof crypto.randomUUID === 'function'
 		? crypto.randomUUID()
 		: `${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -363,8 +363,10 @@ import BrandMark from './BrandMark.astro';
 	.diagnosis-assessment span { color: var(--muted); font-size: 0.58rem; }
 	.diagnosis-assessment strong { margin-top: 0.22rem; color: var(--ink); font-size: 0.72rem; }
 	.diagnosis-assessment p { margin: 0.3rem 0 0; font-size: 0.64rem; line-height: 1.55; }
-	.consultation-note { display: flex; min-height: 3.5rem; align-items: center; margin: 0.8rem 0.35rem 1rem 2.65rem; padding: 0.9rem 1rem; border: 1px solid var(--pink-200); border-left: 3px solid var(--pink-400); border-radius: 14px; background: var(--pink-50); color: var(--ink-soft); font-size: 0.75rem; font-weight: 700; line-height: 1.6; }
+	.consultation-note { display: flex; flex-direction: column; align-items: flex-start; gap: 0.65rem; min-height: 3.5rem; align-items: center; margin: 0.8rem 0.35rem 1rem 2.65rem; padding: 0.9rem 1rem; border: 1px solid var(--pink-200); border-left: 3px solid var(--pink-400); border-radius: 14px; background: var(--pink-50); color: var(--ink-soft); font-size: 0.75rem; font-weight: 700; line-height: 1.6; }
 	.consultation-note[hidden] { display: none; }
+	.consultation-link { color: var(--pink-700); text-underline-offset: 0.25rem; }
+	.consultation-link:focus-visible { outline: 2px solid var(--pink-700); outline-offset: 4px; }
 	.chat-notice { margin: 0.55rem 0.35rem; padding: 0.65rem 0.75rem; border-radius: 10px; font-size: 0.69rem; line-height: 1.55; }
 	.chat-notice[hidden] { display: none; }
 	.chat-notice.error { background: #fff0f0; color: #9b3f49; }

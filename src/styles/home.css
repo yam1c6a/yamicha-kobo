@@ -188,3 +188,7 @@ footer { padding: 3.5rem 0 2rem; border-top: 1px solid var(--line); background: 
 	.footer-main { flex-direction: column; }
 	.footer-main nav { justify-content: flex-start; }
 }
+
+/* Contact address stays readable on narrow screens. */
+.contact-card > p.contact-email { margin-top: 1.25rem; }
+.contact-email a { position: relative; color: var(--pink-700); font-weight: 600; overflow-wrap: anywhere; text-underline-offset: 0.25rem; }
