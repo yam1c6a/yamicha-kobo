@@ -12,11 +12,6 @@ const services = [
 	{ number: '04', title: '業務システム・専用ツール', text: '市販サービスでは少し足りない業務に、必要な機能だけを備えた小さなシステムを作ります。', tags: ['専用ツール', 'システム開発'] },
 ];
 
-const demos = [
-	{ status: '公開中', active: true, category: 'AI CONSULTANT', title: '業務改善AIコンシェルジュ', text: '面倒な作業を入力すると、AIが内容を整理し、改善方法や自動化の可能性をご案内します。', label: 'このページで試す' },
-	{ status: 'Coming Soon', active: false, category: 'ACCOUNTING AI', title: '請求書 → 経理処理AI', text: '請求書から取引先・金額・税を抽出し、確認できる仕訳候補へつなげるデモです。', label: '準備中' },
-	{ status: 'Coming Soon', active: false, category: 'INQUIRY AI', title: 'メール・問い合わせ仕分けAI', text: 'メールや問い合わせ文を内容・緊急度ごとに仕分けし、不足情報の確認や返信案づくりを支援するデモです。', label: '準備中' },
-];
 ---
 
 <Layout title="やみちゃ工房｜開発実績とスキル" description="C++によるアプリケーション開発・長期保守、PM、AI連携・業務自動化の開発実績を紹介するポートフォリオです。">
@@ -24,7 +19,7 @@ const demos = [
 		<div class="shell header-inner">
 			<a class="logo-link" href="#top" aria-label="やみちゃ工房 ホーム"><BrandMark /></a>
 			<nav aria-label="メインナビゲーション">
-				<a href="#services">できること</a><a href="#works">開発実績</a><a href="#skills">スキル</a><a href="#demo">デモ</a><a href="#about">工房について</a>
+				<a href="#services">できること</a><a href="#works">開発実績</a><a href="#skills">スキル</a><a href="#about">工房について</a>
 			</nav>
 			<a class="header-cta" href="#consult" data-focus-chat>相談する<span aria-hidden="true">↗</span></a>
 		</div>
@@ -74,19 +69,6 @@ const demos = [
 
 		<Portfolio />
 
-		<section class="section demo-section" id="demo">
-			<div class="shell">
-				<div class="section-heading demo-heading"><p class="eyebrow">TRY IT</p><h2>AIで何ができるのか、<br />実際に試せます。</h2><p>見るだけでなく、触って分かるデモを少しずつ増やしています。</p></div>
-				<div class="demo-grid">
-					{demos.map((demo, index) => (
-						<article class:list={['demo-card', { active: demo.active }]}>
-							<div class="demo-preview" aria-hidden="true"><span class="demo-number">0{index + 1}</span><div class="demo-symbol">{index === 0 ? '⌁' : index === 1 ? '¥' : '✉'}</div><span class:list={['demo-status', { live: demo.active }]}>{demo.status}</span></div>
-							<div class="demo-content"><p class="demo-category">{demo.category}</p><h3>{demo.title}</h3><p>{demo.text}</p>{demo.active ? <a href="#consult" data-focus-chat>{demo.label}<span aria-hidden="true">→</span></a> : <span class="disabled-link" aria-label={`${demo.title}は準備中です`}>{demo.label}</span>}</div>
-						</article>
-					))}
-				</div>
-			</div>
-		</section>
 
 		<section class="philosophy" id="philosophy">
 			<div class="philosophy-glow" aria-hidden="true"></div>
@@ -116,7 +98,7 @@ const demos = [
 	</main>
 
 	<footer>
-		<div class="shell footer-main"><div class="footer-brand"><BrandMark /><p>面倒な仕事を、仕組みに変える。</p></div><nav aria-label="フッターナビゲーション"><a href="#services">できること</a><a href="#works">開発実績</a><a href="#skills">スキル</a><a href="#demo">デモ</a><a href="#philosophy">考え方</a><a href="#about">工房について</a></nav></div>
+		<div class="shell footer-main"><div class="footer-brand"><BrandMark /><p>面倒な仕事を、仕組みに変える。</p></div><nav aria-label="フッターナビゲーション"><a href="#services">できること</a><a href="#works">開発実績</a><a href="#skills">スキル</a><a href="#philosophy">考え方</a><a href="#about">工房について</a></nav></div>
 		<div class="shell footer-bottom"><small>© {new Date().getFullYear()} Yamicha Kobo</small><a href="#top">ページ上部へ ↑</a></div>
 	</footer>
 </Layout>
