@@ -337,32 +337,32 @@ import BrandMark from './BrandMark.astro';
 	.suggestion:hover { border-color: var(--pink-400); background: var(--pink-100); transform: translateY(-1px); }
 	.suggestion:disabled { cursor: wait; opacity: 0.55; transform: none; }
 	.messages { display: flex; min-height: 8.5rem; max-height: 20rem; flex-direction: column; gap: 0.85rem; overflow-y: auto; padding: 1rem 0.35rem; border-top: 1px solid var(--line); scroll-behavior: smooth; }
-	.message { display: flex; align-items: flex-end; gap: 0.55rem; }
-	.message.user { justify-content: flex-end; }
-	.message-icon { display: grid; width: 1.75rem; height: 1.75rem; flex: 0 0 auto; place-items: center; border-radius: 9px; background: var(--pink-100); color: var(--pink-700); font-size: 0.68rem; font-weight: 800; }
-	.bubble { max-width: 84%; padding: 0.8rem 0.95rem; border-radius: 16px 16px 16px 5px; background: #f7f4f5; color: var(--ink-soft); font-size: 0.81rem; line-height: 1.72; }
-	.bubble p { margin: 0; white-space: pre-wrap; }
-	.bubble ol { margin: 0.65rem 0 0; padding-left: 1.3rem; }
-	.bubble li + li { margin-top: 0.35rem; }
-	.user .bubble { border-radius: 16px 16px 5px 16px; background: var(--ink); color: #fff; }
-	.pending .bubble { display: flex; gap: 0.28rem; padding-block: 1rem; }
-	.typing-dot { width: 0.36rem; height: 0.36rem; border-radius: 50%; background: var(--pink-400); animation: typing 1s infinite ease-in-out; }
-	.typing-dot:nth-child(2) { animation-delay: 140ms; }
-	.typing-dot:nth-child(3) { animation-delay: 280ms; }
+	.chat-card :global(.message) { display: flex; align-items: flex-end; gap: 0.55rem; }
+	.chat-card :global(.message.user) { justify-content: flex-end; }
+	.chat-card :global(.message-icon) { display: grid; width: 1.75rem; height: 1.75rem; flex: 0 0 auto; place-items: center; border-radius: 9px; background: var(--pink-100); color: var(--pink-700); font-size: 0.68rem; font-weight: 800; }
+	.chat-card :global(.bubble) { max-width: 84%; padding: 0.8rem 0.95rem; border-radius: 16px 16px 16px 5px; background: #f7f4f5; color: var(--ink-soft); font-size: 0.81rem; line-height: 1.72; }
+	.chat-card :global(.bubble p) { margin: 0; white-space: pre-wrap; }
+	.chat-card :global(.bubble ol) { margin: 0.65rem 0 0; padding-left: 1.3rem; }
+	.chat-card :global(.bubble li + li) { margin-top: 0.35rem; }
+	.chat-card :global(.user .bubble) { border-radius: 16px 16px 5px 16px; background: var(--ink); color: #fff; }
+	.chat-card :global(.pending .bubble) { display: flex; gap: 0.28rem; padding-block: 1rem; }
+	.chat-card :global(.typing-dot) { width: 0.36rem; height: 0.36rem; border-radius: 50%; background: var(--pink-400); animation: typing 1s infinite ease-in-out; }
+	.chat-card :global(.typing-dot:nth-child(2)) { animation-delay: 140ms; }
+	.chat-card :global(.typing-dot:nth-child(3)) { animation-delay: 280ms; }
 	@keyframes typing { 0%, 60%, 100% { opacity: 0.35; transform: translateY(0); } 30% { opacity: 1; transform: translateY(-3px); } }
-	.diagnosis-card { margin-left: 2.3rem; padding: 1rem; border: 1px solid var(--pink-200); border-radius: 18px; background: #fffafb; color: var(--ink-soft); }
-	.diagnosis-header { display: flex; align-items: center; justify-content: space-between; gap: 0.8rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--line); }
-	.diagnosis-header strong { color: var(--ink); font-size: 0.86rem; }
-	.diagnosis-header span { padding: 0.3rem 0.5rem; border-radius: 999px; background: var(--pink-100); color: var(--pink-700); font-size: 0.6rem; }
-	.diagnosis-card section { padding-top: 0.8rem; }
-	.diagnosis-card h3 { margin: 0 0 0.35rem; color: var(--pink-700); font-size: 0.68rem; }
-	.diagnosis-card ul { margin: 0; padding-left: 1.05rem; font-size: 0.73rem; line-height: 1.65; }
-	.diagnosis-assessment { display: grid; grid-template-columns: 1fr 0.65fr; gap: 0.55rem; margin-top: 0.9rem; }
-	.diagnosis-assessment > div { padding: 0.75rem; border-radius: 12px; background: #f5f1f3; }
-	.diagnosis-assessment span, .diagnosis-assessment strong { display: block; }
-	.diagnosis-assessment span { color: var(--muted); font-size: 0.58rem; }
-	.diagnosis-assessment strong { margin-top: 0.22rem; color: var(--ink); font-size: 0.72rem; }
-	.diagnosis-assessment p { margin: 0.3rem 0 0; font-size: 0.64rem; line-height: 1.55; }
+	.chat-card :global(.diagnosis-card) { margin-left: 2.3rem; padding: 1rem; border: 1px solid var(--pink-200); border-radius: 18px; background: #fffafb; color: var(--ink-soft); }
+	.chat-card :global(.diagnosis-header) { display: flex; align-items: center; justify-content: space-between; gap: 0.8rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--line); }
+	.chat-card :global(.diagnosis-header strong) { color: var(--ink); font-size: 0.86rem; }
+	.chat-card :global(.diagnosis-header span) { padding: 0.3rem 0.5rem; border-radius: 999px; background: var(--pink-100); color: var(--pink-700); font-size: 0.6rem; }
+	.chat-card :global(.diagnosis-card section) { padding-top: 0.8rem; }
+	.chat-card :global(.diagnosis-card h3) { margin: 0 0 0.35rem; color: var(--pink-700); font-size: 0.68rem; }
+	.chat-card :global(.diagnosis-card ul) { margin: 0; padding-left: 1.05rem; font-size: 0.73rem; line-height: 1.65; }
+	.chat-card :global(.diagnosis-assessment) { display: grid; grid-template-columns: 1fr 0.65fr; gap: 0.55rem; margin-top: 0.9rem; }
+	.chat-card :global(.diagnosis-assessment > div) { padding: 0.75rem; border-radius: 12px; background: #f5f1f3; }
+	.chat-card :global(.diagnosis-assessment span), .chat-card :global(.diagnosis-assessment strong) { display: block; }
+	.chat-card :global(.diagnosis-assessment span) { color: var(--muted); font-size: 0.58rem; }
+	.chat-card :global(.diagnosis-assessment strong) { margin-top: 0.22rem; color: var(--ink); font-size: 0.72rem; }
+	.chat-card :global(.diagnosis-assessment p) { margin: 0.3rem 0 0; font-size: 0.64rem; line-height: 1.55; }
 	.consultation-note { display: flex; flex-direction: column; align-items: flex-start; gap: 0.65rem; min-height: 3.5rem; align-items: center; margin: 0.8rem 0.35rem 1rem 2.65rem; padding: 0.9rem 1rem; border: 1px solid var(--pink-200); border-left: 3px solid var(--pink-400); border-radius: 14px; background: var(--pink-50); color: var(--ink-soft); font-size: 0.75rem; font-weight: 700; line-height: 1.6; }
 	.consultation-note[hidden] { display: none; }
 	.consultation-link { color: var(--pink-700); text-underline-offset: 0.25rem; }
@@ -389,14 +389,14 @@ import BrandMark from './BrandMark.astro';
 		.suggestion-list { flex-direction: column; overflow-x: visible; padding-inline: 0.15rem; }
 		.suggestion { width: 100%; flex-basis: auto; white-space: normal; text-align: left; line-height: 1.5; }
 		.messages { min-width: 0; padding-inline: 0.15rem; }
-		.message { width: 100%; min-width: 0; gap: 0.45rem; }
-		.bubble { min-width: 0; max-width: calc(100% - 2.2rem); padding: 0.72rem 0.8rem; overflow-wrap: anywhere; word-break: break-word; }
-		.user .bubble { max-width: 92%; }
-		.diagnosis-header { align-items: flex-start; flex-direction: column; }
+		.chat-card :global(.message) { width: 100%; min-width: 0; gap: 0.45rem; }
+		.chat-card :global(.bubble) { min-width: 0; max-width: calc(100% - 2.2rem); padding: 0.72rem 0.8rem; overflow-wrap: anywhere; word-break: break-word; }
+		.chat-card :global(.user .bubble) { max-width: 92%; }
+		.chat-card :global(.diagnosis-header) { align-items: flex-start; flex-direction: column; }
 		.chat-form { gap: 0.45rem; padding: 0.45rem; }
 		.send-button { width: 4rem; flex: 0 0 4rem; justify-content: center; padding-inline: 0.5rem; }
-		.diagnosis-card { margin-left: 0; }
-		.diagnosis-assessment { grid-template-columns: 1fr; }
+		.chat-card :global(.diagnosis-card) { margin-left: 0; }
+		.chat-card :global(.diagnosis-assessment) { grid-template-columns: 1fr; }
 		.consultation-note { margin-left: 0.35rem; }
 	}
 </style>
