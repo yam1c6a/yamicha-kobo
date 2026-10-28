@@ -25,7 +25,7 @@ import BrandMark from './BrandMark.astro';
 
 	<div class="messages" id="chat-messages" role="log" aria-live="polite" aria-relevant="additions">
 		<div class="message assistant">
-			<span class="message-icon" aria-hidden="true">工</span>
+			<span class="message-icon" aria-hidden="true">AI</span>
 			<div class="bubble">こんにちは。時間がかかっている作業や、面倒に感じていることを教えてください。必要なことを少しずつ伺い、合う改善方法を一緒に整理します。</div>
 		</div>
 	</div>
@@ -139,7 +139,7 @@ import BrandMark from './BrandMark.astro';
 			const icon = document.createElement('span');
 			icon.className = 'message-icon';
 			icon.setAttribute('aria-hidden', 'true');
-			icon.textContent = '工';
+			icon.textContent = 'AI';
 			row.append(icon);
 		}
 		row.append(bubble);
@@ -152,7 +152,7 @@ import BrandMark from './BrandMark.astro';
 		if (!messagesElement) return null;
 		const row = document.createElement('div');
 		row.className = 'message assistant pending';
-		row.innerHTML = '<span class="message-icon" aria-hidden="true">工</span><div class="bubble"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span><span class="sr-only">回答を考えています</span></div>';
+		row.innerHTML = '<span class="message-icon" aria-hidden="true">AI</span><div class="bubble"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span><span class="sr-only">回答を考えています</span></div>';
 		messagesElement.append(row);
 		messagesElement.scrollTo({ top: messagesElement.scrollHeight, behavior: 'smooth' });
 		return row;
