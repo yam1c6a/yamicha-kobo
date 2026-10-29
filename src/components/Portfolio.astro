@@ -5,48 +5,64 @@ const projects = [
     title: 'ECサイト運営のAI管理・自動化システム',
     overview: 'ECサイト運営に必要な情報と操作をまとめる管理システム。AI連携と通常のプログラムを組み合わせて、日々の運営業務を支援します。',
     tech: ['Python', 'FastAPI', 'JavaScript', 'SQLite', 'Jinja2', 'Playwright'],
+    features: ["商品情報・価格・メッセージを一元管理","外部APIとAIを連携した運営業務の自動化"],
+    highlights: ["通常の処理とAIによる判断を分離し、用途に応じて組み合わせる構成","管理画面から業務状況を確認できる仕組み"],
   },
   {
     year: '2026', category: 'AI基盤',
     title: 'AIエージェントの実行・制御基盤',
     overview: 'AIエージェント、ツール、記憶、ワークフローをつなぐ実行基盤。処理の制御と管理画面を一体で開発しました。',
     tech: ['Python', 'JavaScript', 'SQLite', 'AIエージェント'],
+    features: ["AIエージェントと外部ツールの連携","処理フローと実行状態の制御","判断結果と根拠の管理"],
+    highlights: ["AIの推論とツール実行を分離して制御する構成","業務処理を段階的に実行・管理する基盤"],
   },
   {
     year: '2025', category: '対話・記憶管理',
     title: '対話・記憶管理システム',
     overview: 'ローカルLLMと連携し、会話の文脈や長期記憶を保持するシステム。記憶の更新や利用範囲を扱う仕組みを開発しました。',
     tech: ['Python', 'SQLite', 'Ollama'],
+    features: ["会話履歴と長期記憶の保存","記憶の訂正・忘却","Microsoft Teamsの情報収集とナレッジ化"],
+    highlights: ["会話処理と記憶管理を分離した設計","訂正や削除を扱う記憶ライフサイクル"],
   },
   {
     year: '2024年ごろ', category: 'AI・文書管理',
     title: 'AIを活用した公開文書管理システム',
     overview: '公開文書を対象に、RAGによる自然文検索や自動分類を行う管理システムを開発しました。',
     tech: ['Python', 'FastAPI', 'React', 'TypeScript', 'PostgreSQL', 'pgvector', 'Ollama'],
+    features: ["文書の取り込み・分割・ベクトル化","自然文による文書検索","文書の自動分類"],
+    highlights: ["PostgreSQLとpgvectorを使った検索基盤","検索結果を参照して回答するRAG構成"],
   },
   {
     year: '2010年開始', category: 'GIS・長期保守',
     title: '地理空間データの世代管理システム',
     overview: '道路ネットワークの新設・廃止・形状変更を比較し、地理空間データの世代間差分を管理するシステム。長期の開発・保守に携わりました。',
     tech: ['C++'],
+    features: ["道路ネットワークの世代間比較","新設・廃止・形状変更の差分管理","ノード・リンクの変更検出"],
+    highlights: ["地理空間データの構造を踏まえた差分判定","長期運用を見据えた既存機能の保守・拡張"],
   },
   {
     year: '2010年開始', category: 'GIS・アプリ開発',
     title: 'GISビューアアプリケーション',
     overview: '地理空間情報の表示、レイヤ管理、属性情報の参照、位置データの取り込みに対応するビューアを開発しました。',
     tech: ['C++'],
+    features: ["地理情報のレイヤ表示","図形と属性情報の参照","CSVの緯度経度からポイントを生成"],
+    highlights: ["地理空間データと属性情報を関連付けた表示","複数形式の地理情報を扱うデスクトップアプリケーション"],
   },
   {
     year: '2007年ごろ開始', category: '業務システム',
     title: '経理システム',
     overview: '自治体向け経理システムの画面・サーバー処理を開発しました。',
     tech: ['PHP', 'JavaScript', 'Oracle Database'],
+    features: ["経理業務向けの画面処理","サーバー側の業務ロジック","Oracle Databaseとのデータ連携"],
+    highlights: ["画面とサーバーの両面を扱う業務システム構成","既存の業務要件に沿った設計・実装"],
   },
   {
     year: '2004年ごろ開始', category: 'ゲーム・移植',
     title: '海外ゲームのPC向け移植',
     overview: '海外ゲームの日本語化、画面・入力処理の調整、不具合修正を行うPC向け移植開発に携わりました。',
     tech: ['C++'],
+    features: ["ゲーム内テキストの日本語化","画面表示・入力処理の調整","移植に伴う不具合の修正"],
+    highlights: ["既存C++コードの解析と互換性調整","移植先環境に合わせた動作修正"],
   },
 ];
 const skills = [
@@ -72,6 +88,15 @@ const skills = [
           <h3>{project.title}</h3>
           <p class="portfolio-period">{project.year}</p>
           <p class="portfolio-overview">{project.overview}</p>
+          <details class="portfolio-details">
+            <summary>主な機能・技術的な特徴を見る</summary>
+            <div class="portfolio-detail-content">
+              <h4>主な機能</h4>
+              <ul>{project.features.map((feature) => <li>{feature}</li>)}</ul>
+              <h4>技術的な特徴</h4>
+              <ul>{project.highlights.map((highlight) => <li>{highlight}</li>)}</ul>
+            </div>
+          </details>
           <ul class="portfolio-tech" aria-label="使用技術">{project.tech.map((tech) => <li>{tech}</li>)}</ul>
         </article>
       ))}
@@ -104,6 +129,9 @@ const skills = [
   .portfolio-details summary:focus-visible { outline: 2px solid var(--pink-700); outline-offset: 4px; }
   .portfolio-details ul { margin: .7rem 0 0; padding-left: 1.2rem; line-height: 1.9; }
   .portfolio-details li + li { margin-top: .4rem; }
+  .portfolio-detail-content { padding: .35rem 0 .5rem; }
+  .portfolio-detail-content h4 { margin: .9rem 0 .3rem; font-size: .8rem; color: var(--ink-soft); }
+  .portfolio-details { margin-top: 1.2rem; }
   .portfolio-tech { display: flex; flex-wrap: wrap; gap: .4rem; margin: auto 0 0; padding: 0; list-style: none; }
   .portfolio-tech li { padding: .35rem .55rem; border-radius: 5px; background: var(--pink-50); color: var(--ink-soft); font-size: .7rem; }
   .skills-section { background: #fff; }
