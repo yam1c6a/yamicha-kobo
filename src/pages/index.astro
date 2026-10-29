@@ -6,10 +6,10 @@ import Portfolio from '../components/Portfolio.astro';
 import '../styles/home.css';
 
 const services = [
-	{ number: '01', title: '業務自動化', text: '入力・転記・集計・ファイル処理など、繰り返し行う定型作業を仕組みで減らします。', tags: ['定型作業', 'ワークフロー'] },
-	{ number: '02', title: 'AI活用・AIシステム', text: '文書解析、分類、検索、情報整理など、AIが力を発揮する部分へ的確に組み込みます。', tags: ['生成AI', '文書解析'] },
-	{ number: '03', title: 'データ処理', text: 'Excel・CSVをはじめとしたデータの集計、変換、整理、システム間の連携を行います。', tags: ['Excel / CSV', 'データ連携'] },
-	{ number: '04', title: '業務システム・専用ツール', text: '市販サービスでは少し足りない業務に、必要な機能だけを備えた小さなシステムを作ります。', tags: ['専用ツール', 'システム開発'] },
+	{ number: '01', title: 'システム開発', text: '業務内容や運用に合わせた業務システム・専用アプリケーションを設計・開発します。既存システムの改修や保守にも対応します。', tags: ['業務システム', 'アプリケーション'] },
+	{ number: '02', title: 'AI・業務自動化', text: '生成AIやAIエージェントを業務に組み込み、文書解析・情報検索・判断支援・定型作業の自動化を実現します。', tags: ['生成AI', 'AIエージェント'] },
+	{ number: '03', title: 'Web・API開発', text: 'Webアプリケーションや管理画面、APIを開発し、既存サービスや外部システムとの連携を支援します。', tags: ['Webアプリ', 'API連携'] },
+	{ number: '04', title: 'データ活用・連携', text: 'データの収集・変換・集計から、データベース設計やシステム間連携まで、業務に合わせたデータ活用を支援します。', tags: ['データベース', 'データ連携'] },
 ];
 
 ---
@@ -48,14 +48,14 @@ const services = [
 
 		<section class="intro-strip" aria-label="事業方針">
 			<div class="shell intro-grid">
-				<p>手段からではなく、<br /><strong>困りごとから考える。</strong></p>
-				<p>やみちゃ工房は、小さな課題にちょうどいい仕組みをつくるIT工房です。技術の名前を並べるよりも、まず「いま何が面倒なのか」を一緒に整理します。</p>
+				<p>技術ありきではなく、<br /><strong>課題に合う方法を選ぶ。</strong></p>
+				<p>やみちゃ工房は、システム開発とAI活用を通じて、業務上の課題を解決するIT開発事業です。現状の業務や運用環境を把握し、実用性と継続性を重視した仕組みを提案・開発します。</p>
 			</div>
 		</section>
 
 		<section class="section services" id="services">
 			<div class="shell">
-				<div class="section-heading"><p class="eyebrow">WHAT WE DO</p><h2>こんな「面倒」を、<br />仕組みにします。</h2><p>毎日の小さな手作業から、AIを組み込んだ業務システムまで。必要な分だけ、使い続けられる形で。</p></div>
+				<div class="section-heading"><p class="eyebrow">WHAT WE DO</p><h2>課題に合わせた、<br />システムと仕組みを。</h2><p>業務システム、Webアプリケーション、AI連携、データ活用。課題や運用環境を確認し、必要な技術を組み合わせて開発します。</p></div>
 				<div class="service-grid">
 					{services.map((service) => (
 						<article class="service-card">
@@ -80,18 +80,18 @@ const services = [
 
 		<section class="section about-section" id="about">
 			<div class="shell about-grid">
-				<div class="about-title"><p class="eyebrow">ABOUT</p><h2>小さなIT工房だから、<br />柔軟に。</h2><div class="about-mark" aria-hidden="true"><img src="/ym-logo.png" alt="" /><i></i></div></div>
+				<div class="about-title"><p class="eyebrow">ABOUT</p><h2>課題の整理から、<br />開発・運用まで。</h2><div class="about-mark" aria-hidden="true"><img src="/ym-logo.png" alt="" /><i></i></div></div>
 				<div class="about-content">
-					<p class="about-lead">やみちゃ工房は、AI・システム開発・業務改善の技術を活用して、日々の業務をよりシンプルにする仕組みをつくるIT工房です。</p>
-					<p>ゲームのPC向け移植、経理システム、GIS関連アプリケーションの開発・保守を経験。近年はAIを活用した文書管理や、対話・記憶管理、エージェント基盤、EC運営支援の開発に取り組んでいます。</p><p>大掛かりなシステムだけでなく、「この作業だけ何とかしたい」といった小さな課題にも柔軟に対応します。</p>
-					<dl class="business-info"><div><dt>事業内容</dt><dd>AI活用支援・システム開発・業務自動化</dd></div><div><dt>対応領域</dt><dd>既存システムの開発・保守 / AI連携 / 業務自動化 / PM</dd></div><div><dt>ご相談</dt><dd>まだ仕様が決まっていない段階から対応</dd></div></dl>
+					<p class="about-lead">やみちゃ工房は、業務システム開発、Webアプリケーション開発、AI活用・業務自動化を中心に、課題に応じたシステムを企画・設計・開発するIT開発事業です。</p>
+					<p>業務システムやGIS関連アプリケーションの開発・長期保守で培った経験を基盤に、近年はRAGによる文書検索、対話・記憶管理、AIエージェント基盤、EC運営支援など、AIを活用したシステム開発にも取り組んでいます。</p><p>新規開発だけでなく、既存システムの改修・機能追加・保守、業務フローの見直しや自動化まで、構想段階からご相談いただけます。</p>
+					<dl class="business-info"><div><dt>事業内容</dt><dd>システム開発・AI活用支援・業務自動化</dd></div><div><dt>対応領域</dt><dd>業務システム / Webアプリ・API / AI連携 / データ活用 / 開発・保守</dd></div><div><dt>ご相談</dt><dd>まだ仕様が決まっていない段階から対応</dd></div></dl>
 				</div>
 			</div>
 		</section>
 
 		<section class="contact-section" id="contact">
 			<div class="shell contact-card">
-				<div class="contact-decoration" aria-hidden="true"><span></span><i></i></div><p class="eyebrow">CONTACT</p><h2>「これ、なんとかならない？」<br />からどうぞ。</h2><p>まだ仕様が決まっていなくても大丈夫です。<br />今困っていることを教えてください。どんな方法が考えられるか、一緒に整理します。</p>
+				<div class="contact-decoration" aria-hidden="true"><span></span><i></i></div><p class="eyebrow">CONTACT</p><h2>システム開発・業務改善の<br />ご相談はこちら。</h2><p>新規システムの開発、既存システムの改修、AI活用や業務自動化など。<br />構想段階・仕様検討中のご相談も承ります。</p>
 				<div class="contact-actions"><a class="button button-primary" href="mailto:contact@yamicha.com?subject=%E3%82%84%E3%81%BF%E3%81%A1%E3%82%83%E5%B7%A5%E6%88%BF%E3%81%B8%E3%81%AE%E3%81%8A%E5%95%8F%E3%81%84%E5%90%88%E3%82%8F%E3%81%9B">メールで相談する<span aria-hidden="true">→</span></a></div>
 				<p class="contact-email"><a href="mailto:contact@yamicha.com?subject=%E3%82%84%E3%81%BF%E3%81%A1%E3%82%83%E5%B7%A5%E6%88%BF%E3%81%B8%E3%81%AE%E3%81%8A%E5%95%8F%E3%81%84%E5%90%88%E3%82%8F%E3%81%9B">contact@yamicha.com</a></p>
 			</div>
