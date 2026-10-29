@@ -1,74 +1,58 @@
 ---
 const projects = [
   {
-    year: '2026', duration: '3か月', category: 'AI・業務自動化',
+    year: '2026', category: 'AI・業務自動化',
     title: 'ECサイト運営のAI管理・自動化システム',
     overview: 'ECサイト運営に必要な情報と操作をまとめる管理システム。AI連携と通常のプログラムを組み合わせて、日々の運営業務を支援します。',
-    role: '1名体制で要件整理・設計・実装・テスト・運用',
-    details: ['管理画面、外部API連携、SQLiteによるデータ管理を実装。', 'Playwrightを用いたブラウザ自動化とAI連携を実装。'],
     tech: ['Python', 'FastAPI', 'JavaScript', 'SQLite', 'Jinja2', 'Playwright'],
   },
   {
-    year: '2026', duration: '6か月', category: 'AI基盤',
+    year: '2026', category: 'AI基盤',
     title: 'AIエージェントの実行・制御基盤',
     overview: 'AIエージェント、ツール、記憶、ワークフローをつなぐ実行基盤。処理の制御と管理画面を一体で開発しました。',
-    role: '1名体制で要件整理・設計・実装・テスト・運用',
-    details: ['エージェントと外部ツールを連携させる処理を設計・実装。', 'JavaScriptとNode.jsで管理画面・サーバーを開発。'],
-    tech: ['JavaScript', 'Node.js', 'HTML', 'CSS'],
+    tech: ['Python', 'JavaScript', 'SQLite', 'AIエージェント'],
   },
   {
-    year: '2025', duration: '6か月', category: '対話・記憶管理',
+    year: '2025', category: '対話・記憶管理',
     title: '対話・記憶管理システム',
     overview: 'ローカルLLMと連携し、会話の文脈や長期記憶を保持するシステム。記憶の更新や利用範囲を扱う仕組みを開発しました。',
-    role: '1名体制で要件整理・設計・実装・テスト・運用',
-    details: ['会話履歴・長期記憶の永続化、訂正・忘却を実装。', 'LLM連携部と判断・記憶管理部を分離し、確認済みフィードバックを対話に反映。'],
     tech: ['Python', 'SQLite', 'Ollama'],
   },
   {
-    year: '2024年ごろ', duration: '約6か月', category: 'AI・文書管理',
+    year: '2024年ごろ', category: 'AI・文書管理',
     title: 'AIを活用した公開文書管理システム',
-    overview: '公開文書の検索・分類・要約などにAIを活用する文書管理システムを開発しました。',
-    role: '設計・画面開発・AI連携・データベース処理など開発全工程',
-    details: ['Pythonによるシステム開発と、PostgreSQLによるデータ管理を担当。', '画面とAI機能、データベース処理を含めて開発。'],
-    tech: ['Python', 'PostgreSQL'],
+    overview: '公開文書を対象に、RAGによる自然文検索や自動分類を行う管理システムを開発しました。',
+    tech: ['Python', 'FastAPI', 'React', 'TypeScript', 'PostgreSQL', 'pgvector', 'Ollama'],
   },
   {
-    year: '2010年開始', duration: '10年以上・保守を含む', category: 'GIS・長期保守',
+    year: '2010年開始', category: 'GIS・長期保守',
     title: '地理空間データの世代管理システム',
-    overview: '地理空間データの変更履歴を管理するシステム。開発と長期保守に携わりました。',
-    role: '10名規模のチームでPM・設計・実装・保守',
-    details: ['顧客との要件調整、進捗管理、作業割り振り、品質管理を担当。', 'PM業務と並行して設計・実装にも従事。'],
+    overview: '道路ネットワークの新設・廃止・形状変更を比較し、地理空間データの世代間差分を管理するシステム。長期の開発・保守に携わりました。',
     tech: ['C++'],
   },
   {
-    year: '2010年開始', duration: '約3年', category: 'GIS・アプリ開発',
+    year: '2010年開始', category: 'GIS・アプリ開発',
     title: 'GISビューアアプリケーション',
-    overview: '地理空間情報を扱うビューアアプリケーションの開発を担当しました。',
-    role: '5名規模のチームでPM・設計・実装',
-    details: ['顧客との要件調整、進捗管理、作業割り振り、品質管理を担当。', 'C++を用いた設計・実装にも従事。'],
+    overview: '地理空間情報の表示、レイヤ管理、属性情報の参照、位置データの取り込みに対応するビューアを開発しました。',
     tech: ['C++'],
   },
   {
-    year: '2007年ごろ開始', duration: '約2年', category: '業務システム',
+    year: '2007年ごろ開始', category: '業務システム',
     title: '経理システム',
-    overview: '経理システムのフロントエンドとバックエンドを開発しました。',
-    role: '設計・実装・テスト',
-    details: ['PHP・JavaScript・Oracleを使用。', '画面側とサーバー側の双方の設計・実装・テストを担当。'],
+    overview: '自治体向け経理システムの画面・サーバー処理を開発しました。',
     tech: ['PHP', 'JavaScript', 'Oracle Database'],
   },
   {
-    year: '2004年ごろ開始', duration: '約10か月', category: 'ゲーム・移植',
+    year: '2004年ごろ開始', category: 'ゲーム・移植',
     title: '海外ゲームのPC向け移植',
-    overview: '海外ゲームの日本語化とPC向け移植に伴うプログラム修正を担当しました。',
-    role: '日本語化・画面と入力処理の修正・不具合対応',
-    details: ['C++による画面表示・入力処理の調整。', '動作不具合の調査・修正を担当。'],
+    overview: '海外ゲームの日本語化、画面・入力処理の調整、不具合修正を行うPC向け移植開発に携わりました。',
     tech: ['C++'],
   },
 ];
 const skills = [
-  { name: 'アプリケーション・Web開発', text: 'C++ / Python / JavaScript / PHP / HTML / CSS' },
-  { name: 'サーバー・データベース', text: 'FastAPI / Node.js / Jinja2 / Oracle / PostgreSQL / SQLite' },
-  { name: 'AI連携・自動化', text: 'ローカルLLM連携 / Ollama / 外部API連携 / Playwright' },
+  { name: 'アプリケーション・Web開発', text: 'C++ / C# / VB / Java / Python / JavaScript / TypeScript / React' },
+  { name: 'サーバー・データベース', text: 'FastAPI / Node.js / Jinja2 / Oracle / PostgreSQL / SQLite / AWS EC2' },
+  { name: 'AI連携・自動化', text: 'RAG / pgvector / Ollama / Microsoft Graph API / 外部API連携' },
   { name: 'プロジェクト推進', text: 'PM / 顧客との要件調整 / 進捗・品質管理 / 長期保守' },
 ];
 ---
@@ -78,7 +62,7 @@ const skills = [
     <div class="section-heading">
       <p class="eyebrow">SELECTED WORKS</p>
       <h2 id="portfolio-heading">開発から保守まで。<br />これまでの実績。</h2>
-      <p>C++によるアプリケーション開発から、業務システム、AI連携・自動化まで。案件ごとの担当範囲と使用技術を紹介します。</p>
+      <p>C++によるアプリケーション開発から、業務システム、AI連携・自動化まで。主な機能やシステムの特徴、使用技術を紹介します。</p>
     </div>
     <p class="portfolio-note">過去の担当案件と自主開発の実績を掲載しています。発注元・サービス固有名・画面・詳細仕様は公開せず、概要を紹介しています。</p>
     <div class="portfolio-grid">
@@ -86,13 +70,8 @@ const skills = [
         <article class="portfolio-card">
           <div class="portfolio-meta"><span>{project.category}</span><span>{String(index + 1).padStart(2, '0')}</span></div>
           <h3>{project.title}</h3>
-          <p class="portfolio-period">{project.year} / {project.duration}</p>
+          <p class="portfolio-period">{project.year}</p>
           <p class="portfolio-overview">{project.overview}</p>
-          <dl class="portfolio-role"><dt>担当範囲</dt><dd>{project.role}</dd></dl>
-          <details class="portfolio-details">
-            <summary>担当内容を見る</summary>
-            <ul>{project.details.map((detail) => <li>{detail}</li>)}</ul>
-          </details>
           <ul class="portfolio-tech" aria-label="使用技術">{project.tech.map((tech) => <li>{tech}</li>)}</ul>
         </article>
       ))}
@@ -102,7 +81,7 @@ const skills = [
 
 <section class="section skills-section" id="skills" aria-labelledby="skills-heading">
   <div class="shell skills-grid">
-    <div class="section-heading"><p class="eyebrow">SKILLS</p><h2 id="skills-heading">実装する力と、<br />進める力。</h2><p>1名でのシステム開発と、チームでのプロジェクト推進。その両方の経験を活かします。</p></div>
+    <div class="section-heading"><p class="eyebrow">SKILLS</p><h2 id="skills-heading">実装する力と、<br />進める力。</h2><p>長期運用される業務システムからAI連携まで。目的に合わせて技術を組み合わせます。</p></div>
     <dl class="skill-list">{skills.map((skill) => <div><dt>{skill.name}</dt><dd>{skill.text}</dd></div>)}</dl>
   </div>
 </section>
