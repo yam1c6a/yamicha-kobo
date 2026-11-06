@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import { env } from 'cloudflare:workers';
 import { generateConsultationResponse } from '../../services/ai/consultation';
+import { getAIConfig } from '../../services/ai/config';
 import { CHAT_LIMITS } from '../../services/ai/consultation-limits.js';
 import { validateMessages, readJsonBody } from '../../services/ai/chat-validation.js';
 import type { AIEnvironment, ChatMessage } from '../../services/ai/types';
@@ -38,6 +39,13 @@ export const POST: APIRoute = async ({ request }) => {
   const validation = validateMessages(body.messages);
   if (!validation.messages) return json({ error: validation.error, code: 'INVALID_MESSAGES' }, 400);
   const turns = validation.messages.filter((message) => message.role === 'user').length;
+  // Public model ID only, never an environment dump, account ID or API key.
+  // This reports the configured ID passed to Workers AI, not independent attestation.
+  const configuredModel = getAIConfig(runtimeEnv).model;
+  const diagnostics = {
+    'X-Consultation-Model': /^@cf\/[a-zA-Z0-9_./-]{1,120}$/.test(configuredModel) ? configuredModel : 'custom',
+    'X-Consultation-Revision': 'quality-20261106-r1',
+  };
   try {
     const result = await generateConsultationResponse({ messages: validation.messages as ChatMessage[], env: runtimeEnv });
     return json({
@@ -45,18 +53,19 @@ export const POST: APIRoute = async ({ request }) => {
       phase: result.phase, questions: result.questions, diagnosis: result.diagnosis,
       cta: result.cta, sources: result.sources || [], sourceNotice: result.sourceNotice || '',
       limits: { turnsUsed: turns, turnsRemaining: Math.max(0, CHAT_LIMITS.turns - turns), maxTurns: CHAT_LIMITS.turns },
-    });
+    }, 200, diagnostics);
   } catch (error) {
     const message = error instanceof Error ? error.message : '';
+    const review = message === 'AI_ADVICE_REVIEW_REQUIRED';
     const quota = /3036|free allocation|daily allocation|quota/i.test(message);
     const invalid = /AI_INVALID_RESPONSE|JSON Mode|JSON|Unexpected token/i.test(message);
     const missing = /binding is not configured/i.test(message);
-    // Never log the provider error text: it can contain a prompt or response.
-    const code = quota ? 'AI_DAILY_LIMIT' : missing ? 'AI_NOT_CONFIGURED' : invalid ? 'AI_INVALID_RESPONSE' : 'AI_UNAVAILABLE';
+    const code = review ? 'AI_ADVICE_REVIEW_REQUIRED' : quota ? 'AI_DAILY_LIMIT' : missing ? 'AI_NOT_CONFIGURED' : invalid ? 'AI_INVALID_RESPONSE' : 'AI_UNAVAILABLE';
     console.error('AI consultation failed', code);
-    return json({ code, error: quota ? '本日のAI利用枠に達しました。直接お問い合わせください。'
+    return json({ code, error: review ? '回答に安全性の確認が必要な説明が含まれたため、表示を止めました。実際の機密資料は入力せず、条件だけでご相談ください。直接のお問い合わせも利用できます。'
+      : quota ? '本日のAI利用枠に達しました。直接お問い合わせください。'
       : missing ? 'AI相談室の接続設定を確認しています。直接お問い合わせください。'
       : invalid ? '回答を正しい形式で受け取れませんでした。入力内容は残してあるので、もう一度お試しください。'
-      : 'ただいまAI相談室に接続できません。時間をおいてお試しください。' }, quota || missing ? 503 : 502);
+      : 'ただいまAI相談室に接続できません。時間をおいてお試しください。' }, quota || missing ? 503 : 502, diagnostics);
   }
 };

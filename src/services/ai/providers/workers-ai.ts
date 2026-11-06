@@ -3,6 +3,7 @@ import { buildConsultationInput, CONSULTATION_SYSTEM_PROMPT } from '../consultat
 import { consultationResponseSchema } from '../consultation-schema';
 import { CHAT_LIMITS } from '../consultation-limits.js';
 import { retrieveTechnicalNotes, technicalContext, resolveSources, freshnessNotice } from '../technical-context.js';
+import { privacyReviewIssues } from '../advice-validation.js';
 import type { AIRequirement, ConsultationDiagnosis, ConsultationPhase, ConsultationProvider, ConsultationResponse, GenerateConsultationInput, ImplementationDifficulty } from '../types';
 
 type WorkersAIBinding = { run(model: string, input: Record<string, unknown>, options?: Record<string, unknown>): Promise<unknown> };
@@ -35,7 +36,6 @@ const normalizeDiagnosis = (value: unknown): ConsultationDiagnosis | null => {
 
 export const normalizeResponse = (data: Record<string, unknown>): ConsultationResponse => {
   const reply = typeof data.reply === 'string' ? data.reply.trim() : '';
-  // Do not silently slice a technical explanation or display an empty fallback as a real answer.
   if (!reply || reply.length > CHAT_LIMITS.replyChars) throw new Error('AI_INVALID_RESPONSE');
   const requested = cleanString(data.phase) as ConsultationPhase;
   let phase: ConsultationPhase = phases.includes(requested) ? requested : 'answer';
@@ -54,17 +54,22 @@ export class WorkersAIProvider implements ConsultationProvider {
     if (!ai?.run) throw new Error('Workers AI binding is not configured.');
     const config = getAIConfig(env);
     const notes = retrieveTechnicalNotes(messages);
-    // Exactly one inference per request. No hidden retry, live crawler or paid search.
+    const reference = buildConsultationInput(messages, technicalContext(notes));
+    // Preserve actual dialogue roles instead of asking the model to reconstruct
+    // an entire conversation from a JSON string. Reference data is not authority.
+    const dialogue = messages.map((message, index) => ({
+      role: message.role,
+      content: index === 0 ? `${reference}\n\n【相談者の発言】\n${message.content}` : message.content,
+    }));
+    // Exactly one inference: no hidden retry, model switch, crawler or paid search.
     const result = await ai.run(config.model, {
-      messages: [
-        { role: 'system', content: CONSULTATION_SYSTEM_PROMPT },
-        { role: 'user', content: buildConsultationInput(messages, technicalContext(notes)) },
-      ],
+      messages: [{ role: 'system', content: CONSULTATION_SYSTEM_PROMPT }, ...dialogue],
       response_format: { type: 'json_schema', json_schema: consultationResponseSchema },
       max_tokens: config.maxTokens, temperature: 0.2,
     }, config.gatewayId ? { gateway: { id: config.gatewayId, skipCache: true, collectLog: false } } : undefined);
     const parsed = parseJsonResponse(result);
     const response = normalizeResponse(parsed);
+    if (privacyReviewIssues(response, messages).length) throw new Error('AI_ADVICE_REVIEW_REQUIRED');
     return {
       ...response,
       sources: response.phase === 'out_of_scope' ? [] : resolveSources(parsed.source_ids, notes),
