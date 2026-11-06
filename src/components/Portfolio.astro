@@ -1,62 +1,6 @@
 ---
-const projects = [
-  {
-    category: 'AI・業務自動化', title: 'ECサイト運営のAI管理・自動化システム',
-    overview: 'ECサイト運営に必要な情報と操作をまとめる管理システム。AI連携と通常のプログラムを組み合わせて、日々の運営業務を支援します。',
-    tech: ['Python', 'FastAPI', 'JavaScript', 'SQLite', 'Jinja2'],
-    features: ['商品情報・価格・メッセージを一元管理', '外部APIとAIを連携した運営業務の自動化'],
-    highlights: ['通常の処理とAIによる判断を分離し、用途に応じて組み合わせる構成', '管理画面から業務状況を確認できる仕組み'],
-  },
-  {
-    category: 'AI基盤', title: 'AIエージェントの実行・制御基盤',
-    overview: 'AIエージェント、ツール、記憶、ワークフローをつなぐ実行基盤。処理の制御と管理画面を一体で開発しました。',
-    tech: ['Python', 'JavaScript', 'SQLite', 'AIエージェント'],
-    features: ['AIエージェントと外部ツールの連携', '処理フローと実行状態の制御', '判断結果と根拠の管理'],
-    highlights: ['AIの推論とツール実行を分離して制御する構成', '業務処理を段階的に実行・管理する基盤'],
-  },
-  {
-    category: '対話・記憶管理', title: '対話・記憶管理システム',
-    overview: 'ローカルLLMと連携し、会話の文脈や長期記憶を保持するシステム。記憶の更新や利用範囲を扱う仕組みを開発しました。',
-    tech: ['Python', 'SQLite', 'Ollama'],
-    features: ['会話履歴と長期記憶の保存', '記憶の訂正・忘却', 'Microsoft Teamsの情報収集とナレッジ化'],
-    highlights: ['会話処理と記憶管理を分離した設計', '訂正や削除を扱う記憶ライフサイクル'],
-  },
-  {
-    category: 'AI・文書管理', title: 'AIを活用した公開文書管理システム',
-    overview: '公開文書を対象に、RAGによる自然文検索や自動分類を行う管理システムを開発しました。',
-    tech: ['Python', 'FastAPI', 'React', 'TypeScript', 'PostgreSQL', 'pgvector', 'Ollama'],
-    features: ['文書の取り込み・分割・ベクトル化', '自然文による文書検索', '文書の自動分類'],
-    highlights: ['PostgreSQLとpgvectorを使った検索基盤', '検索結果を参照して回答するRAG構成'],
-  },
-  {
-    category: 'GIS・地理空間', title: '地理空間データの世代管理システム',
-    overview: '道路ネットワークの新設・廃止・形状変更を比較し、地理空間データの世代間差分を管理するシステム。既存機能の保守・拡張にも対応しました。',
-    tech: ['C++'],
-    features: ['道路ネットワークの世代間比較', '新設・廃止・形状変更の差分管理', 'ノード・リンクの変更検出'],
-    highlights: ['地理空間データの構造を踏まえた差分判定', '長期運用を見据えた既存機能の保守・拡張'],
-  },
-  {
-    category: 'GIS・アプリ開発', title: 'GISビューアアプリケーション',
-    overview: '地理空間情報の表示、レイヤ管理、属性情報の参照、位置データの取り込みに対応するビューアを開発しました。',
-    tech: ['C++'],
-    features: ['地理情報のレイヤ表示', '図形と属性情報の参照', 'CSVの緯度経度からポイントを生成'],
-    highlights: ['地理空間データと属性情報を関連付けた表示', '複数形式の地理情報を扱うデスクトップアプリケーション'],
-  },
-  {
-    category: '業務システム', title: '経理システム',
-    overview: '自治体向け経理システムの画面・サーバー処理を開発しました。',
-    tech: ['PHP', 'JavaScript', 'Oracle Database'],
-    features: ['経理業務向けの画面処理', 'サーバー側の業務ロジック', 'Oracle Databaseとのデータ連携'],
-    highlights: ['画面とサーバーの両面を扱う業務システム構成', '既存の業務要件に沿った設計・実装'],
-  },
-  {
-    category: 'ゲーム・移植', title: '海外ゲームのPC向け移植',
-    overview: '海外ゲームの日本語化、画面・入力処理の調整、不具合修正に対応したPC向け移植開発。',
-    tech: ['C++'],
-    features: ['ゲーム内テキストの日本語化', '画面表示・入力処理の調整', '移植に伴う不具合の修正'],
-    highlights: ['既存C++コードの解析と互換性調整', '移植先環境に合わせた動作修正'],
-  },
-];
+import { caseStudies } from '../data/case-studies.js';
+
 const solutions = [
   { name: '業務に合わせたアプリケーション開発', text: 'デスクトップからWebまで、業務フローと運用環境に合わせて設計。既存システムの改修や機能拡張にも対応します。', tech: 'C++ / C# / VB / Java / Python / JavaScript / TypeScript / React' },
   { name: 'データをつなぐ基盤・API連携', text: 'データベース、Web API、外部サービスを連携し、情報を業務で活用できる仕組みを構築します。', tech: 'FastAPI / Node.js / Jinja2 / Oracle / PostgreSQL / SQLite / AWS EC2' },
@@ -67,16 +11,37 @@ const solutions = [
 
 <section class="section portfolio-section" id="works" aria-labelledby="portfolio-heading">
   <div class="shell">
-    <div class="section-heading"><p class="eyebrow">CASE STUDIES</p><h2 id="portfolio-heading">開発実績</h2><p>業務システム、地理空間情報、AI・自動化。<br />実際の課題に向き合って開発した、システムの事例を紹介します。</p></div>
-    <p class="portfolio-note">守秘義務に配慮し、発注元・サービス固有名・実画面・詳細仕様は公開せず、概要を紹介しています。</p>
+    <div class="section-heading">
+      <p class="eyebrow">CASE STUDIES</p>
+      <h2 id="portfolio-heading">開発実績</h2>
+      <p>業務システム、地理空間情報、AI・自動化。<br />システムの用途から主な機能、設計・構成まで、具体的な開発事例を紹介します。</p>
+    </div>
+    <p class="portfolio-note">開発に関わったシステムの事例を掲載しています。守秘義務に配慮し、発注元・サービス固有名・実画面・非公開の詳細仕様は掲載していません。</p>
     <div class="portfolio-grid">
-      {projects.map((project, index) => (
-        <article class="portfolio-card">
+      {caseStudies.map((project, index) => (
+        <article class="portfolio-card" id={`case-${project.id}`} aria-labelledby={`case-title-${project.id}`}>
           <div class="portfolio-meta"><span>{project.category}</span><span>CASE {String(index + 1).padStart(2, '0')}</span></div>
-          <h3>{project.title}</h3>
+          <h3 id={`case-title-${project.id}`}>{project.title}</h3>
           <p class="portfolio-overview">{project.overview}</p>
-          <details class="portfolio-details"><summary>主な機能・システムの特徴</summary><div class="portfolio-detail-content"><h4>主な機能</h4><ul>{project.features.map((feature) => <li>{feature}</li>)}</ul><h4>技術的な特徴</h4><ul>{project.highlights.map((highlight) => <li>{highlight}</li>)}</ul></div></details>
-          <ul class="portfolio-tech" aria-label="使用技術">{project.tech.map((tech) => <li>{tech}</li>)}</ul>
+          <dl class="portfolio-purpose"><dt>用途・目的</dt><dd>{project.purpose}</dd></dl>
+          <details class="portfolio-details">
+            <summary><span>機能・構成を詳しく見る<span class="sr-only">：{project.title}</span></span></summary>
+            <div class="portfolio-detail-content">
+              <section aria-labelledby={`case-functions-${project.id}`}>
+                <h4 id={`case-functions-${project.id}`}>主な機能</h4>
+                <dl class="case-feature-list">{project.features.map((feature) => <div><dt>{feature.title}</dt><dd>{feature.description}</dd></div>)}</dl>
+              </section>
+              <section aria-labelledby={`case-design-${project.id}`}>
+                <h4 id={`case-design-${project.id}`}>設計・実装のポイント</h4>
+                <ul class="case-design-list">{project.design.map((point) => <li>{point}</li>)}</ul>
+              </section>
+              <section aria-labelledby={`case-stack-${project.id}`}>
+                <h4 id={`case-stack-${project.id}`}>システム構成</h4>
+                <dl class="case-stack">{project.stack.map((item) => <div><dt>{item.label}</dt><dd>{item.value}</dd></div>)}</dl>
+              </section>
+            </div>
+          </details>
+          <ul class="portfolio-tech" aria-label="主な使用技術">{project.tech.map((tech) => <li>{tech}</li>)}</ul>
         </article>
       ))}
     </div>
@@ -92,22 +57,37 @@ const solutions = [
 
 <style>
   .portfolio-section { background: #f3f7fa; }
-  .portfolio-note { max-width: 54rem; margin: -1rem 0 2rem; color: var(--muted); font-size: .78rem; line-height: 1.9; }
-  .portfolio-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
-  .portfolio-card { display: flex; flex-direction: column; min-width: 0; padding: clamp(1.5rem, 3vw, 2.25rem); border: 1px solid var(--line-strong); border-radius: 8px; background: #fff; }
-  .portfolio-meta { display: flex; justify-content: space-between; gap: 1rem; color: var(--pink-700); font-size: .7rem; font-weight: 700; }
-  .portfolio-meta span:last-child { color: var(--muted); font-family: Manrope, sans-serif; font-size: .6rem; letter-spacing: .08em; }
+  .portfolio-note { max-width: 54rem; margin: -1rem 0 2rem; color: var(--muted); font-size: .8rem; line-height: 1.9; }
+  .portfolio-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 1.25rem; }
+  .portfolio-card { display: flex; flex-direction: column; min-width: 0; padding: clamp(1.5rem, 3vw, 2.25rem); border: 1px solid var(--line-strong); border-radius: 8px; background: #fff; scroll-margin-top: 7rem; }
+  .portfolio-meta { display: flex; justify-content: space-between; gap: 1rem; color: var(--pink-700); font-size: .72rem; font-weight: 700; }
+  .portfolio-meta span:last-child { flex-shrink: 0; color: var(--muted); font-family: Manrope, sans-serif; font-size: .65rem; letter-spacing: .08em; }
   .portfolio-card h3 { margin: 1.25rem 0 .9rem; font-size: clamp(1.15rem, 2vw, 1.4rem); line-height: 1.6; overflow-wrap: anywhere; }
-  .portfolio-overview { margin: 0; color: var(--ink-soft); font-size: .85rem; line-height: 1.95; }
-  .portfolio-details { margin: 1.2rem 0 1.5rem; color: var(--ink-soft); font-size: .8rem; }
-  .portfolio-details summary { width: fit-content; padding: .8rem 0; color: var(--pink-700); cursor: pointer; font-weight: 600; }
+  .portfolio-overview { margin: 0; color: var(--ink-soft); font-size: .9rem; line-height: 1.95; }
+  .portfolio-purpose { margin: 1.25rem 0 0; padding: 1rem 1.1rem; border-left: 3px solid var(--pink-600); background: var(--pink-50); }
+  .portfolio-purpose dt { color: var(--pink-700); font-size: .72rem; font-weight: 700; }
+  .portfolio-purpose dd { margin: .4rem 0 0; color: var(--ink-soft); font-size: .85rem; line-height: 1.85; }
+  .portfolio-details { margin: 1.2rem 0 1.5rem; color: var(--ink-soft); font-size: .85rem; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .portfolio-details summary { min-height: 48px; padding: .85rem .25rem; color: var(--pink-700); cursor: pointer; font-weight: 600; line-height: 1.7; }
+  .portfolio-details summary:hover { color: var(--ink); }
   .portfolio-details summary:focus-visible { outline: 2px solid var(--pink-700); outline-offset: 4px; }
-  .portfolio-details ul { margin: .7rem 0 0; padding-left: 1.2rem; line-height: 1.9; }
-  .portfolio-details li + li { margin-top: .4rem; }
-  .portfolio-detail-content { padding: .35rem 0 .5rem; }
-  .portfolio-detail-content h4 { margin: .9rem 0 .3rem; font-size: .8rem; color: var(--ink-soft); }
-  .portfolio-tech { display: flex; flex-wrap: wrap; gap: .4rem; margin: auto 0 0; padding: 0; list-style: none; }
-  .portfolio-tech li { padding: .35rem .55rem; border-radius: 3px; background: var(--pink-50); color: var(--ink-soft); font-size: .7rem; }
+  .portfolio-detail-content { padding: .2rem 0 1.4rem; }
+  .portfolio-detail-content > section + section { margin-top: 1.5rem; padding-top: 1.3rem; border-top: 1px solid var(--line); }
+  .portfolio-detail-content h4 { margin: 0 0 .85rem; font-size: .9rem; color: var(--ink); }
+  .case-feature-list { margin: 0; }
+  .case-feature-list > div + div { margin-top: .95rem; }
+  .case-feature-list dt { color: var(--ink); font-size: .84rem; font-weight: 600; }
+  .case-feature-list dd { margin: .3rem 0 0; line-height: 1.9; }
+  .case-design-list { margin: 0; padding-left: 1.2rem; line-height: 1.9; }
+  .case-design-list li + li { margin-top: .65rem; }
+  .case-design-list li::marker { color: var(--pink-600); }
+  .case-stack { margin: 0; }
+  .case-stack > div { display: grid; grid-template-columns: 7rem minmax(0, 1fr); gap: .75rem; padding: .75rem 0; border-bottom: 1px solid var(--line); }
+  .case-stack > div:first-child { border-top: 1px solid var(--line); }
+  .case-stack dt { color: var(--muted); font-size: .75rem; line-height: 1.9; }
+  .case-stack dd { min-width: 0; margin: 0; font-size: .8rem; line-height: 1.9; overflow-wrap: anywhere; }
+  .portfolio-tech { display: flex; flex-wrap: wrap; gap: .4rem; margin: 0; padding: 0; list-style: none; }
+  .portfolio-tech li { padding: .35rem .55rem; border-radius: 3px; background: var(--pink-50); color: var(--ink-soft); font-size: .72rem; }
   .skills-section { background: #fff; }
   .skills-grid { display: grid; grid-template-columns: .85fr 1.15fr; gap: clamp(2rem, 7vw, 6rem); }
   .skill-list { margin: 0; }
@@ -117,4 +97,8 @@ const solutions = [
   .skill-list dd { margin: 0; color: var(--ink-soft); font-size: .85rem; line-height: 1.95; }
   .solution-tech { display: block; margin-top: .8rem; color: var(--muted); font-size: .72rem; }
   @media (max-width: 780px) { .portfolio-grid, .skills-grid { grid-template-columns: 1fr; } }
+  @media (max-width: 480px) {
+    .portfolio-card { padding: 1.25rem; }
+    .case-stack > div { grid-template-columns: 1fr; gap: .25rem; }
+  }
 </style>
