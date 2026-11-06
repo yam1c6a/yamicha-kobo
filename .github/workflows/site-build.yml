@@ -21,5 +21,6 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci
+      - run: node --test tests/technical-consultation.test.mjs
       - run: npm run build
       - run: node scripts/verify-home.mjs
