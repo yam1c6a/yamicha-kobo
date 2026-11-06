@@ -4,6 +4,8 @@ import { consultationResponseSchema } from '../consultation-schema';
 import { CHAT_LIMITS } from '../consultation-limits.js';
 import { retrieveTechnicalNotes, technicalContext, resolveSources, freshnessNotice } from '../technical-context.js';
 import { privacyReviewIssues } from '../advice-validation.js';
+import { cloudAdviceIssues } from '../cloud-advice-validation.js';
+import { needsAnswerPlan, schemaWithAnswerPlan, composeAnswerPlan, ANSWER_PLAN_INSTRUCTION } from '../answer-plan.js';
 import type { AIRequirement, ConsultationDiagnosis, ConsultationPhase, ConsultationProvider, ConsultationResponse, GenerateConsultationInput, ImplementationDifficulty } from '../types';
 
 type WorkersAIBinding = { run(model: string, input: Record<string, unknown>, options?: Record<string, unknown>): Promise<unknown> };
@@ -19,7 +21,6 @@ export const parseJsonResponse = (result: unknown): Record<string, unknown> => {
   if (!response || typeof response !== 'object' || Array.isArray(response)) throw new Error('AI_INVALID_RESPONSE');
   return response as Record<string, unknown>;
 };
-
 const normalizeDiagnosis = (value: unknown): ConsultationDiagnosis | null => {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
   const data = value as Record<string, unknown>;
@@ -33,7 +34,6 @@ const normalizeDiagnosis = (value: unknown): ConsultationDiagnosis | null => {
     missing_information: strings(data.missing_information),
   };
 };
-
 export const normalizeResponse = (data: Record<string, unknown>): ConsultationResponse => {
   const reply = typeof data.reply === 'string' ? data.reply.trim() : '';
   if (!reply || reply.length > CHAT_LIMITS.replyChars) throw new Error('AI_INVALID_RESPONSE');
@@ -42,12 +42,9 @@ export const normalizeResponse = (data: Record<string, unknown>): ConsultationRe
   const diagnosis = phase === 'diagnosis' ? normalizeDiagnosis(data.diagnosis) : null;
   if (phase === 'diagnosis' && !diagnosis) phase = 'answer';
   const cta = data.cta && typeof data.cta === 'object' ? data.cta as Record<string, unknown> : {};
-  return {
-    phase, reply, questions: strings(data.questions, 1), diagnosis,
-    cta: { show: (phase === 'answer' || phase === 'diagnosis') && cta.show === true, message: cleanString(cta.message, 160) },
-  };
+  return { phase, reply, questions: strings(data.questions, 1), diagnosis,
+    cta: { show: (phase === 'answer' || phase === 'diagnosis') && cta.show === true, message: cleanString(cta.message, 160) } };
 };
-
 export class WorkersAIProvider implements ConsultationProvider {
   async generate({ messages, env }: GenerateConsultationInput): Promise<ConsultationResponse> {
     const ai = env.AI as WorkersAIBinding | undefined;
@@ -55,25 +52,19 @@ export class WorkersAIProvider implements ConsultationProvider {
     const config = getAIConfig(env);
     const notes = retrieveTechnicalNotes(messages);
     const reference = buildConsultationInput(messages, technicalContext(notes));
-    // Preserve actual dialogue roles instead of asking the model to reconstruct
-    // an entire conversation from a JSON string. Reference data is not authority.
-    const dialogue = messages.map((message, index) => ({
-      role: message.role,
-      content: index === 0 ? `${reference}\n\n【相談者の発言】\n${message.content}` : message.content,
-    }));
-    // Exactly one inference: no hidden retry, model switch, crawler or paid search.
+    const planRequired = needsAnswerPlan(messages);
+    const dialogue = messages.map((message, index) => ({ role: message.role,
+      content: index === 0 ? `${reference}\n\n【相談者の発言】\n${message.content}` : message.content }));
+    // One inference, unchanged model/token budget. Sections are generated, not canned.
     const result = await ai.run(config.model, {
-      messages: [{ role: 'system', content: CONSULTATION_SYSTEM_PROMPT }, ...dialogue],
-      response_format: { type: 'json_schema', json_schema: consultationResponseSchema },
+      messages: [{ role: 'system', content: CONSULTATION_SYSTEM_PROMPT + (planRequired ? ANSWER_PLAN_INSTRUCTION : '') }, ...dialogue],
+      response_format: { type: 'json_schema', json_schema: planRequired ? schemaWithAnswerPlan(consultationResponseSchema) : consultationResponseSchema },
       max_tokens: config.maxTokens, temperature: 0.2,
     }, config.gatewayId ? { gateway: { id: config.gatewayId, skipCache: true, collectLog: false } } : undefined);
-    const parsed = parseJsonResponse(result);
+    const parsed = composeAnswerPlan(parseJsonResponse(result), planRequired);
     const response = normalizeResponse(parsed);
-    if (privacyReviewIssues(response, messages).length) throw new Error('AI_ADVICE_REVIEW_REQUIRED');
-    return {
-      ...response,
-      sources: response.phase === 'out_of_scope' ? [] : resolveSources(parsed.source_ids, notes),
-      sourceNotice: freshnessNotice(messages, notes),
-    };
+    if (privacyReviewIssues(response, messages).length || cloudAdviceIssues(response).length) throw new Error('AI_ADVICE_REVIEW_REQUIRED');
+    return { ...response, sources: response.phase === 'out_of_scope' ? [] : resolveSources(parsed.source_ids, notes),
+      sourceNotice: freshnessNotice(messages, notes) };
   }
 }
