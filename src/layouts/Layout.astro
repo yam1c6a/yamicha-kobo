@@ -2,32 +2,32 @@
 import '../styles/global.css';
 
 interface Props {
-	title?: string;
-	description?: string;
+  title?: string;
+  description?: string;
+  themeColor?: string;
 }
 
 const {
-	title = 'やみちゃ工房｜面倒な仕事を、仕組みに変える。',
-	description = 'AI・システム開発・業務自動化を組み合わせて、日々の面倒な仕事をシンプルにするIT工房です。',
+  title = 'やみちゃ工房｜面倒な仕事を、仕組みに変える。',
+  description = 'AI・システム開発・業務自動化を組み合わせて、日々の面倒な仕事をシンプルにするIT工房です。',
+  themeColor = '#fffafc',
 } = Astro.props;
 ---
 
 <!doctype html>
 <html lang="ja">
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<meta name="description" content={description} />
-		<meta name="theme-color" content="#fffafc" />
-		<meta property="og:type" content="website" />
-		<meta property="og:title" content={title} />
-		<meta property="og:description" content={description} />
-		<link rel="icon" type="image/png" href="/ym-icon.png?v=1" />
-		<link rel="apple-touch-icon" href="/ym-icon.png?v=1" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{title}</title>
-	</head>
-	<body>
-		<slot />
-	</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content={themeColor} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <link rel="icon" type="image/png" href="/ym-icon.png?v=1" />
+    <link rel="apple-touch-icon" href="/ym-icon.png?v=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+  </head>
+  <body><slot /></body>
 </html>

@@ -1,105 +1,95 @@
 ---
 import BrandMark from '../components/BrandMark.astro';
 import ChatConsultation from '../components/ChatConsultation.astro';
-import Layout from '../layouts/Layout.astro';
 import Portfolio from '../components/Portfolio.astro';
+import ServiceIcon from '../components/ServiceIcon.astro';
+import Layout from '../layouts/Layout.astro';
 import '../styles/home.css';
 
 const services = [
-	{ number: '01', title: 'システム開発', text: '業務内容や運用に合わせた業務システム・専用アプリケーションを設計・開発します。既存システムの改修や保守にも対応します。', tags: ['業務システム', 'アプリケーション'] },
-	{ number: '02', title: 'AI・業務自動化', text: '生成AIやAIエージェントを業務に組み込み、文書解析・情報検索・判断支援・定型作業の自動化を実現します。', tags: ['生成AI', 'AIエージェント'] },
-	{ number: '03', title: 'Web・API開発', text: 'Webアプリケーションや管理画面、APIを開発し、既存サービスや外部システムとの連携を支援します。', tags: ['Webアプリ', 'API連携'] },
-	{ number: '04', title: 'データ活用・連携', text: 'データの収集・変換・集計から、データベース設計やシステム間連携まで、業務に合わせたデータ活用を支援します。', tags: ['データベース', 'データ連携'] },
+  { id: 'system-development', icon: 'system' as const, title: 'システム開発', english: 'SYSTEM DEVELOPMENT', short: '業務システム・Web・API', text: '業務に合わせたシステムやWebアプリケーションを設計・開発。外部サービスとのAPI連携、既存システムの改修・保守にも対応します。', tags: ['業務システム', 'Webアプリケーション', 'API連携'] },
+  { id: 'geospatial', icon: 'gis' as const, title: '地理空間ソリューション', english: 'GEOSPATIAL SOLUTIONS', short: 'GIS・地図データの活用', text: '地図と属性情報をつなぎ、地理空間データを使いやすい形に。ビューア開発、レイヤ管理、道路ネットワークの差分比較などを支援します。', tags: ['GIS・地図表示', '地理空間データ', '世代間比較'] },
+  { id: 'ai-solutions', icon: 'ai' as const, title: 'AI活用・RAG', english: 'AI & AUTOMATION', short: '文書検索・業務自動化', text: '文書検索やナレッジ活用から、AIエージェントによる業務支援まで。通常のプログラムと生成AIを組み合わせ、実用的な仕組みを構築します。', tags: ['RAG・文書検索', 'AIエージェント', '業務自動化'] },
+  { id: 'infrastructure', icon: 'cloud' as const, title: 'システム基盤・運用', english: 'INFRASTRUCTURE & OPERATIONS', short: 'データベース・構築・保守', text: 'アプリケーションを支えるデータベースやサーバー環境を整備。クラウド・オンプレミスの環境に合わせ、構築から運用・保守まで支援します。', tags: ['データベース設計', 'サーバー構築', '運用・保守'] },
 ];
-
+const navigation = [
+  { href: '#services', label: '事業内容' },
+  { href: '#works', label: '開発実績' },
+  { href: '#skills', label: '技術・ソリューション' },
+  { href: '#about', label: '事業概要' },
+];
+const contactHref = 'mailto:contact@yamicha.com?subject=' + encodeURIComponent('やみちゃ工房へのお問い合わせ');
 ---
 
-<Layout title="やみちゃ工房" description="AIシステム・業務システム・Web開発・業務自動化に取り組むやみちゃ工房の事業内容と開発実績をご紹介します。">
-	<header class="site-header">
-		<div class="shell header-inner">
-			<a class="logo-link" href="#top" aria-label="やみちゃ工房 ホーム"><BrandMark /></a>
-			<nav aria-label="メインナビゲーション">
-				<a href="#services">事業内容</a><a href="#works">開発実績</a><a href="#skills">技術領域</a><a href="#about">工房について</a>
-			</nav>
-			<a class="header-cta" href="#contact">相談する<span aria-hidden="true">↗</span></a>
-		</div>
-	</header>
+<Layout title="やみちゃ工房｜システム開発・AI・地理空間ソリューション" description="業務システムの開発から、AI・地理空間情報の活用まで。やみちゃ工房は、多様な技術を組み合わせ、お客様の課題に応じたシステムを企画・設計・開発・運用します。" themeColor="#061c31">
+  <div class="corporate-site" id="top">
+    <a class="skip-link" href="#main-content">本文へ移動</a>
+    <header class="site-header">
+      <div class="shell header-inner">
+        <a class="logo-link" href="#top" aria-label="やみちゃ工房 ホーム"><BrandMark /><span class="brand-caption" aria-hidden="true">YAMICHA STUDIO</span></a>
+        <nav class="desktop-nav" aria-label="メインナビゲーション">{navigation.map((item) => <a href={item.href}>{item.label}</a>)}</nav>
+        <a class="header-cta" href="#contact"><span aria-hidden="true">↗</span> お問い合わせ</a>
+        <details class="mobile-menu">
+          <summary><span class="menu-lines" aria-hidden="true"></span><span>メニュー</span></summary>
+          <nav aria-label="モバイルナビゲーション"><a href="#top">ホーム</a>{navigation.map((item) => <a href={item.href}>{item.label}</a>)}<a href="#consult" data-focus-chat>AI相談室</a><a href="#contact">お問い合わせ</a></nav>
+        </details>
+      </div>
+    </header>
 
-	<main id="top">
-		<section class="hero" id="consult">
-			<div class="hero-decoration decoration-one" aria-hidden="true"></div><div class="hero-decoration decoration-two" aria-hidden="true"></div>
-			<div class="shell hero-grid">
-				<div class="hero-copy">
-					<p class="hero-kicker"><span aria-hidden="true"></span>SYSTEM DEVELOPMENT & AI</p>
-					<h1>業務を知り、<br /><em>仕組み</em>をつくる。</h1>
-					<p class="hero-lead">C++の開発・長期保守から、AI連携・業務自動化まで。<br class="desktop-only" />業務課題に合わせた、使い続けられるシステムを開発します。</p>
-					<div class="hero-actions">
-						<a class="button button-primary" href="#works">開発実績を見る<span aria-hidden="true">→</span></a>
-						<a class="button button-secondary" href="#consult" data-focus-chat>AIに相談してみる</a>
-					</div>
-					<div class="hero-points" aria-label="やみちゃ工房の特徴">
-						<span><i aria-hidden="true">✓</i>開発から長期保守まで</span><span><i aria-hidden="true">✓</i>業務に合わせた設計・開発</span>
-					</div>
-				</div>
-				<div class="hero-chat"><div class="orbit orbit-one" aria-hidden="true"></div><div class="orbit orbit-two" aria-hidden="true"></div><ChatConsultation /></div>
-			</div>
-			<div class="shell hero-footnote"><span>SCROLL TO EXPLORE</span><i aria-hidden="true"></i></div>
-		</section>
+    <main id="main-content" tabindex="-1">
+      <section class="hero" aria-labelledby="hero-heading">
+        <div class="hero-network" aria-hidden="true"></div>
+        <div class="shell hero-grid">
+          <div class="hero-copy">
+            <p class="hero-kicker">TECHNOLOGY FOR YOUR BUSINESS</p>
+            <h1 id="hero-heading">技術で、<br /><span>ビジネスの可能性を</span><br />広げる。</h1>
+            <p class="hero-lead">業務システムの開発から、AI・地理空間情報の活用まで。<br class="desktop-only" />多様な技術を組み合わせ、お客様の課題に最適な<br class="desktop-only" />ソリューションを提供します。</p>
+            <div class="hero-actions"><a class="button button-primary" href="#works">開発実績を見る <span aria-hidden="true">→</span></a><a class="button button-secondary" href="#contact">ご相談・お問い合わせ <span aria-hidden="true">→</span></a></div>
+            <a class="hero-chat-link" href="#consult" data-focus-chat><span aria-hidden="true">＋</span> まずはAIに相談してみる</a>
+          </div>
+          <div class="hero-visual"><img src="/images/technology-hero.avif" width="800" height="433" alt="ネットワークでつながる立体地図、システム開発画面、AIの構成図のイメージ" fetchpriority="high" decoding="async" /></div>
+        </div>
+        <div class="shell service-overview" aria-label="提供サービス">{services.map((service) => <a href={`#${service.id}`}><ServiceIcon name={service.icon} /><span><strong>{service.icon === 'gis' ? 'GIS・地理空間' : service.title}</strong><small>{service.short}</small></span><span class="overview-arrow" aria-hidden="true">↗</span></a>)}</div>
+      </section>
 
-		<section class="intro-strip" aria-label="事業方針">
-			<div class="shell intro-grid">
-				<p>技術ありきではなく、<br /><strong>課題に合う方法を選ぶ。</strong></p>
-				<p>やみちゃ工房は、システム開発とAI活用を通じて、業務上の課題を解決するIT開発事業です。現状の業務や運用環境を把握し、実用性と継続性を重視した仕組みを提案・開発します。</p>
-			</div>
-		</section>
+      <section class="section services" id="services" aria-labelledby="services-heading">
+        <div class="shell">
+          <div class="section-heading section-heading-split"><div><p class="eyebrow">OUR SERVICES</p><h2 id="services-heading">事業内容</h2></div><p>課題の整理から、設計・開発、運用まで。<br />ビジネスを支える仕組みを、適した技術で実現します。</p></div>
+          <div class="service-grid">{services.map((service, index) => <article class="service-card" id={service.id}><div class="service-top"><ServiceIcon name={service.icon} /><span>{String(index + 1).padStart(2, '0')}</span></div><p class="service-english">{service.english}</p><h3>{service.title}</h3><p class="service-description">{service.text}</p><ul class="service-tags">{service.tags.map((tag) => <li>{tag}</li>)}</ul></article>)}</div>
+        </div>
+      </section>
 
-		<section class="section services" id="services">
-			<div class="shell">
-				<div class="section-heading"><p class="eyebrow">WHAT WE DO</p><h2>課題に合わせた、<br />システムと仕組みを。</h2><p>業務システム、Webアプリケーション、AI連携、データ活用。課題や運用環境を確認し、必要な技術を組み合わせて開発します。</p></div>
-				<div class="service-grid">
-					{services.map((service) => (
-						<article class="service-card">
-							<div class="service-top"><span class="service-icon" aria-hidden="true">{service.number}</span><span class="service-arrow" aria-hidden="true">↗</span></div>
-							<h3>{service.title}</h3><p>{service.text}</p><div class="tag-list">{service.tags.map((tag) => <span>{tag}</span>)}</div>
-						</article>
-					))}
-				</div>
-			</div>
-		</section>
+      <Portfolio />
 
-		<Portfolio />
+      <section class="philosophy" id="philosophy" aria-labelledby="philosophy-heading">
+        <div class="shell philosophy-grid"><div><p class="eyebrow">OUR APPROACH</p><h2 id="philosophy-heading">技術ありきではなく、<br />課題に合う方法を。</h2></div><div class="philosophy-copy"><p>AIを導入することが、目的ではありません。</p><p>まず業務や運用環境を整理し、通常のプログラム、AI、既存サービスなどから適した方法を選びます。新しいシステムの開発にも、今ある仕組みの改善にも、実用性と継続性を大切にして取り組みます。</p><a href="#contact">構想段階からご相談ください <span aria-hidden="true">→</span></a></div></div>
+      </section>
 
+      <section class="section about-section" id="about" aria-labelledby="about-heading">
+        <div class="shell about-grid"><div class="section-heading"><p class="eyebrow">ABOUT US</p><h2 id="about-heading">事業概要</h2><p>業務を理解し、<br />使い続けられる仕組みをつくる。</p></div><div class="about-content"><p>やみちゃ工房は、業務システム開発、地理空間情報の活用、AI・業務自動化を手がけるIT開発事業です。お客様の業務や運用環境に合わせ、企画・設計から開発・運用まで支援します。</p><p>新規開発はもちろん、既存システムの改修・機能追加・保守、データ連携や業務フローの見直しまで、課題に応じた仕組みを提案します。</p><dl class="business-info"><div><dt>事業名</dt><dd>やみちゃ工房</dd></div><div><dt>事業内容</dt><dd>システム開発 / 地理空間ソリューション / AI活用・RAG / システム基盤・運用</dd></div><div><dt>お問い合わせ</dt><dd><a href={contactHref}>contact@yamicha.com</a></dd></div></dl></div></div>
+      </section>
 
-		<section class="philosophy" id="philosophy">
-			<div class="philosophy-glow" aria-hidden="true"></div>
-			<div class="shell philosophy-grid">
-				<div><p class="eyebrow">OUR PHILOSOPHY</p><h2>AIを使うことが、<br /><em>目的ではありません。</em></h2></div>
-				<div class="philosophy-copy"><p>AIが得意な仕事もあれば、通常のプログラムの方が速く、安く、安定して処理できる仕事もあります。</p><p>やみちゃ工房では、まず業務そのものを整理します。AI、プログラム、Excel、既存サービスなどから適した方法を選び、必要に応じて組み合わせます。</p><p class="philosophy-emphasis">目指しているのは「AIを導入すること」ではなく、<br /><strong>「仕事が楽になること」</strong>です。</p></div>
-			</div>
-		</section>
+      <section class="section consultation-section" id="consult" aria-labelledby="consult-heading">
+        <div class="shell consultation-grid"><div class="section-heading"><p class="eyebrow">AI CONSULTATION</p><h2 id="consult-heading">その課題、<br />まずは言葉に。</h2><p>「この作業を自動化したい」「AIで何ができる？」<br />普段の言葉で、AI相談室に話しかけてみてください。課題や改善方法を整理するお手伝いをします。</p><p class="consultation-disclaimer">AIによるご案内は参考情報です。具体的な仕様・費用・納期は、個別のご相談で確認します。</p><a class="text-link" href="#contact">直接お問い合わせする <span aria-hidden="true">→</span></a></div><ChatConsultation /></div>
+      </section>
 
-		<section class="section about-section" id="about">
-			<div class="shell about-grid">
-				<div class="about-title"><p class="eyebrow">ABOUT</p><h2>課題の整理から、<br />開発・運用まで。</h2><div class="about-mark" aria-hidden="true"><img src="/ym-logo.png" alt="" /><i></i></div></div>
-				<div class="about-content">
-					<p class="about-lead">やみちゃ工房は、業務システム開発、Webアプリケーション開発、AI活用・業務自動化を中心に、課題に応じたシステムを企画・設計・開発するIT開発事業です。</p>
-					<p>業務システムやGIS関連アプリケーションの開発・長期保守で培った経験を基盤に、近年はRAGによる文書検索、対話・記憶管理、AIエージェント基盤、EC運営支援など、AIを活用したシステム開発にも取り組んでいます。</p><p>新規開発だけでなく、既存システムの改修・機能追加・保守、業務フローの見直しや自動化まで、構想段階からご相談いただけます。</p>
-					<dl class="business-info"><div><dt>事業内容</dt><dd>システム開発・AI活用支援・業務自動化</dd></div><div><dt>対応領域</dt><dd>業務システム / Webアプリ・API / AI連携 / データ活用 / 開発・保守</dd></div><div><dt>ご相談</dt><dd>まだ仕様が決まっていない段階から対応</dd></div></dl>
-				</div>
-			</div>
-		</section>
+      <section class="contact-section" id="contact" aria-labelledby="contact-heading"><div class="shell contact-card"><div><p class="eyebrow">CONTACT</p><h2 id="contact-heading">ビジネスの課題を、<br />次の一歩へ。</h2><p>システム開発、AI活用、業務改善のご相談を承ります。<br />まだ仕様が決まっていない段階でも、お気軽にお問い合わせください。</p></div><div class="contact-actions"><a class="button button-primary" href={contactHref}>メールでお問い合わせ <span aria-hidden="true">→</span></a><a class="contact-email" href={contactHref}>contact@yamicha.com</a></div></div></section>
+    </main>
 
-		<section class="contact-section" id="contact">
-			<div class="shell contact-card">
-				<div class="contact-decoration" aria-hidden="true"><span></span><i></i></div><p class="eyebrow">CONTACT</p><h2>システム開発・業務改善の<br />ご相談はこちら。</h2><p>新規システムの開発、既存システムの改修、AI活用や業務自動化など。<br />構想段階・仕様検討中のご相談も承ります。</p>
-				<div class="contact-actions"><a class="button button-primary" href="mailto:contact@yamicha.com?subject=%E3%82%84%E3%81%BF%E3%81%A1%E3%82%83%E5%B7%A5%E6%88%BF%E3%81%B8%E3%81%AE%E3%81%8A%E5%95%8F%E3%81%84%E5%90%88%E3%82%8F%E3%81%9B">メールで相談する<span aria-hidden="true">→</span></a></div>
-				<p class="contact-email"><a href="mailto:contact@yamicha.com?subject=%E3%82%84%E3%81%BF%E3%81%A1%E3%82%83%E5%B7%A5%E6%88%BF%E3%81%B8%E3%81%AE%E3%81%8A%E5%95%8F%E3%81%84%E5%90%88%E3%82%8F%E3%81%9B">contact@yamicha.com</a></p>
-			</div>
-		</section>
-	</main>
-
-	<footer>
-		<div class="shell footer-main"><div class="footer-brand"><BrandMark /><p>面倒な仕事を、仕組みに変える。</p></div><nav aria-label="フッターナビゲーション"><a href="#services">事業内容</a><a href="#works">開発実績</a><a href="#skills">技術領域</a><a href="#philosophy">考え方</a><a href="#about">工房について</a></nav></div>
-		<div class="shell footer-bottom"><small>© {new Date().getFullYear()} Yamicha Kobo</small><a href="#top">ページ上部へ ↑</a></div>
-	</footer>
+    <footer class="site-footer"><div class="shell footer-main"><div class="footer-brand"><a class="logo-link" href="#top" aria-label="やみちゃ工房 ホーム"><BrandMark /></a><p>技術で、ビジネスの可能性を広げる。</p></div><nav aria-label="フッターナビゲーション">{navigation.map((item) => <a href={item.href}>{item.label}</a>)}<a href="#consult" data-focus-chat>AI相談室</a><a href="#contact">お問い合わせ</a></nav></div><div class="shell footer-bottom"><small>© {new Date().getFullYear()} Yamicha Kobo</small><a href="#top">ページ上部へ <span aria-hidden="true">↑</span></a></div></footer>
+  </div>
 </Layout>
+
+<script>
+  const menu = document.querySelector<HTMLDetailsElement>('.mobile-menu');
+  menu?.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => { menu.open = false; }));
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && menu?.open) {
+      menu.open = false;
+      menu.querySelector('summary')?.focus();
+    }
+  });
+  document.addEventListener('click', (event) => {
+    if (menu?.open && event.target instanceof Node && !menu.contains(event.target)) menu.open = false;
+  });
+</script>

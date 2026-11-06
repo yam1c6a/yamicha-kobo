@@ -1,0 +1,11 @@
+---
+interface Props { name: 'system' | 'gis' | 'ai' | 'cloud'; }
+const { name } = Astro.props;
+const paths = {
+  system: 'M5 4h22v18H5z M2 27h28l-3-5H5z M13 9l-4 4 4 4 M19 9l4 4-4 4 M17 8l-2 10',
+  gis: 'M16 3 2 10l14 7 14-7-14-7Z M3 16l13 7 13-7 M3 22l13 7 13-7',
+  ai: 'M8 8h16v16H8z M12 3v5 M20 3v5 M12 24v5 M20 24v5 M3 12h5 M3 20h5 M24 12h5 M24 20h5 M11 20l3-8 3 8 M12 17h4 M21 12v8',
+  cloud: 'M9 25a7 7 0 0 1-1-14 9 9 0 0 1 17-1 7.5 7.5 0 0 1-1 15H9Z',
+};
+---
+<svg class="service-symbol" viewBox="0 0 32 32" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d={paths[name]} /></svg>
