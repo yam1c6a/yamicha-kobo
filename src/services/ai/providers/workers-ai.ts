@@ -5,7 +5,7 @@ import { CHAT_LIMITS } from '../consultation-limits.js';
 import { retrieveTechnicalNotes, technicalContext, resolveSources, freshnessNotice } from '../technical-context.js';
 import { privacyReviewIssues } from '../advice-validation.js';
 import { cloudAdviceIssues } from '../cloud-advice-validation.js';
-import { needsAnswerPlan, schemaWithAnswerPlan, composeAnswerPlan, ANSWER_PLAN_INSTRUCTION } from '../answer-plan.js';
+import { needsAnswerPlan, schemaWithAnswerPlan, composeAnswerPlan, planningSystemPrompt } from '../answer-plan.js';
 import type { AIRequirement, ConsultationDiagnosis, ConsultationPhase, ConsultationProvider, ConsultationResponse, GenerateConsultationInput, ImplementationDifficulty } from '../types';
 
 type WorkersAIBinding = { run(model: string, input: Record<string, unknown>, options?: Record<string, unknown>): Promise<unknown> };
@@ -55,17 +55,14 @@ export class WorkersAIProvider implements ConsultationProvider {
     const planRequired = needsAnswerPlan(messages);
     const dialogue = messages.map((message, index) => ({ role: message.role,
       content: index === 0 ? `${reference}\n\n【相談者の発言】\n${message.content}` : message.content }));
-    // One inference, unchanged model/token budget. Sections are generated, not canned.
+    // A planning-specific schema has no unrelated phase/diagnosis branches.
+    // One inference; unchanged model, output budget, caching and logging policy.
     const result = await ai.run(config.model, {
-      messages: [{ role: 'system', content: CONSULTATION_SYSTEM_PROMPT + (planRequired ? ANSWER_PLAN_INSTRUCTION : '') }, ...dialogue],
+      messages: [{ role: 'system', content: planRequired ? planningSystemPrompt(CONSULTATION_SYSTEM_PROMPT) : CONSULTATION_SYSTEM_PROMPT }, ...dialogue],
       response_format: { type: 'json_schema', json_schema: planRequired ? schemaWithAnswerPlan(consultationResponseSchema) : consultationResponseSchema },
       max_tokens: config.maxTokens, temperature: 0.2,
     }, config.gatewayId ? { gateway: { id: config.gatewayId, skipCache: true, collectLog: false } } : undefined);
-    const raw = parseJsonResponse(result);
-    // Normalize first: unknown/whitespace phases or a null diagnosis previously
-    // became answer only AFTER the plan check and could lose required details.
-    const normalized = normalizeResponse(raw);
-    const parsed = composeAnswerPlan({ ...raw, phase: normalized.phase }, planRequired);
+    const parsed = composeAnswerPlan(parseJsonResponse(result), planRequired);
     const response = normalizeResponse(parsed);
     if (privacyReviewIssues(response, messages).length || cloudAdviceIssues(response).length) throw new Error('AI_ADVICE_REVIEW_REQUIRED');
     return { ...response, answerSource: 'model', sources: response.phase === 'out_of_scope' ? [] : resolveSources(parsed.source_ids, notes),

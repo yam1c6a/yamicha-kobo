@@ -37,7 +37,7 @@ const answer = (phase, plan = null) => ({ phase, reply: 'Power Queryで結合し
 const generate = (response) => new WorkersAIProvider().generate({ messages: [user(query)], env: { AI: { async run() { return { response }; } } } });
 
 test('exact live Excel procedure question always requests a plan', () => assert.ok(needsAnswerPlan([user(query)])));
-for (const phase of ['answer ', 'unexpected', undefined, 'diagnosis']) {
+for (const phase of ['answer ', 'unexpected', undefined, 'diagnosis', 'discovery', 'out_of_scope']) {
   test(`normalized ${String(phase)} cannot bypass required plan`, async () => {
     await assert.rejects(generate(answer(phase)), /AI_INVALID_RESPONSE/);
   });
@@ -47,10 +47,12 @@ test('phase normalization preserves a complete generated plan', async () => {
   assert.equal(result.phase, 'answer');
   assert.ok(result.reply.includes('進め方') && result.reply.includes(validPlan.steps[1]));
 });
-test('planning schema cannot select an unrelated diagnosis card', () => {
+test('planning schema cannot select an unrelated diagnosis or discovery branch', () => {
   const schema = schemaWithAnswerPlan({ properties: {}, required: [] });
-  assert.deepEqual(schema.properties.phase.enum, ['answer', 'discovery', 'out_of_scope']);
-  assert.deepEqual(schema.properties.diagnosis, { type: 'null' });
+  assert.equal(schema.properties.phase, undefined);
+  assert.equal(schema.properties.diagnosis, undefined);
+  assert.ok(schema.required.includes('plan'));
+  assert.equal(schema.properties.plan.type, 'object');
 });
 test('GIS catalogue renders both real cases, not an introductory stub', () => {
   const reply = publicCaseCatalog([user('やみちゃ工房のGIS関連の実績を教えてください。資格や取引先名は推測しないでください。')]);
