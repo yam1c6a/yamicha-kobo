@@ -1,0 +1,90 @@
+name: Consultation quality live 20261106
+# Owner-requested one-shot test on QA branch; no schedule, secrets or retries.
+on:
+  push:
+    branches: [qa/live-consultation-20261106]
+    paths: [.github/workflows/consultation-quality-live-20261106.yml]
+permissions:
+  contents: read
+concurrency:
+  group: consultation-live-20261106
+  cancel-in-progress: false
+jobs:
+  live-quality:
+    if: github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Six synthetic consultations; preserve actual answers and record diagnostics
+        shell: bash
+        run: |
+          python3 -u - <<'PY'
+          import json, time, uuid, urllib.request, urllib.error, urllib.parse
+          BASE = 'https://yamicha.com'
+          REVISION = 'quality-20261106-r1'
+          BASELINE = 'd386eaacdd7512e37f4b315a8b1e4ca8e6f89b6d'
+          CASES = [
+            ('AWS', [
+              '既存のWindows Server/IIS上の.NET Framework 4.8業務システムをAWSで動かしたいです。コンテナ化しておらず、常時稼働が必要です。運用担当は少人数です。EC2・ECS/Fargate・Lambdaから何を選びますか。最小構成と選ぶ理由、運用上の注意を教えてください。',
+              '条件を変更します。アプリはLinuxコンテナで動作し、ローカルディスクへの永続保存もOSへのログインも不要です。OSの更新作業を減らしたい場合、先ほどの構成をどう変えますか。']),
+            ('LLM', [
+              '社内規程の検索と問い合わせの回答案作成にLLMを使いたいです。日本語の回答品質と運用の負担を重視します。社外へのデータ送信可否はまだ確認中です。外部LLM APIとローカルLLMをどう選べばよいですか。判断基準と最初に試す方法を教えてください。',
+              '条件を追加します。文書本文だけでなく、質問・埋め込み生成の入力・処理ログも社外送信禁止です。外部LLM APIを使う案は外してください。この条件で最小構成と運用上の注意点を提案してください。']),
+            ('業務自動化', [
+              '毎月、同じ列構成のExcelファイル30個を1つに結合し、部署別の金額を集計します。Windows版Excelで作業し、社内にPythonを保守できる人はいません。AIは必要ですか。最小構成と導入手順を教えてください。',
+              '追加条件です。ファイル数や列は同じですが、各行に自由文の備考があり、内容に応じた問い合わせ分類と返信案も作りたいです。数値の集計は今までどおり正確にしたいです。前の案のどこを残し、どこだけにAIを使いますか。返信は担当者の確認後に送信します。']),
+          ]
+          class NoRedirect(urllib.request.HTTPRedirectHandler):
+            def redirect_request(self, req, fp, code, msg, headers, newurl): return None
+          client = urllib.request.build_opener(NoRedirect())
+          token = str(uuid.uuid4())
+          print('::stop-commands::' + token, flush=True)
+          results, fatal, last_started = [], '', None
+          def history(data):
+            parts = [data['message']['content'][:1800]]
+            if data.get('questions'): parts.append(data['questions'][0][:220])
+            diagnosis = data.get('diagnosis') or {}
+            if diagnosis.get('recommended_solution'): parts.append('\n'.join(item[:160] for item in diagnosis['recommended_solution'][:3]))
+            if diagnosis.get('ai_reason'): parts.append(diagnosis['ai_reason'][:160])
+            if diagnosis.get('missing_information'): parts.append(diagnosis['missing_information'][0][:100])
+            return '\n\n'.join(parts)[:2800]
+          try:
+            with urllib.request.urlopen(urllib.request.Request(BASE + '/', headers={'User-Agent':'YamichaKoboQA/1.0'}), timeout=20) as response:
+              url = urllib.parse.urlsplit(response.geturl())
+              if url.scheme != 'https' or url.hostname not in {'yamicha.com','www.yamicha.com'}: raise RuntimeError('Unexpected homepage destination')
+              if 'やみちゃ工房' not in response.read(500000).decode('utf-8'): raise RuntimeError('Homepage identity mismatch')
+              origin = url.scheme + '://' + url.netloc
+            for domain, prompts in CASES:
+              messages, session = [], str(uuid.uuid4())
+              for turn, prompt in enumerate(prompts, 1):
+                if len(results) >= 6: raise RuntimeError('Test budget exceeded')
+                if last_started is not None: time.sleep(max(0, 8 - (time.monotonic() - last_started)))
+                outgoing = messages + [{'role':'user','content':prompt}]
+                payload = json.dumps({'sessionId':session,'messages':outgoing},ensure_ascii=False).encode('utf-8')
+                req = urllib.request.Request(origin+'/api/chat', data=payload, method='POST', headers={'Origin':origin,'Content-Type':'application/json','Accept':'application/json','User-Agent':'YamichaKoboQA/1.0'})
+                started = last_started = time.monotonic()
+                record = {'domain':domain,'turn':turn,'question':prompt}
+                try:
+                  response = client.open(req, timeout=35)
+                except urllib.error.HTTPError as error:
+                  response = error
+                with response:
+                  raw = response.read(65537)
+                  record.update(http_status=response.code, elapsed_seconds=round(time.monotonic()-started,3), model=response.headers.get('X-Consultation-Model'), revision=response.headers.get('X-Consultation-Revision'))
+                if len(raw)>65536: raise RuntimeError('Oversized response')
+                data = json.loads(raw)
+                record['response'] = data
+                record['transport_ok'] = record['http_status']==200 and isinstance(data.get('message',{}).get('content'),str)
+                results.append(record)
+                print('RESULT_JSON '+json.dumps(record,ensure_ascii=False),flush=True)
+                if record['revision'] != REVISION: raise RuntimeError('Unexpected deployment revision; no more requests sent')
+                if record['http_status'] in (401,403,429,503): raise RuntimeError('Access or capacity limit; no retry')
+                if not record['transport_ok']: break
+                messages = outgoing + [{'role':'assistant','content':history(data)}]
+          except Exception as error:
+            fatal = type(error).__name__ + ': ' + str(error)[:240]
+          summary = {'baseline':BASELINE,'attempted':len(results),'successful':sum(r.get('transport_ok',False) for r in results),'fatal_error':fatal,'quality_verdict':'Requires review; blocked or HTTP-success responses are not automatically quality passes'}
+          print('SUMMARY_JSON '+json.dumps(summary,ensure_ascii=False),flush=True)
+          print('::'+token+'::',flush=True)
+          if fatal or summary['successful']!=6: raise SystemExit(1)
+          PY
