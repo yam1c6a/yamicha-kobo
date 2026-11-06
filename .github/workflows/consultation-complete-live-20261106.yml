@@ -1,0 +1,93 @@
+name: Consultation completeness acceptance 20261106
+# One-shot owner-requested verification. Fixed public target, no secrets or retries.
+on:
+  push:
+    branches: [qa/live-consultation-20261106]
+    paths: [.github/workflows/consultation-complete-live-20261106.yml]
+permissions:
+  contents: read
+concurrency:
+  group: consultation-live-20261106
+  cancel-in-progress: false
+jobs:
+  live-completeness:
+    if: github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Same nine synthetic cases; do not treat HTTP success as quality approval
+        shell: bash
+        run: |
+          python3 -u - <<'PY'
+          import ast, json, pathlib, textwrap, time, uuid, urllib.request, urllib.error, urllib.parse
+          BASE = 'https://yamicha.com'
+          BASELINE = '48d4dbef4f5b68842f36a2205c1d6b34fd409595'
+          # Read the prior test's literal fixtures WITHOUT executing its code.
+          workflow = pathlib.Path('.github/workflows/consultation-plan-live-20261106.yml').read_text()
+          script = textwrap.dedent(workflow.split("python3 -u - <<'PY'\n", 1)[1].rsplit('\n          PY', 1)[0])
+          tree = ast.parse(script)
+          cases = next(ast.literal_eval(node.value) for node in tree.body if isinstance(node, ast.Assign) and any(isinstance(target, ast.Name) and target.id == 'CASES' for target in node.targets))
+          assert sum(len(prompts) for _, prompts in cases) == 9
+          class NoRedirect(urllib.request.HTTPRedirectHandler):
+              def redirect_request(self, req, fp, code, msg, headers, newurl): return None
+          client = urllib.request.build_opener(NoRedirect())
+          token = str(uuid.uuid4())
+          print('::stop-commands::' + token, flush=True)
+          results, fatal, last_started = [], '', None
+          def history(data):
+              parts = [data['message']['content'][:1800]]
+              if data.get('questions'): parts.append(data['questions'][0][:220])
+              diagnosis = data.get('diagnosis') or {}
+              if diagnosis.get('recommended_solution'): parts.append('\n'.join(item[:160] for item in diagnosis['recommended_solution'][:3]))
+              if diagnosis.get('ai_reason'): parts.append(diagnosis['ai_reason'][:160])
+              if diagnosis.get('missing_information'): parts.append(diagnosis['missing_information'][0][:100])
+              return '\n\n'.join(parts)[:2800]
+          try:
+              with urllib.request.urlopen(urllib.request.Request(BASE+'/', headers={'User-Agent':'YamichaKoboQA/1.0'}), timeout=20) as response:
+                  url = urllib.parse.urlsplit(response.geturl())
+                  if url.scheme != 'https' or url.hostname not in {'yamicha.com','www.yamicha.com'}: raise RuntimeError('Unexpected homepage destination')
+                  if 'やみちゃ工房' not in response.read(500000).decode('utf-8'): raise RuntimeError('Homepage identity mismatch')
+                  origin = url.scheme + '://' + url.netloc
+              for domain, prompts in cases:
+                  messages, session = [], str(uuid.uuid4())
+                  for turn, prompt in enumerate(prompts, 1):
+                      if len(results) >= 9: raise RuntimeError('Request budget exceeded')
+                      if last_started is not None: time.sleep(max(0, 10-(time.monotonic()-last_started)))
+                      outgoing = messages + [{'role':'user','content':prompt}]
+                      req = urllib.request.Request(origin+'/api/chat', data=json.dumps({'sessionId':session,'messages':outgoing}, ensure_ascii=False).encode('utf-8'), method='POST', headers={'Origin':origin,'Content-Type':'application/json','Accept':'application/json','User-Agent':'YamichaKoboQA/1.0'})
+                      started = last_started = time.monotonic()
+                      record = {'domain':domain,'turn':turn,'question':prompt}
+                      try: response = client.open(req, timeout=35)
+                      except urllib.error.HTTPError as error: response = error
+                      with response:
+                          raw = response.read(65537)
+                          record.update(http_status=response.code, elapsed_seconds=round(time.monotonic()-started,3), model=response.headers.get('X-Consultation-Model'), answer_source=response.headers.get('X-Consultation-Source'))
+                      if len(raw)>65536: raise RuntimeError('Oversized response')
+                      data = json.loads(raw)
+                      record['response'] = data
+                      content = data.get('message',{}).get('content')
+                      record['transport_ok'] = record['http_status']==200 and isinstance(content,str) and bool(content.strip())
+                      record['planning_sections_present'] = isinstance(content,str) and all(label in content for label in ['選ぶ理由\n','進め方\n','注意点\n'])
+                      results.append(record)
+                      print('RESULT_JSON '+json.dumps(record,ensure_ascii=False),flush=True)
+                      if record['http_status'] in (401,403,429,503): raise RuntimeError('Access or capacity limit; no retries')
+                      if not record['transport_ok']: break
+                      if record['answer_source'] not in ('model','public-catalog') or data.get('answerSource') != record['answer_source']: raise RuntimeError('Expected deployment provenance missing')
+                      messages = outgoing + [{'role':'assistant','content':history(data)}]
+          except Exception as error:
+              fatal = type(error).__name__ + ': ' + str(error)[:240]
+          planning = [r for r in results if r['domain'] in ('AWS','LLM','業務自動化')]
+          catalogue = [r for r in results if r['domain']=='holdout-studio']
+          checks = {
+              'nine_responses': len(results)==9 and all(r.get('transport_ok') for r in results),
+              'six_complete_planning_shapes': len(planning)==6 and all(r['planning_sections_present'] for r in planning),
+              'catalogue_identified_and_contains_two_public_cases': len(catalogue)==1 and catalogue[0].get('answer_source')=='public-catalog' and all(title in catalogue[0].get('response',{}).get('message',{}).get('content','') for title in ['地理空間データの世代管理システム','GISビューア・地理空間データ共有システム']),
+          }
+          print('SUMMARY_JSON '+json.dumps({'baseline':BASELINE,'attempted':len(results),'successful':sum(r.get('transport_ok',False) for r in results),'checks':checks,'fatal_error':fatal,'quality_verdict':'Shape/provenance checks only; review all generated advice separately'},ensure_ascii=False),flush=True)
+          print('::'+token+'::',flush=True)
+          if fatal or not all(checks.values()): raise SystemExit(1)
+          PY
