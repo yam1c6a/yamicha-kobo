@@ -1,39 +1,53 @@
 import { technicalNotes } from './technical-notes.js';
 
-const normalize = (text) => text.normalize('NFKC').toLowerCase();
+const normalize = (text) => text.normalize('NFKC').toLowerCase().trim();
 function matches(text, keyword) {
   const term = normalize(keyword);
-  // Avoid matching e.g. "rag" inside "storage" or "iam" inside a name.
-  if (/^[a-z0-9]+$/.test(term)) {
-    return new RegExp(`(^|[^a-z0-9])${term}([^a-z0-9]|$)`, 'i').test(text);
-  }
+  // Do not match "rag" inside "storage" or "iam" inside a name.
+  if (/^[a-z0-9]+$/.test(term)) return new RegExp(`(^|[^a-z0-9])${term}([^a-z0-9]|$)`, 'i').test(text);
   return text.includes(term);
 }
 function score(text, note) {
   return note.keywords.reduce((sum, keyword) => sum + (matches(text, keyword) ? 1 : 0), 0);
 }
-
 function domains(text) {
   const words = {
     aws: ['AWS', 'EC2', 'Lambda', 'Fargate', 'ECS', 'IAM', 'クラウド', 'IIS'],
-    llm: ['LLM', 'モデル', '生成AI', 'ローカル', 'Ollama', 'GPU', 'VRAM', 'APIと'],
+    llm: ['LLM', 'モデル', '生成AI', 'ローカル推論', 'ローカルモデル', 'Ollama', 'GPU', 'VRAM', 'APIと'],
     rag: ['RAG', 'ラグ', '社内文書', '社内資料', '文書検索', 'ナレッジ', 'ベクトル', 'チャンク', 'pgvector'],
   };
   return Object.keys(words).filter((key) => words[key].some((word) => matches(text, word)));
 }
+const topicReset = /^(?:ところで|別(?:件|の(?:話|相談|質問))|話(?:題)?を変|新しい(?:相談|質問)|前の話は(?:忘|置))/u;
+const conditionReply = /^(?:(?:db|データベース|言語)\s*(?:は|:)\s*)?(?:python|postgresql|postgres|pgvector)(?:です|を使います|を使っています|を使いたい|を使う予定です|でお願いします|にします|にしたい)?[。.!！]?$/u;
+const continuation = /^(?:それ|その|では|じゃあ|そう|もっと|もう少し|具体的|詳しく|費用は|料金は|構成は|どちら|どう違|前の|先ほど|windows|linux|社内だけ|[0-9]|(?:条件|要件|前提)(?:を|の|は|に)|追加(?:条件|要件|です|します)|補足|訂正)/u;
+
+/** User-only, contiguous context. Never search backwards past a new topic.
+ * These are untrusted statements, not verified facts or authorization rules.
+ * Explicit new domains replace unrelated old domains; assistant text never
+ * chooses a stack. Bounded by the existing eight-turn conversation budget.
+ */
+export function activeUserTexts(messages) {
+  let active = [];
+  for (const message of messages.filter((item) => item.role === 'user')) {
+    const text = normalize(message.content);
+    const currentDomains = domains(text);
+    const priorDomains = new Set(active.flatMap(domains));
+    const differentDomain = currentDomains.length > 0 && priorDomains.size > 0 &&
+      currentDomains.every((domain) => !priorDomains.has(domain));
+    if (!active.length || topicReset.test(text) || differentDomain ||
+        !(continuation.test(text) || conditionReply.test(text))) active = [text];
+    else active = [...active, text].slice(-8);
+  }
+  return active;
+}
 
 export function retrieveTechnicalNotes(messages) {
-  const users = messages.filter((message) => message.role === 'user');
-  const latest = normalize(users.at(-1)?.content || '').trim();
-  // Carry only a recent user topic into a genuine follow-up/short condition reply.
-  const conditionReply = /^(?:(?:db|データベース|言語)\s*(?:は|:)\s*)?(?:python|postgresql|postgres|pgvector)(?:です|を使います|を使っています|を使いたい|を使う予定です|でお願いします|にします|にしたい)?[。.!！]?$/.test(latest);
-  const followUp = conditionReply || /^(それ|その|では|じゃあ|そう|もっと|もう少し|具体的|詳しく|費用は|料金は|構成は|どちら|どう違|前の|先ほど|windows|linux|社内だけ|[0-9])/.test(latest);
-  const previous = followUp ? normalize([...users].slice(0, -1).reverse().find((message) =>
-    domains(normalize(message.content)).length > 0)?.content || '') : '';
-  const relevant = new Set([...domains(latest), ...domains(previous)]);
-  const context = `${latest}\n${previous}`;
-  // Specific examples need BOTH a matching domain and an explicitly named stack.
-  // Assistant-invented technologies never qualify a note for retrieval.
+  const active = activeUserTexts(messages);
+  const latest = active.at(-1) || '';
+  const previous = active.slice(0, -1).join('\n');
+  const relevant = new Set(active.flatMap(domains));
+  const context = active.join('\n');
   return technicalNotes.map((note, index) => {
     const eligible = relevant.has(note.id.split('-')[0]) &&
       (!note.requiresAny || note.requiresAny.some((keyword) => matches(context, keyword)));
