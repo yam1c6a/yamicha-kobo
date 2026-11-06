@@ -1,7 +1,7 @@
 name: Consultation live acceptance 20261106
 
-# One-shot, owner-requested live test. No secrets, schedules, deployments or retries.
-# This workflow exists only on the QA branch, never on main.
+# Owner-requested bounded live test on the QA branch only.
+# No secrets, scheduled runs, deployment or automatic retries.
 on:
   push:
     branches: [qa/live-consultation-20261106]
@@ -30,10 +30,9 @@ jobs:
           import urllib.request
           import uuid
 
-          # Fixed public destination; no arbitrary URLs, account data or credentials.
           BASE = 'https://yamicha.com'
           ALLOWED_HOSTS = {'yamicha.com', 'www.yamicha.com'}
-          BASELINE = 'f587bf84a0674a474a496bbec9b43331ea644e65'
+          BASELINE = '497c7b3d5819f52a54695864a1672100a5536d29'
           CASES = [
               ('AWS', [
                   '既存のWindows Server/IIS上の.NET Framework 4.8業務システムをAWSで動かしたいです。コンテナ化しておらず、常時稼働が必要です。運用担当は少人数です。EC2・ECS/Fargate・Lambdaから何を選びますか。最小構成と選ぶ理由、運用上の注意を教えてください。',
@@ -49,7 +48,7 @@ jobs:
               ]),
           ]
 
-          # Prevent any generated answer from being interpreted as a workflow command.
+          # Treat model output as data, never as workflow commands or executable code.
           token = str(uuid.uuid4())
           print(f'::stop-commands::{token}', flush=True)
           results = []
@@ -65,21 +64,21 @@ jobs:
           post_client = urllib.request.build_opener(NoRedirect())
 
           def assistant_history(data):
-              # Same compact history fields as the current browser implementation.
+              # Match the revised browser history: no misleading confirmed-fact labels.
               parts = [data['message']['content'][:1800]]
               questions = data.get('questions') or []
               if questions:
-                  parts.append('確認したこと:\n' + questions[0][:220])
+                  parts.append(questions[0][:220])
               diagnosis = data.get('diagnosis')
               if diagnosis:
                   proposals = diagnosis.get('recommended_solution') or []
                   if proposals:
-                      parts.append('提示した案:\n' + '\n'.join(item[:160] for item in proposals[:3]))
+                      parts.append('\n'.join(item[:160] for item in proposals[:3]))
                   if diagnosis.get('ai_reason'):
-                      parts.append('AIの使いどころ: ' + diagnosis['ai_reason'][:160])
+                      parts.append(diagnosis['ai_reason'][:160])
                   missing = diagnosis.get('missing_information') or []
                   if missing:
-                      parts.append('未確認事項: ' + missing[0][:100])
+                      parts.append(missing[0][:100])
               return '\n\n'.join(parts)[:2800]
 
           try:
@@ -164,9 +163,9 @@ jobs:
               summary_path = os.environ.get('GITHUB_STEP_SUMMARY')
               if summary_path:
                   with open(summary_path, 'a', encoding='utf-8') as handle:
-                      handle.write('# Live consultation acceptance\n\nSynthetic public questions only. No production code changed.\n\n')
+                      handle.write('# Live consultation retest\n\nSame six synthetic questions after fix 497c7b3. No production writes by this workflow.\n\n')
                       handle.write(f'Attempted: {attempted}/6; successful responses: {report["successful_responses"]}.\n\n')
-                      handle.write('These are API observations, not browser rendering tests or a model-quality pass. Full answers are in RESULT_JSON log lines.\n')
+                      handle.write('API observations only, not browser rendering tests or a blanket model-quality pass. Full answers are in RESULT_JSON log lines.\n')
               print(f'::{token}::', flush=True)
           if fatal or report['successful_responses'] != 6:
               raise SystemExit(1)
