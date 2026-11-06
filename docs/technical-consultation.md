@@ -9,7 +9,7 @@ optional rather than mandatory. The existing public case-study source remains
 the sole authority for studio experience. Technical knowledge is not a new claim
 about delivered projects, certifications or guaranteed support.
 
-`technical-notes.js` contains eight Japanese editorial summaries with primary
+`technical-notes.js` contains nine Japanese editorial summaries with primary
 source URLs and a checked date. `technical-context.js` selects at most three
 notes using normalized keywords, English word boundaries and limited user-only
 follow-up context. This is small, lexical retrieval-augmented generation, not
@@ -62,13 +62,49 @@ show note sources and review dates. IME composition does not submit. A failed
 request restores input and removes the failed UI turn. A new-consultation button
 clears page state; the existing contact link and handoff events remain available.
 
+## Question duplication and concrete RAG guidance (2026-11-06)
+
+`question-deduplication.js` removes only a complete terminal sentence matching
+an explicit structured question. It tolerates width/whitespace, terminal
+punctuation and a small set of question prefixes. It does not fuzzy-match,
+rewrite explanations, remove quoted examples, or remove unrelated questions.
+A question-only answer stays nonempty and its redundant structured copy is
+suppressed. The policy applies this before final-turn/repeated-question filtering,
+so the cleaned reply is also used by the existing client history and handoff.
+Semantically equivalent but differently worded questions remain a limitation.
+
+The `rag-postgres` note is a conditional implementation example, not a new studio
+case study. It explains ingestion, embeddings, PostgreSQL/pgvector retrieval,
+permission enforcement, generation, tradeoffs, alternatives and evaluation.
+It requires an explicit PostgreSQL/Postgres/pgvector keyword AND a RAG topic;
+matching implementation notes rank before general notes. A bounded, explicit
+DB-choice reply may inherit a previous user RAG topic. Assistant text alone
+cannot select the stack. The existing eight notes and their checked dates remain
+unchanged. Generic RAG or unrelated PostgreSQL questions do not force this design.
+
+The primary Python/PostgreSQL flow and the supporting design/security guidance
+were reviewed on 2026-11-06:
+- https://learn.microsoft.com/en-us/training/modules/build-rag-applications-azure-database-postgresql/5-build-rag-application-postgresql-python
+- https://learn.microsoft.com/ja-jp/training/modules/build-rag-applications-azure-database-postgresql/7-improve-accuracy-advanced-rag-architecture
+- https://learn.microsoft.com/en-us/azure/search/search-security-best-practices
+- https://www.postgresql.org/docs/current/textsearch-parsers.html
+
+The ingestion/API decomposition and selection advice are editorial design
+proposals, not claims that one linked article specifies the complete solution.
+Do not equate metadata filtering with authorization unless the server derives
+and enforces the filter from a trusted identity. Japanese tokenization needs
+validation; PostgreSQL's standard full-text search is not assumed sufficient.
+No database, embedding API, new model, extra model call or live web crawler is
+introduced into this website. The longer selected note can affect input tokens;
+actual answer quality and latency still require live testing.
+
 ## Automated checks
 
 Node 22.16+:
 
 ```sh
 npm ci
-node --test tests/technical-consultation.test.mjs
+node --test tests/*.test.mjs
 npm run build
 node scripts/verify-home.mjs
 ```
@@ -77,7 +113,10 @@ Tests compile temporary copies of the real TS service/API modules using Node's
 stripTypeScriptTypes and mock only the Cloudflare runtime/binding. They cover
 retrieval, follow-ups, source allowlisting, model configuration, output parsing,
 conversation policy, history, payload limits, rate limiting and API responses.
-They do NOT measure real model reasoning, latency or live answer quality.
+The regression suite includes the reported duplicate reply, punctuation/width
+variants, question-only replies, preservation of examples, source selection and
+stack/domain isolation. They do NOT measure real model reasoning, latency or
+live answer quality.
 
 ## Live acceptance examples (manual, incurs normal AI usage)
 
@@ -102,6 +141,8 @@ without actually observing responses.
    Expect consideration of deterministic automation rather than forced AI.
 8. A follow-up after one of the above: その構成の注意点は？
    Expect use of the actual preceding discussion without repeated intake questions.
+9. PythonとPostgreSQLで社内文書のRAGを作りたい。構成と検索精度、権限管理を教えて。
+   Expect the conditional concrete note, roles/data flow, tradeoffs and at most one question.
 
 Also inspect 320px/mobile and desktop widths, source links, new consultation,
 errors, keyboard operation and contact handoff. No change to portfolio cards,

@@ -24,17 +24,24 @@ function domains(text) {
 
 export function retrieveTechnicalNotes(messages) {
   const users = messages.filter((message) => message.role === 'user');
-  const latest = normalize(users.at(-1)?.content || '');
+  const latest = normalize(users.at(-1)?.content || '').trim();
   // Carry only a recent user topic into a genuine follow-up/short condition reply.
-  const followUp = /^(それ|その|では|じゃあ|そう|もっと|もう少し|具体的|詳しく|費用は|料金は|構成は|どちら|どう違|前の|先ほど|windows|linux|社内だけ|[0-9])/.test(latest);
+  const conditionReply = /^(?:(?:db|データベース|言語)\s*(?:は|:)\s*)?(?:python|postgresql|postgres|pgvector)(?:です|を使います|を使っています|を使いたい|を使う予定です|でお願いします|にします|にしたい)?[。.!！]?$/.test(latest);
+  const followUp = conditionReply || /^(それ|その|では|じゃあ|そう|もっと|もう少し|具体的|詳しく|費用は|料金は|構成は|どちら|どう違|前の|先ほど|windows|linux|社内だけ|[0-9])/.test(latest);
   const previous = followUp ? normalize([...users].slice(0, -1).reverse().find((message) =>
     domains(normalize(message.content)).length > 0)?.content || '') : '';
   const relevant = new Set([...domains(latest), ...domains(previous)]);
-  // Generic words like "comparison" or "permission" do not pull in another domain.
-  return technicalNotes.map((note, index) => ({ note, index,
-    score: relevant.has(note.id.split('-')[0]) ? score(latest, note) * 4 + score(previous, note) : 0,
-  })).filter((item) => item.score > 0)
-    .sort((a, b) => b.score - a.score || a.index - b.index).slice(0, 3).map((item) => item.note);
+  const context = `${latest}\n${previous}`;
+  // Specific examples need BOTH a matching domain and an explicitly named stack.
+  // Assistant-invented technologies never qualify a note for retrieval.
+  return technicalNotes.map((note, index) => {
+    const eligible = relevant.has(note.id.split('-')[0]) &&
+      (!note.requiresAny || note.requiresAny.some((keyword) => matches(context, keyword)));
+    return { note, index, specificity: note.requiresAny ? 1 : 0,
+      score: eligible ? score(latest, note) * 4 + score(previous, note) : 0 };
+  }).filter((item) => item.score > 0)
+    .sort((a, b) => b.specificity - a.specificity || b.score - a.score || a.index - b.index)
+    .slice(0, 3).map((item) => item.note);
 }
 
 export function technicalContext(notes) {

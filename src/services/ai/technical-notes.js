@@ -58,4 +58,12 @@ export const technicalNotes = [
     url: 'https://learn.microsoft.com/en-us/azure/search/search-security-best-practices',
     sourceTitle: 'Microsoft公式：検索サービスのセキュリティ',
   },
+  {
+    id: 'rag-postgres', title: 'Python・PostgreSQLで組むRAGの具体例', checkedAt: '2026-11-06',
+    requiresAny: ['PostgreSQL', 'Postgres', 'pgvector'],
+    keywords: ['Python', 'PostgreSQL', 'Postgres', 'pgvector', 'RAG', '社内文書', '社内資料', '文書検索', '構成', '設計', '検索'],
+    text: '【条件付きの主案】既存PostgreSQLを活用し、自然文の言い換えから資料を探したい場合は、Pythonの取込み処理＋PostgreSQL/pgvector＋検索API＋生成LLMを最小の試作案とする。公式のPython/PostgreSQL例を踏まえた設計例であり、工房の導入実績でも、Azureや特定LLMの利用を必須にするものでもない。\n【処理の流れ】文書→Pythonでテキスト抽出・見出し等を考慮した分割・埋め込み生成→PostgreSQLに本文・文書ID・出典・版・埋め込みを保存→Pythonの検索APIで認証・権限を確認して類似検索SQLを実行→許可済みの本文と出典だけをLLMへ渡し、根拠付きで回答。埋め込み生成と回答生成は別の処理。資料が足りなければ回答不能とする。\n【選ぶ理由と負担】既存DBで本文とベクトルを管理でき、専用ベクトルDBを別途増やさず始められる。一方、埋め込みの計算・保存と、文書更新時の再計算が必要。外部モデルを使えるかは機密性・契約条件を確認し、勝手に外部送信を前提にしない。\n【代替案】文書番号や固定用語の一致が中心ならキーワード検索から始める。両方が必要なら同じ質問セットで比較してハイブリッド検索を検討する。日本語は分かち書き等の検索構成を確認し、標準全文検索だけで十分とは断言しない。\n【権限・更新・検証】文書IDに閲覧権限をひも付け、サーバーで確認した利用者の権限を検索SQLに強制する。許可されない本文をLLMや外部の再ランキング処理へ渡さない。更新・削除・権限変更を検索対象へ反映し、参照リンクにも認可を適用する。正解資料が検索上位にあるか、回答がその資料に忠実かを別々に測る。別部署の資料が出ないことと、根拠のない質問に答えないこともテストする。',
+    url: 'https://learn.microsoft.com/en-us/training/modules/build-rag-applications-azure-database-postgresql/5-build-rag-application-postgresql-python',
+    sourceTitle: 'Microsoft公式：Python・PostgreSQLのRAG構築例',
+  },
 ];
