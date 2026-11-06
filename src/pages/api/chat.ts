@@ -39,8 +39,8 @@ export const POST: APIRoute = async ({ request }) => {
   const validation = validateMessages(body.messages);
   if (!validation.messages) return json({ error: validation.error, code: 'INVALID_MESSAGES' }, 400);
   const turns = validation.messages.filter((message) => message.role === 'user').length;
-  // Public model ID only, never an environment dump, account ID or API key.
-  // This reports the configured ID passed to Workers AI, not independent attestation.
+  // Configured public model ID, not attestation and not a claim that catalog
+  // responses invoke inference. X-Consultation-Source distinguishes those.
   const configuredModel = getAIConfig(runtimeEnv).model;
   const diagnostics = {
     'X-Consultation-Model': /^@cf\/[a-zA-Z0-9_./-]{1,120}$/.test(configuredModel) ? configuredModel : 'custom',
@@ -48,12 +48,13 @@ export const POST: APIRoute = async ({ request }) => {
   };
   try {
     const result = await generateConsultationResponse({ messages: validation.messages as ChatMessage[], env: runtimeEnv });
+    const answerSource = result.answerSource === 'public-catalog' ? 'public-catalog' : 'model';
     return json({
       message: { id: crypto.randomUUID(), role: 'assistant', content: result.reply, createdAt: new Date().toISOString() },
       phase: result.phase, questions: result.questions, diagnosis: result.diagnosis,
-      cta: result.cta, sources: result.sources || [], sourceNotice: result.sourceNotice || '',
+      cta: result.cta, sources: result.sources || [], sourceNotice: result.sourceNotice || '', answerSource,
       limits: { turnsUsed: turns, turnsRemaining: Math.max(0, CHAT_LIMITS.turns - turns), maxTurns: CHAT_LIMITS.turns },
-    }, 200, diagnostics);
+    }, 200, { ...diagnostics, 'X-Consultation-Source': answerSource });
   } catch (error) {
     const message = error instanceof Error ? error.message : '';
     const review = message === 'AI_ADVICE_REVIEW_REQUIRED';

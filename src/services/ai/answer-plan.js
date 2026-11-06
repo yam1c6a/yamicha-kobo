@@ -1,5 +1,5 @@
-/** Explicit architecture / procedure requests need more than a one-line conclusion.
- * This routes output shape, not technical choices or expected answers.
+/** Explicit architecture / procedure requests need more than a conclusion.
+ * Select output shape, not technical choices or expected answers.
  */
 export function needsAnswerPlan(messages) {
   const latest = messages.filter((message) => message.role === 'user').at(-1)?.content || '';
@@ -15,27 +15,34 @@ export function schemaWithAnswerPlan(base) {
     ...base,
     properties: {
       ...base.properties,
+      // Explicit planning uses one answer shape, never the unrelated diagnosis
+      // branch whose empty payload could previously normalize back to answer.
+      phase: { type: 'string', enum: ['answer', 'discovery', 'out_of_scope'] },
+      diagnosis: { type: 'null' },
       reply: { type: 'string', minLength: 1, maxLength: 250, description: '相談条件に対する結論。手順や注意点はplanへ分ける。' },
       plan: {
-        description: 'answerの場合は必須の具体案。他のphaseではnull。内部思考ではなく、利用者に見せる回答の各部分。',
-        anyOf: [
-          { type: 'null' },
-          { type: 'object', additionalProperties: false,
-            properties: {
-              reasons: list('相談条件に合う理由と、代替案に切り替える条件。一般論ではなく今回の前提に結び付ける。', 1, 2),
-              steps: list('順番のある具体的操作。利用する機能、何を入力・設定し、どの結果を確認するか。開発・テスト等の工程名だけは不可。', 2, 4),
-              cautions: list('利用者に残る運用責任、情報の送信先と許可、判断の前提。安全性を無条件に保証しない。', 1, 3),
-            }, required: ['reasons', 'steps', 'cautions'] },
-        ],
+        description: 'answerの場合は必須の具体案。他のphaseではnull。すべて利用者に見せる回答。',
+        anyOf: [{ type: 'null' }, {
+          type: 'object', additionalProperties: false,
+          properties: {
+            reasons: list('今回の条件に主案が適する理由。採用例が多いから、だけではなく条件と機能の関係を説明する。', 1, 2),
+            steps: list('実際に行う操作を順に書く。対象の機能、入力、設定・操作内容、結果の確認を具体化する。調べる・検討する・適切に設定するだけでは不可。', 2, 4),
+            cautions: list('利用者に残る運用責任と安全条件。本文で省いた重要な条件をここに書く。', 1, 3),
+          }, required: ['reasons', 'steps', 'cautions'],
+        }],
       },
     }, required: [...base.required, 'plan'],
   };
 }
-export const ANSWER_PLAN_INSTRUCTION = '\n【今回の構成・手順回答】指定Schemaのplanを使う。replyは250文字以内の結論だけ。answerならplan=nullは禁止。理由をreasons、実際の操作をsteps、運用責任や安全条件をcautionsへ書く。各項目160文字以内、全体は目安600〜1000文字。すべて利用者に表示される説明であり、内部思考ではない。例えば「適切に設定する」ではなく、対象の機能と設定・照合する内容を具体化する。EC2のゲストOSは利用者が更新する。Fargateでもコンテナイメージ内のパッケージは利用者が更新する。生成LLMのローカル化と、埋め込み・ログ等のローカル化は別々に設定と通信を検証する。';
+export const ANSWER_PLAN_INSTRUCTION = '\n【今回の構成・手順回答】今回はdiagnosisは使わずnullにする。answerならplan必須、replyは250文字以内の結論だけ。選定理由をreasons、実際の操作をsteps、利用者に残る運用責任と安全条件をcautionsへ。各項目160文字以内、全体は目安600〜1000文字。すべて利用者に表示される説明であり内部思考ではない。一般論や「適切に設定する」で終わらず、使う機能とその操作・検証結果を書く。例えばデータ処理は入力元を選ぶ→対象を絞る→変換・集計→件数と合計を照合する。システム構成は役割を持つ部品をどう接続して動作確認するかを書く。EC2のゲストOS、Fargateのコンテナイメージの更新責任は利用者に残る。ローカル生成だけで埋め込みやログの送信先まで社内になると仮定しない。';
 
-/** Compose only generated sections. Never insert expected factual answers. */
+/** Compose generated sections only. Caller supplies the normalized phase before
+ * validation: phase coercion must never bypass completeness checks.
+ */
 export function composeAnswerPlan(data, required) {
-  if (!required || data.phase !== 'answer') return data;
+  if (!required) return data;
+  if (data.phase === 'diagnosis' || !['answer', 'discovery', 'out_of_scope'].includes(data.phase)) throw new Error('AI_INVALID_RESPONSE');
+  if (data.phase !== 'answer') return data;
   const plan = data.plan;
   if (!plan || typeof plan !== 'object' || Array.isArray(plan) || typeof data.reply !== 'string' || !data.reply.trim() || data.reply.trim().length > 250) throw new Error('AI_INVALID_RESPONSE');
   const limits = { reasons: [1, 2], steps: [2, 4], cautions: [1, 3] };

@@ -1,0 +1,9 @@
+# Answer completeness and public catalogue / 2026-11-06
+
+The eb4cbb8 live run returned nine HTTP 200 responses but only five of the six architecture/procedure requests had planning sections. The Excel initial answer was one sentence, and the studio GIS answer was an introduction without its promised examples. These are NOT quality passes.
+
+A reproducible code-level bypass existed: composeAnswerPlan inspected the raw phase before normalizeResponse could coerce an unknown phase, whitespace phase or null diagnosis back to answer. Normalize the phase before enforcing the plan. The planning schema excludes diagnosis and requires its value to be null. Tests cover these alternate raw phases and the exact Excel request. We did not store raw production model output, so the specific raw phase behind that observed short live answer is unknown; the bypass is an independently reproduced bug, not an asserted forensic certainty.
+
+Pure public-case catalogue requests now render the website's canonical caseStudies data without model generation. Supported topic filters select published projects, and title/overview text comes directly from that data. The route excludes architecture, pricing, feasibility and implementation questions. Unknown-domain questions are not turned into all projects. This is intentionally deterministic factual navigation, not a claim that the LLM invented a better biography. API answerSource and X-Consultation-Source distinguish public-catalog from model. Public-catalog makes zero model calls; other requests still make at most one. Model ID diagnostics mean configured model only.
+
+No new project experience, model, search subscription or billing setting was added. The live acceptance report must separately assess generated technical answers and deterministic catalogue rendering. Existing source allowlisting, sensitive-data warnings, quotas and publication guards remain unchanged.

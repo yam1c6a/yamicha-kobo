@@ -61,10 +61,14 @@ export class WorkersAIProvider implements ConsultationProvider {
       response_format: { type: 'json_schema', json_schema: planRequired ? schemaWithAnswerPlan(consultationResponseSchema) : consultationResponseSchema },
       max_tokens: config.maxTokens, temperature: 0.2,
     }, config.gatewayId ? { gateway: { id: config.gatewayId, skipCache: true, collectLog: false } } : undefined);
-    const parsed = composeAnswerPlan(parseJsonResponse(result), planRequired);
+    const raw = parseJsonResponse(result);
+    // Normalize first: unknown/whitespace phases or a null diagnosis previously
+    // became answer only AFTER the plan check and could lose required details.
+    const normalized = normalizeResponse(raw);
+    const parsed = composeAnswerPlan({ ...raw, phase: normalized.phase }, planRequired);
     const response = normalizeResponse(parsed);
     if (privacyReviewIssues(response, messages).length || cloudAdviceIssues(response).length) throw new Error('AI_ADVICE_REVIEW_REQUIRED');
-    return { ...response, sources: response.phase === 'out_of_scope' ? [] : resolveSources(parsed.source_ids, notes),
+    return { ...response, answerSource: 'model', sources: response.phase === 'out_of_scope' ? [] : resolveSources(parsed.source_ids, notes),
       sourceNotice: freshnessNotice(messages, notes) };
   }
 }

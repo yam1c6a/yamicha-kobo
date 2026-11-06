@@ -15,12 +15,11 @@ export type ConsultationResponse = {
   diagnosis: ConsultationDiagnosis | null;
   cta: { show: boolean; message: string };
   sources?: ConsultationSource[]; sourceNotice?: string;
+  answerSource?: 'model' | 'public-catalog';
 };
 export type AIEnvironment = {
   AI?: unknown; AI_PROVIDER?: string; WORKERS_AI_MODEL?: string;
   AI_GATEWAY_ID?: string; CONSULTATION_MAX_OUTPUT_TOKENS?: string;
 };
 export type GenerateConsultationInput = { messages: ChatMessage[]; env: AIEnvironment };
-export interface ConsultationProvider {
-  generate(input: GenerateConsultationInput): Promise<ConsultationResponse>;
-}
+export interface ConsultationProvider { generate(input: GenerateConsultationInput): Promise<ConsultationResponse>; }
