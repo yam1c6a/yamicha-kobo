@@ -1,0 +1,173 @@
+name: Consultation live acceptance 20261106
+
+# One-shot, owner-requested live test. No secrets, schedules, deployments or retries.
+# This workflow exists only on the QA branch, never on main.
+on:
+  push:
+    branches: [qa/live-consultation-20261106]
+    paths: [.github/workflows/consultation-live-20261106.yml]
+permissions:
+  contents: read
+concurrency:
+  group: consultation-live-20261106
+  cancel-in-progress: false
+jobs:
+  live-acceptance:
+    if: github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: Send at most six synthetic consultations to the public API
+        shell: bash
+        run: |
+          python3 -u - <<'PY'
+          import datetime
+          import json
+          import os
+          import time
+          import urllib.error
+          import urllib.parse
+          import urllib.request
+          import uuid
+
+          # Fixed public destination; no arbitrary URLs, account data or credentials.
+          BASE = 'https://yamicha.com'
+          ALLOWED_HOSTS = {'yamicha.com', 'www.yamicha.com'}
+          BASELINE = 'f587bf84a0674a474a496bbec9b43331ea644e65'
+          CASES = [
+              ('AWS', [
+                  '既存のWindows Server/IIS上の.NET Framework 4.8業務システムをAWSで動かしたいです。コンテナ化しておらず、常時稼働が必要です。運用担当は少人数です。EC2・ECS/Fargate・Lambdaから何を選びますか。最小構成と選ぶ理由、運用上の注意を教えてください。',
+                  '条件を変更します。アプリはLinuxコンテナで動作し、ローカルディスクへの永続保存もOSへのログインも不要です。OSの更新作業を減らしたい場合、先ほどの構成をどう変えますか。',
+              ]),
+              ('LLM', [
+                  '社内規程の検索と問い合わせの回答案作成にLLMを使いたいです。日本語の回答品質と運用の負担を重視します。社外へのデータ送信可否はまだ確認中です。外部LLM APIとローカルLLMをどう選べばよいですか。判断基準と最初に試す方法を教えてください。',
+                  '条件を追加します。文書本文だけでなく、質問・埋め込み生成の入力・処理ログも社外送信禁止です。外部LLM APIを使う案は外してください。この条件で最小構成と運用上の注意点を提案してください。',
+              ]),
+              ('業務自動化', [
+                  '毎月、同じ列構成のExcelファイル30個を1つに結合し、部署別の金額を集計します。Windows版Excelで作業し、社内にPythonを保守できる人はいません。AIは必要ですか。最小構成と導入手順を教えてください。',
+                  '追加条件です。ファイル数や列は同じですが、各行に自由文の備考があり、内容に応じた問い合わせ分類と返信案も作りたいです。数値の集計は今までどおり正確にしたいです。前の案のどこを残し、どこだけにAIを使いますか。返信は担当者の確認後に送信します。',
+              ]),
+          ]
+
+          # Prevent any generated answer from being interpreted as a workflow command.
+          token = str(uuid.uuid4())
+          print(f'::stop-commands::{token}', flush=True)
+          results = []
+          attempted = 0
+          fatal = ''
+          origin = BASE
+          last_started = None
+
+          class NoRedirect(urllib.request.HTTPRedirectHandler):
+              def redirect_request(self, req, fp, code, msg, headers, newurl):
+                  return None
+
+          post_client = urllib.request.build_opener(NoRedirect())
+
+          def assistant_history(data):
+              # Same compact history fields as the current browser implementation.
+              parts = [data['message']['content'][:1800]]
+              questions = data.get('questions') or []
+              if questions:
+                  parts.append('確認したこと:\n' + questions[0][:220])
+              diagnosis = data.get('diagnosis')
+              if diagnosis:
+                  proposals = diagnosis.get('recommended_solution') or []
+                  if proposals:
+                      parts.append('提示した案:\n' + '\n'.join(item[:160] for item in proposals[:3]))
+                  if diagnosis.get('ai_reason'):
+                      parts.append('AIの使いどころ: ' + diagnosis['ai_reason'][:160])
+                  missing = diagnosis.get('missing_information') or []
+                  if missing:
+                      parts.append('未確認事項: ' + missing[0][:100])
+              return '\n\n'.join(parts)[:2800]
+
+          try:
+              preflight = urllib.request.Request(BASE + '/', headers={'User-Agent': 'YamichaKoboQA/1.0'})
+              with urllib.request.urlopen(preflight, timeout=20) as response:
+                  final = urllib.parse.urlsplit(response.geturl())
+                  if final.scheme != 'https' or final.hostname not in ALLOWED_HOSTS:
+                      raise RuntimeError('Unexpected homepage destination; no API calls sent')
+                  page = response.read(500000).decode('utf-8', errors='replace')
+                  if 'やみちゃ工房' not in page:
+                      raise RuntimeError('Homepage identity not verified; no API calls sent')
+                  origin = f'{final.scheme}://{final.netloc}'
+                  print('PREFLIGHT_JSON ' + json.dumps({'status': response.status, 'origin': origin, 'brand_verified': True}, ensure_ascii=False), flush=True)
+
+              stop = False
+              for domain, prompts in CASES:
+                  messages = []
+                  session_id = str(uuid.uuid4())
+                  for turn, prompt in enumerate(prompts, 1):
+                      if attempted >= 6:
+                          raise RuntimeError('Request budget exceeded')
+                      if last_started is not None:
+                          time.sleep(max(0, 8 - (time.monotonic() - last_started)))
+                      outgoing = messages + [{'role': 'user', 'content': prompt}]
+                      payload = json.dumps({'sessionId': session_id, 'messages': outgoing}, ensure_ascii=False).encode('utf-8')
+                      request = urllib.request.Request(origin + '/api/chat', data=payload, method='POST', headers={
+                          'Content-Type': 'application/json', 'Accept': 'application/json',
+                          'Origin': origin, 'User-Agent': 'YamichaKoboQA/1.0',
+                      })
+                      attempted += 1
+                      started = last_started = time.monotonic()
+                      record = {'domain': domain, 'turn': turn, 'question': prompt}
+                      try:
+                          with post_client.open(request, timeout=35) as response:
+                              raw = response.read(65537)
+                              record['http_status'] = response.status
+                              record['content_type'] = response.headers.get('Content-Type', '')
+                          record['elapsed_seconds'] = round(time.monotonic() - started, 3)
+                          if len(raw) > 65536:
+                              raise ValueError('Response exceeds test safety limit')
+                          data = json.loads(raw)
+                          if not isinstance(data, dict) or not isinstance(data.get('message'), dict) or not isinstance(data['message'].get('content'), str) or not data['message']['content'].strip():
+                              raise ValueError('Missing answer content')
+                          record['response'] = data
+                          record['transport_ok'] = True
+                          messages = outgoing + [{'role': 'assistant', 'content': assistant_history(data)}]
+                      except urllib.error.HTTPError as error:
+                          record['http_status'] = error.code
+                          record['elapsed_seconds'] = round(time.monotonic() - started, 3)
+                          record['transport_ok'] = False
+                          try:
+                              body = json.loads(error.read(65536))
+                              record['error_code'] = body.get('code', 'HTTP_ERROR') if isinstance(body, dict) else 'HTTP_ERROR'
+                              record['error'] = body.get('error', '') if isinstance(body, dict) else ''
+                          except (ValueError, UnicodeError):
+                              record['error_code'] = 'NON_JSON_HTTP_ERROR'
+                          stop = error.code in (401, 403, 429, 503) or 300 <= error.code < 400
+                      except Exception as error:
+                          record.update(transport_ok=False, elapsed_seconds=round(time.monotonic() - started, 3), error_type=type(error).__name__, error=str(error)[:250])
+                          stop = isinstance(error, (urllib.error.URLError, TimeoutError))
+                      results.append(record)
+                      print('RESULT_JSON ' + json.dumps(record, ensure_ascii=False), flush=True)
+                      if stop or not record.get('transport_ok'):
+                          break
+                  if stop:
+                      break
+          except Exception as error:
+              fatal = type(error).__name__ + ': ' + str(error)[:300]
+              print('PREFLIGHT_ERROR ' + fatal, flush=True)
+          finally:
+              report = {
+                  'tested_at_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                  'repository_baseline': BASELINE, 'endpoint': origin + '/api/chat',
+                  'planned_requests': 6, 'attempted_requests': attempted,
+                  'successful_responses': sum(bool(item.get('transport_ok')) for item in results),
+                  'model_id_observed': False, 'quality_verdict': 'Requires human review; HTTP success is not answer-quality approval',
+                  'fatal_error': fatal,
+              }
+              print('SUMMARY_JSON ' + json.dumps(report, ensure_ascii=False), flush=True)
+              with open('consultation-live-report.json', 'w', encoding='utf-8') as handle:
+                  json.dump({'summary': report, 'results': results}, handle, ensure_ascii=False, indent=2)
+              summary_path = os.environ.get('GITHUB_STEP_SUMMARY')
+              if summary_path:
+                  with open(summary_path, 'a', encoding='utf-8') as handle:
+                      handle.write('# Live consultation acceptance\n\nSynthetic public questions only. No production code changed.\n\n')
+                      handle.write(f'Attempted: {attempted}/6; successful responses: {report["successful_responses"]}.\n\n')
+                      handle.write('These are API observations, not browser rendering tests or a model-quality pass. Full answers are in RESULT_JSON log lines.\n')
+              print(f'::{token}::', flush=True)
+          if fatal or report['successful_responses'] != 6:
+              raise SystemExit(1)
+          PY
