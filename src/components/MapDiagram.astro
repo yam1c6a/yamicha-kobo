@@ -1,0 +1,35 @@
+---
+interface Props {
+  variant?: 'before' | 'after' | 'locations';
+}
+
+const { variant = 'locations' } = Astro.props;
+---
+
+<svg class:list={['map-diagram', { before: variant === 'before' }]} viewBox="0 0 192 110" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+  <rect width="192" height="110" fill="var(--map-land, #c9edf0)" />
+  <path d="M12 20 31 13 42 22 33 39 10 37ZM92 13l29-1 14 16-21 13-23-10ZM142 63l20-12 22 14-4 23-24 6Z" fill="var(--map-park, #a2dcd9)" />
+  <path d="M-14 83C20 75 20 62 43 58S77 55 94 71s39 22 64 13 22-27 47-32" fill="none" stroke="var(--map-water, #82d4e4)" stroke-width="12" />
+  <g fill="none" stroke="#fff" stroke-linecap="round" stroke-width="2.5">
+    <path d="m15-4 12 33-8 31 6 50M44-8l7 26 17 19-9 25 10 48M87-5 74 21l18 16 10 31-4 42M135-8l-7 26 12 20-12 22 15 50M167-2l-13 30 10 25 12 18 5 39" />
+    <path d="m-4 19 34 1 25 5 27-5 27 11 30-8 17 5 36-3M-5 46l24 4 29-9 26 7 28-5 33 3 25-5 37 4M-7 76l24-8 36 14 15-8 32 10 36-9 38 8 24-9M-5 95l37-4 34 9 30-2 26 7 23-6 50 2" />
+  </g>
+  {variant === 'before' ? (
+    <path d="M-5 106C20 84 31 75 48 68s21-16 27-30l11-40" fill="none" stroke="#758b9c" stroke-width="5" />
+  ) : (
+    <path d="M-5 106C20 84 31 75 48 68s22-13 42-13 28 8 50 0 31-24 57-26" fill="none" stroke="#0b9eb4" stroke-width="5" />
+  )}
+  {variant === 'locations' && (
+    <g fill="#153d57" stroke="#fff" stroke-width="1.5">
+      <path d="M38 69s-8-10-8-15a8 8 0 1 1 16 0c0 5-8 15-8 15Z" />
+      <path d="M113 43s-8-10-8-15a8 8 0 1 1 16 0c0 5-8 15-8 15Z" />
+      <path d="M146 85s-8-10-8-15a8 8 0 1 1 16 0c0 5-8 15-8 15Z" />
+      <g fill="#fff" stroke="none"><circle cx="38" cy="54" r="2.3" /><circle cx="113" cy="28" r="2.3" /><circle cx="146" cy="70" r="2.3" /></g>
+    </g>
+  )}
+</svg>
+
+<style>
+  .map-diagram { display: block; width: 100%; height: 100%; }
+  .before { --map-land: #dce5eb; --map-park: #c8d6df; --map-water: #bacbd7; }
+</style>

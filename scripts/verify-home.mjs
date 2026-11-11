@@ -33,10 +33,14 @@ for (const id of ['services', 'works', 'skills', 'about', 'consult', 'contact', 
   assert.ok(ids.includes(id), `Missing section or existing chat element: ${id}`);
 }
 assert.equal((html.match(/<h1\b/g) || []).length, 1, 'Homepage must have one main heading');
-assert.ok(html.includes('ビジネスの可能性を'), 'Corporate headline missing');
-assert.ok(html.includes('contact@yamicha.com'), 'Existing contact address missing');
-assert.ok(html.includes('/images/technology-hero.avif'), 'Approved hero artwork missing');
-assert.ok(files.some((file) => file.endsWith(`${path.sep}images${path.sep}technology-hero.avif`)), 'Hero asset was not copied');
+assert.ok(html.includes('業務の手間を減らす。') && html.includes('使える形に。'), 'Homepage headline missing');
+assert.ok(html.includes('href="mailto:contact@yamicha.com?'), 'Existing email link missing');
+assert.ok(html.includes('class="project-diagram diagram-hero"') && html.includes('活用イメージ'), 'Labeled hero diagram missing');
+assert.ok(html.includes('開発に関わった実績'), 'Portfolio heading missing');
+assert.equal((html.match(/説明用イメージ/g) || []).length, 3, 'Expected three labeled case diagrams');
+const featuredLinks = [...html.matchAll(/<a\b[^>]*href="#case-([^"]+)"[^>]*\bdata-case-link\b/g)].map((match) => match[1]);
+assert.deepEqual(featuredLinks, ['public-documents', 'geospatial-versions', 'ec-operations'], 'Featured cards must link to their full existing cases');
+assert.match(html, /<details\b[^>]*id="all-works"/, 'Full portfolio must be accessible through a native disclosure');
 assert.ok(!html.includes('20年以上'), 'Personal career claim must not appear');
 assert.ok(!html.includes('>SKILLS<'), 'Resume-style section label must not appear');
 const cards = [...html.matchAll(/<article\b[^>]*\bclass=["']portfolio-card["'][^>]*>[\s\S]*?<\/article>/g)].map((match) => match[0]);
@@ -68,4 +72,4 @@ assert.ok(publicCaseKnowledge.includes('税務上の最終判断は税理士'), 
 assert.ok(!/Playwright|1名体制|10年以上/.test(publicCaseKnowledge), 'Retired facts must not return in AI context');
 const aiSource = await readFile(new URL('../src/services/ai/studio-knowledge.ts', import.meta.url), 'utf8');
 assert.ok(aiSource.includes("from '../../data/case-studies.js'") && aiSource.includes('${publicCaseKnowledge}'), 'AI must consume the shared public case source');
-console.log(`Homepage verification passed: ${ids.length} unique IDs; 8 expanded cases, shared AI facts, anchors, contact, artwork and chat preserved.`);
+console.log(`Homepage verification passed: ${ids.length} unique IDs; 8 detailed cases, shared AI facts, anchors, contact, labeled diagrams and chat.`);
