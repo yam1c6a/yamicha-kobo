@@ -39,7 +39,7 @@ assert.ok(html.includes('class="project-diagram diagram-hero"') && html.includes
 assert.ok(html.includes('開発に関わった実績'), 'Portfolio heading missing');
 assert.equal((html.match(/説明用イメージ/g) || []).length, 3, 'Expected three labeled case diagrams');
 const featuredLinks = [...html.matchAll(/<a\b[^>]*href="#case-([^"]+)"[^>]*\bdata-case-link\b/g)].map((match) => match[1]);
-assert.deepEqual(featuredLinks, ['public-documents', 'geospatial-versions', 'ec-operations'], 'Featured cards must link to their full existing cases');
+assert.deepEqual(featuredLinks, ['ai-agent-platform', 'geospatial-versions', 'ec-operations'], 'Featured cards must link to their full existing cases');
 assert.match(html, /<details\b[^>]*id="all-works"/, 'Full portfolio must be accessible through a native disclosure');
 assert.ok(!html.includes('20年以上'), 'Personal career claim must not appear');
 assert.ok(!html.includes('>SKILLS<'), 'Resume-style section label must not appear');
