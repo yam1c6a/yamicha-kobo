@@ -33,7 +33,7 @@ for (const id of ['services', 'works', 'skills', 'about', 'consult', 'contact', 
   assert.ok(ids.includes(id), `Missing section or existing chat element: ${id}`);
 }
 assert.equal((html.match(/<h1\b/g) || []).length, 1, 'Homepage must have one main heading');
-assert.match(html, /<h1\b[^>]*>業務を動かす、<br\s*\/?\s*>AIエージェントを<br\s*\/?\s*><span[^>]*>つくる。<\/span><\/h1>/, 'Homepage headline missing');
+assert.match(html, /<h1\b[^>]*>AIエージェントと、<br\s*\/?\s*>システム開発で、<br\s*\/?\s*><span[^>]*>業務の課題を解決。<\/span><\/h1>/, 'Homepage headline missing');
 assert.ok(html.includes('href="mailto:contact@yamicha.com?'), 'Existing email link missing');
 assert.ok(html.includes('class="project-diagram diagram-hero"') && html.includes('活用イメージ'), 'Labeled hero diagram missing');
 assert.ok(html.includes('開発に関わった実績'), 'Portfolio heading missing');
