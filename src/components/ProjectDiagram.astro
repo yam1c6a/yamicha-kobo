@@ -1,0 +1,163 @@
+---
+import MapDiagram from './MapDiagram.astro';
+
+interface Props {
+  variant: 'hero' | 'documents' | 'roads' | 'commerce';
+}
+
+const { variant } = Astro.props;
+const workflow = ['データの取り込み', '処理・整理', '出力・共有'];
+const documents = ['業務マニュアル.pdf', '申請様式.docx', '運用手順書.pdf'];
+const commerce = ['商品情報', '出品管理', '在庫確認', '問い合わせ'];
+---
+
+<figure class:list={['project-diagram', 'diagram-' + variant]}>
+  <div class="diagram-scene" aria-hidden="true">
+    {variant === 'hero' && (
+      <div class="diagram-window workflow-window">
+        <div class="window-bar"><i></i><i></i><i></i></div>
+        <div class="window-content">
+          <b class="window-heading">業務のワークフロー</b>
+          <ul class="workflow-steps">
+            {workflow.map((step, index) => (
+              <li><span>{index < 2 ? '✓' : ''}</span>{step}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    )}
+    {(variant === 'hero' || variant === 'documents') && (
+      <div class="diagram-window document-window">
+        <div class="window-bar"><i></i><i></i><i></i></div>
+        <div class="window-content">
+          <b class="window-heading">文書検索</b>
+          <div class="search-field">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" focusable="false"><circle cx="6.5" cy="6.5" r="4" /><path d="m10 10 4 4" /></svg>
+            <span>キーワードで検索</span>
+          </div>
+          <ul class="document-rows">
+            {documents.map((document) => (
+              <li>
+                <svg viewBox="0 0 16 18" fill="none" stroke="currentColor" stroke-width="1.2" focusable="false"><path d="M3 1h6l4 4v12H3zM9 1v4h4M5 8h6M5 11h6M5 14h4" /></svg>
+                <span>{document}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    )}
+    {variant === 'hero' && (
+      <div class="diagram-window map-window">
+        <div class="window-bar"><i></i><i></i><i></i></div>
+        <div class="window-content">
+          <b class="window-heading">地図データ</b>
+          <div class="map-frame"><MapDiagram /></div>
+        </div>
+      </div>
+    )}
+    {variant === 'roads' && (
+      <div class="comparison">
+        <div><b>変更前</b><MapDiagram variant="before" /></div>
+        <span>→</span>
+        <div><b>変更後</b><MapDiagram variant="after" /></div>
+      </div>
+    )}
+    {variant === 'commerce' && (
+      <div class="commerce-window diagram-window">
+        <div class="window-bar"><i></i><i></i><i></i></div>
+        <div class="commerce-content">
+          <div class="commerce-sidebar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" focusable="false"><path d="M2 3h4l3 12h10l2-8H7" /><circle cx="10" cy="20" r="1" /><circle cx="18" cy="20" r="1" /></svg>
+            <i></i><i></i><i></i>
+          </div>
+          <div class="window-content">
+            <b class="window-heading">EC運営業務</b>
+            <ul class="commerce-rows">
+              {commerce.map((label, index) => <li><span class:list={['checkbox', { checked: index < 2 }]}>{index < 2 ? '✓' : ''}</span>{label}<i></i></li>)}
+            </ul>
+          </div>
+        </div>
+      </div>
+    )}
+  </div>
+  <figcaption>{variant === 'hero' ? '活用イメージ' : '説明用イメージ'}</figcaption>
+</figure>
+
+<style>
+  .project-diagram { position: relative; width: 100%; min-width: 0; margin: 0; container-type: inline-size; }
+  .diagram-scene { position: relative; }
+  .diagram-hero .diagram-scene { aspect-ratio: 1.33; }
+  .diagram-hero .diagram-scene::before {
+    position: absolute;
+    inset: 12% 0 8% 8%;
+    border-radius: 16cqi 13cqi 19cqi 13cqi;
+    background: linear-gradient(130deg, #d4f3fa, #e8f8fb 57%, #c5edf6);
+    content: '';
+  }
+  .diagram-hero .diagram-scene::after {
+    position: absolute;
+    z-index: 0;
+    inset: 23% 16% 20% 18%;
+    border: 1px solid #55bdd5;
+    border-radius: 3cqi;
+    content: '';
+  }
+  .project-diagram figcaption { color: #465d6b; text-align: right; font-size: .71rem; line-height: 1.45; }
+  .diagram-hero figcaption { margin: .35rem .25rem 0 0; }
+  .diagram-window {
+    position: absolute;
+    z-index: 1;
+    overflow: hidden;
+    border: 1px solid #1b4763;
+    border-radius: 1.6cqi;
+    background: #fcfeff;
+    color: #17394e;
+    box-shadow: 0 1.4cqi 3.4cqi #113a5323;
+  }
+  .window-bar { display: flex; align-items: center; gap: 1cqi; padding: 1.1cqi 1.5cqi; background: linear-gradient(110deg, #123c58, #235877); }
+  .window-bar i { width: 1.1cqi; aspect-ratio: 1; border-radius: 50%; background: #d7f5fb; }
+  .window-bar i:first-child { background: #79d3e5; }
+  .window-content { padding: 1.6cqi; }
+  .window-heading { display: block; padding-bottom: 1.05cqi; font-size: 2.7cqi; line-height: 1.35; }
+  .diagram-hero .workflow-window { top: 1%; left: 27%; width: 45%; }
+  .workflow-window .window-content { padding: 1.8cqi 3.4cqi 2.8cqi; }
+  .workflow-steps, .document-rows, .commerce-rows { margin: 0; padding: 0; list-style: none; }
+  .workflow-steps { padding-top: .6cqi; border-top: 1px solid #d8e6ec; }
+  .workflow-steps li { position: relative; display: flex; align-items: center; gap: 1.4cqi; min-height: 5.35cqi; font-size: 2.05cqi; font-weight: 600; }
+  .workflow-steps li + li::before { position: absolute; top: -1.2cqi; left: 1.55cqi; height: 2cqi; border-left: 1px solid #6cb1c5; content: ''; }
+  .workflow-steps span { z-index: 1; display: grid; width: 3.3cqi; height: 3.3cqi; place-items: center; border: 1px solid #118ba3; border-radius: 50%; background: #118ba3; color: #fff; font-size: 2.1cqi; line-height: 1; }
+  .workflow-steps li:last-child span { background: #f2fafc; }
+  .diagram-hero .document-window { z-index: 2; bottom: 5%; left: 1%; width: 55%; }
+  .diagram-hero .map-window { z-index: 2; top: 45%; right: 1%; width: 40%; }
+  .search-field { display: flex; align-items: center; gap: 1cqi; min-height: 5cqi; margin-bottom: 1.1cqi; padding: .3cqi 1.15cqi; border: 1px solid #aac3d1; border-radius: .65cqi; color: #405f74; font-size: 1.95cqi; }
+  .search-field svg { width: 2.5cqi; color: #215771; }
+  .document-rows { display: grid; gap: .7cqi; }
+  .document-rows li { display: flex; align-items: center; gap: .9cqi; min-height: 4.7cqi; padding: .55cqi .9cqi; border-radius: .6cqi; background: #ebf5f9; font-size: 1.85cqi; font-weight: 600; }
+  .document-rows li::after { width: 20%; height: .8cqi; margin-left: auto; border-radius: 9px; background: #abcad9; content: ''; }
+  .document-rows svg { flex: 0 0 2.5cqi; width: 2.5cqi; color: #236887; }
+  .map-frame { overflow: hidden; aspect-ratio: 1.4; border-radius: .7cqi; }
+  .project-diagram:not(.diagram-hero) { overflow: hidden; border-radius: 8px; background: linear-gradient(135deg, #d7edf6, #edf8fb); }
+  .project-diagram:not(.diagram-hero) .diagram-scene { aspect-ratio: 1.9; }
+  .project-diagram:not(.diagram-hero) figcaption { position: absolute; z-index: 2; right: .5rem; bottom: .5rem; padding: .18rem .42rem; border: 1px solid #d2e0e8; border-radius: 4px; background: #f9fdff; font-size: .64rem; }
+  .diagram-documents .document-window, .commerce-window { inset: 9% 11% 11%; }
+  .project-diagram:not(.diagram-hero) .window-bar { padding-block: 1.6cqi; }
+  .project-diagram:not(.diagram-hero) .window-heading { font-size: 3.2cqi; }
+  .diagram-documents .window-content { padding: 2.5cqi 3cqi; }
+  .diagram-documents .search-field { min-height: 5.9cqi; font-size: 2.45cqi; }
+  .diagram-documents .document-rows li { min-height: 5.5cqi; font-size: 2.3cqi; }
+  .diagram-documents .document-rows svg { flex-basis: 3cqi; width: 3cqi; }
+  .comparison { position: absolute; inset: 9% 6% 16%; display: grid; grid-template-columns: 1fr 1fr; gap: 2.5cqi; }
+  .comparison > div { position: relative; overflow: hidden; border: 1px solid #a3c3d4; border-radius: 1.4cqi; }
+  .comparison b { position: absolute; top: 1.5cqi; left: 1.5cqi; padding: .7cqi 1.5cqi; border-radius: .7cqi; background: #fff; color: #17394e; font-size: 2.8cqi; }
+  .comparison span { position: absolute; z-index: 1; top: 50%; left: 50%; display: grid; width: 8cqi; aspect-ratio: 1; place-items: center; transform: translate(-50%, -50%); border: 1px solid #fff; border-radius: 50%; background: #08788d; color: #fff; font-size: 4.2cqi; line-height: 1; }
+  .commerce-content { display: grid; grid-template-columns: 17% 1fr; height: 100%; }
+  .commerce-content .window-content { padding: 2.3cqi 2.5cqi; }
+  .commerce-sidebar { display: grid; grid-auto-rows: max-content; gap: 2.5cqi; padding: 3cqi 2cqi; background: linear-gradient(#1d536f, #337c9f); color: white; }
+  .commerce-sidebar svg { width: 6cqi; }
+  .commerce-sidebar i { height: .9cqi; border-radius: 10px; background: #aad4e4; }
+  .commerce-sidebar i:last-child { width: 65%; }
+  .commerce-rows li { display: flex; align-items: center; gap: 1.5cqi; min-height: 6.4cqi; padding: .35cqi 1cqi; border-bottom: 1px solid #dcebf0; font-size: 2.4cqi; font-weight: 600; }
+  .commerce-rows .checkbox { display: grid; width: 3.5cqi; height: 3.5cqi; place-items: center; border: 1px solid #729fb2; border-radius: .6cqi; font-size: 2.5cqi; line-height: 1; }
+  .commerce-rows .checked { border-color: #0b869e; background: #0b869e; color: #fff; }
+  .commerce-rows i { width: 17%; height: 1cqi; margin-left: auto; border-radius: 10px; background: #b1d0dd; }
+</style>

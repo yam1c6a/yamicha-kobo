@@ -1,35 +1,21 @@
-# Corporate homepage design
+# トップページ
 
-## Intent
+やみちゃ工房のトップページでは、業務システム開発・AI・地図データの活用について、相談内容と関連する実績を紹介します。白を基調に、紺とシアンを使用しています。
 
-Use the approved navy/cyan network, GIS and software-development visual while
-presenting the studio's services and customer value rather than an individual
-resume. The main headline is 「技術で、ビジネスの可能性を広げる。」.
+- ヒーローと代表実績3件の図解は Astro、CSS、SVG で描画しています。図には「活用イメージ」「説明用イメージ」と表示します。
+- 実績の正本は `src/data/case-studies.js` です。「すべての開発実績を見る」から8件の用途・目的、主な機能、設計・実装、システム構成を確認できます。既存の `#case-*` から各案件を直接開けます。
+- 問い合わせ先は `contact@yamicha.com` です。AI相談室は `#consult` にあり、既存の `/api/chat` を使います。
+- トップページのテーマは `.corporate-site` 内に適用します。
 
-- Keep the existing brand assets, eight development examples and contact address.
-- Preserve the existing AI consultation component and `/api/chat`; move the
-  component to `#consult`, with links from the hero, mobile menu and footer.
-- Keep existing section anchors, including `#skills` for technical solutions.
-- Do not add unimplemented blog links, company-size claims or career-year claims.
-- Scope the new palette to `.corporate-site` so product/privacy pages are unchanged.
+## 検証
 
-## Artwork
+```sh
+npm ci
+node --test tests/*.test.mjs
+npm run build
+node scripts/verify-home.mjs
+```
 
-`public/images/technology-hero.avif` is an optimized crop of the user-approved,
-AI-generated homepage concept from 2026-11-06. It is a conceptual illustration,
-not an actual client system screenshot. The header, headline, navigation and CTA
-buttons are real HTML, not baked into the image. The original logo is retained.
+GitHub Actions も同じ順で実行します。生成HTMLのアンカー、ID、図解、実績、メールリンク、AI相談フォームを検証します。実際のモデルへの送信には Cloudflare のバインディングが必要です。
 
-## Checks
-
-`npm ci && npm run build && node scripts/verify-home.mjs`
-
-The GitHub Actions workflow runs the production build and verifies the actual
-rendered homepage: section anchors, unique IDs, all eight examples, contact link,
-hero asset and existing chat form. No AI request or deployment is performed by
-that workflow. The existing Cloudflare deployment remains responsible for main.
-
-For visual checks, inspect desktop and mobile layouts, native details-based
-navigation (including Escape), expandable case-study details and the AI chat.
-Live AI behavior requires the existing Cloudflare bindings and is not exercised
-by the structural verification script.
+表示を確認するときは `npm run preview` で起動します。デスクトップとスマートフォン幅で、ナビゲーション、実績リンクと開閉欄、問い合わせリンク、AI相談室への移動を確認します。
