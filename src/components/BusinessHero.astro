@@ -1,0 +1,77 @@
+---
+import ProjectDiagram from './ProjectDiagram.astro';
+---
+<!-- Keep the original illustration; the three domains remain independent. -->
+<section class="business-hero" aria-labelledby="hero-heading">
+  <div class="shell business-intro">
+    <div class="business-copy">
+      <p class="business-kicker">業務システム・AI・地理空間</p>
+      <h1 id="hero-heading"><span>システム開発で、</span><span>業務の課題を<span class="business-emphasis">解決。</span></span></h1>
+      <div class="business-description">
+        <p>業務システムの新規開発・改修、AIエージェント開発、地理空間システム。課題の整理から開発・運用まで、それぞれの業務に合う仕組みづくりを支援します。</p>
+        <div class="business-actions">
+          <a class="button button-primary" href="#contact">開発について相談する <span aria-hidden="true">→</span></a>
+          <a class="text-link" href="#works">開発実績を見る <span aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </div>
+    <div class="business-illustration">
+      <ProjectDiagram variant="hero" />
+    </div>
+  </div>
+  <nav class="business-navigation" aria-label="開発領域">
+    <ul class="shell business-areas">
+      <li><a href="#system-development"><span class="business-area-title">業務システム開発<span class="business-nav-arrow" aria-hidden="true">→</span></span><span class="business-area-summary">新規開発・改修・データ連携</span></a></li>
+      <li><a href="#ai-solutions"><span class="business-area-title">AIエージェント開発<span class="business-nav-arrow" aria-hidden="true">→</span></span><span class="business-area-summary">業務支援・外部ツール連携</span></a></li>
+      <li><a href="#geospatial"><span class="business-area-title">地理空間システム<span class="business-nav-arrow" aria-hidden="true">→</span></span><span class="business-area-summary">GIS・地図ビューア・道路データ</span></a></li>
+    </ul>
+  </nav>
+</section>
+<style>
+  .business-hero { background: #fff; }
+  .business-intro { display: grid; grid-template-columns: 1.08fr 1fr; align-items: center; gap: clamp(2rem, 4vw, 4rem); padding-block: clamp(2.75rem, 5vw, 4.75rem); }
+  .business-copy, .business-illustration { min-width: 0; }
+  .business-kicker { margin: 0 0 1.5rem; color: #0c6581; font-size: .9rem; font-weight: 700; letter-spacing: .08em; }
+  .business-hero h1 { margin: 0; color: #102a3d; font-size: clamp(2rem, 3.4vw, 3.2rem); font-weight: 700; line-height: 1.5; letter-spacing: -.035em; overflow-wrap: normal; }
+  .business-hero h1 > span { display: block; }
+  .business-emphasis { color: #00738f; }
+  .business-description { margin-top: 1.5rem; }
+  .business-description > p { max-width: 32rem; margin: 0; color: #345064; font-size: 1rem; line-height: 2; }
+  .business-actions { display: flex; align-items: center; flex-wrap: wrap; gap: .5rem 1.35rem; margin-top: 1.6rem; }
+  .business-actions .button { border-radius: 0; }
+  .business-actions .text-link { font-size: .9rem; }
+  .business-navigation { background: #102a3d; color: #fff; }
+  .business-areas { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 0; list-style: none; }
+  .business-areas li { min-width: 0; }
+  .business-areas li + li { border-left: 1px solid #496271; }
+  .business-areas a { display: flex; height: 100%; min-height: 154px; flex-direction: column; justify-content: center; gap: .75rem; padding: 2rem clamp(1.25rem, 2.5vw, 2.5rem); color: #fff; text-decoration: none; }
+  .business-areas a:hover { background: #1b4054; }
+  .business-areas a:hover .business-area-title { text-decoration: underline; text-underline-offset: .25em; }
+  .business-areas a:focus-visible { outline: 3px solid #9be7f6; outline-offset: -6px; }
+  .business-area-title { display: flex; align-items: center; justify-content: space-between; gap: .75rem; font-size: clamp(1.05rem, 1.7vw, 1.5rem); font-weight: 700; line-height: 1.6; }
+  .business-nav-arrow { flex-shrink: 0; color: #78d8ec; font-size: 1.25rem; }
+  .business-area-summary { color: #d1e1e9; font-size: .875rem; line-height: 1.7; }
+  @media (max-width: 860px) {
+    .business-intro { grid-template-columns: minmax(0, 1fr); gap: 2rem; padding-block: 3rem; }
+    .business-hero h1 { font-size: clamp(1.7rem, 6.8vw, 3rem); }
+    .business-kicker { margin-bottom: 1rem; font-size: .8rem; }
+    .business-description > p { max-width: 40rem; }
+    .business-actions { margin-top: 1.25rem; }
+    .business-illustration { width: min(100%, 32rem); margin-inline: auto; }
+    .business-areas a { padding-inline: 1rem; }
+    .business-area-title { font-size: 1rem; }
+    .business-area-summary { font-size: .8rem; }
+  }
+  @media (max-width: 680px) {
+    .business-areas { grid-template-columns: minmax(0, 1fr); }
+    .business-areas li + li { border-left: 0; border-top: 1px solid #496271; }
+    .business-areas a { min-height: 102px; gap: .3rem; padding: 1.2rem .5rem; }
+    .business-area-title { font-size: 1.15rem; }
+    .business-area-summary { font-size: .85rem; }
+  }
+  @media (max-width: 380px) {
+    .business-intro { padding-block: 2.5rem; }
+    .business-actions { align-items: flex-start; flex-direction: column; gap: .15rem; }
+    .business-actions .button { width: 100%; }
+  }
+</style>
