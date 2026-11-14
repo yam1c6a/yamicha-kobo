@@ -43,7 +43,14 @@ assert.equal((domainNavigation.match(/<ul\b/g) || []).length, 1, 'Domains must s
 assert.equal((domainNavigation.match(/<li\b/g) || []).length, 3, 'Expected three peer development domains');
 assert.deepEqual([...domainNavigation.matchAll(/href="#([^"]+)"/g)].map((m) => m[1]), ['system-development', 'ai-solutions', 'geospatial'], 'Each domain must have its own destination');
 for (const label of ['業務システム開発', 'AIエージェント開発', '地理空間システム', 'GIS・地図ビューア・道路データ']) assert.ok(domainNavigation.includes(label), `Missing independent domain label: ${label}`);
-assert.ok(!html.includes('workflow-inputs') && !html.includes('workflow-core') && !html.includes('diagram-hero'), 'The misleading all-services-to-AI hero must not return');
+assert.ok(!html.includes('workflow-inputs') && !html.includes('workflow-core'), 'The misleading all-services-to-AI hero must not return');
+// Restore the original illustration, not the rejected replacement workflow.
+const heroDiagram = html.match(/<figure\b[^>]*class="project-diagram diagram-hero"[^>]*>([\s\S]*?)<\/figure>/)?.[1];
+assert.ok(heroDiagram && heroDiagram.includes('活用イメージ'), 'Original labeled hero illustration missing');
+for (const name of ['workflow-window', 'agent-window', 'map-window']) assert.ok(heroDiagram.includes(name), `Missing original illustration panel: ${name}`);
+const serviceCards = [...html.matchAll(/<article\b[^>]*class="service-card"[^>]*>[\s\S]*?<\/article>/g)].map((m) => m[0]);
+assert.equal(serviceCards.length, 3, 'Expected three independent service cards');
+for (const card of serviceCards) assert.ok(!/<span\b[^>]*>\s*0[123]\s*<\/span>/.test(card), 'Decorative service numbering must not return');
 assert.ok(html.includes('開発に関わった実績'), 'Portfolio heading missing');
 assert.equal((html.match(/説明用イメージ/g) || []).length, 3, 'Expected three labeled case diagrams');
 const featuredLinks = [...html.matchAll(/<a\b[^>]*href="#case-([^"]+)"[^>]*\bdata-case-link\b/g)].map((match) => match[1]);
@@ -80,4 +87,4 @@ assert.ok(publicCaseKnowledge.includes('税務上の最終判断は税理士'), 
 assert.ok(!/Playwright|1名体制|10年以上/.test(publicCaseKnowledge), 'Retired facts must not return in AI context');
 const aiSource = await readFile(new URL('../src/services/ai/studio-knowledge.ts', import.meta.url), 'utf8');
 assert.ok(aiSource.includes("from '../../data/case-studies.js'") && aiSource.includes('${publicCaseKnowledge}'), 'AI must consume the shared public case source');
-console.log(`Homepage verification passed: ${ids.length} unique IDs; 3 independent domains; 8 detailed cases, shared AI facts, anchors, contact, labeled case diagrams and chat.`);
+console.log(`Homepage verification passed: ${ids.length} unique IDs; 3 independent domains; original hero art; no decorative service numbers; 8 detailed cases, shared AI facts, anchors, contact and chat.`);

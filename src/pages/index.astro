@@ -79,9 +79,9 @@ const contactHref = 'mailto:' + contactEmail + '?subject=' + encodeURIComponent(
             <h2 class="section-title" id="services-heading">こんな課題をご相談いただけます</h2>
           </div>
           <div class="service-grid">
-            {services.map((service, index) => (
+            {services.map((service) => (
               <article class="service-card" id={service.id}>
-                <div class="service-topline"><ServiceIcon name={service.icon} /><span aria-hidden="true">0{index + 1}</span></div>
+                <div class="service-topline"><ServiceIcon name={service.icon} /></div>
                 <div>
                   <h3>{service.title}</h3>
                   <p>{service.text}</p>
