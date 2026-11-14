@@ -1,11 +1,12 @@
 ---
+import AccountingDiagram from './AccountingDiagram.astro';
 import ProjectDiagram from './ProjectDiagram.astro';
 import { caseStudies } from '../data/case-studies.js';
 
 const featured = [
   { id: 'ai-agent-platform', variant: 'agent', title: '業務を支援するAIエージェント', text: '取引や関連資料を照合し、勘定科目の候補や判断材料を提示します。税務上の最終判断は税理士が行います。' },
   { id: 'geospatial-versions', variant: 'roads', title: '道路データの比較・管理', text: '変更前後の道路データを比較し、新設・廃止・形状変更を検出して履歴を管理します。' },
-  { id: 'ec-operations', variant: 'commerce', title: 'EC運営の業務自動化', text: '商品リサーチから出品・在庫管理、顧客対応まで、日々のEC運営を一つの画面で管理します。' },
+  { id: 'public-accounting', variant: 'accounting', title: '経理システム', text: '自治体向けの財務会計システム。予算管理・予算執行、支出負担行為・支出命令、会計データの登録・検索・更新に対応します。' },
 ] as const;
 
 ---
@@ -16,7 +17,7 @@ const featured = [
     <div class="featured-grid">
       {featured.map((project) => (
         <article class="featured-card">
-          <ProjectDiagram variant={project.variant} />
+          {project.variant === 'accounting' ? <AccountingDiagram /> : <ProjectDiagram variant={project.variant} />}
           <h3>{project.title}</h3>
           <p>{project.text}</p>
           <a class="text-link" href={`#case-${project.id}`} data-case-link>

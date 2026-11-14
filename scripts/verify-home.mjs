@@ -54,7 +54,17 @@ for (const card of serviceCards) assert.ok(!/<span\b[^>]*>\s*0[123]\s*<\/span>/.
 assert.ok(html.includes('開発に関わった実績'), 'Portfolio heading missing');
 assert.equal((html.match(/説明用イメージ/g) || []).length, 3, 'Expected three labeled case diagrams');
 const featuredLinks = [...html.matchAll(/<a\b[^>]*href="#case-([^"]+)"[^>]*\bdata-case-link\b/g)].map((match) => match[1]);
-assert.deepEqual(featuredLinks, ['ai-agent-platform', 'geospatial-versions', 'ec-operations'], 'Featured cards must link to their full existing cases');
+assert.deepEqual(featuredLinks, ['ai-agent-platform', 'geospatial-versions', 'public-accounting'], 'Featured cards must link to their full existing cases');
+// Promote the verified municipal accounting case without deleting the EC case.
+const featuredCards = [...html.matchAll(/<article\b[^>]*class="featured-card"[^>]*>[\s\S]*?<\/article>/g)].map((m) => m[0]);
+assert.equal(featuredCards.length, 3, 'Expected three featured cases');
+const accountingCard = featuredCards.find((card) => card.includes('href="#case-public-accounting"'));
+assert.ok(accountingCard, 'Accounting must be one of the featured cases');
+assert.match(accountingCard, /<h3\b[^>]*>経理システム<\/h3>/, 'Accounting card heading missing');
+assert.ok(accountingCard.includes('diagram-accounting') && accountingCard.includes('説明用イメージ'), 'Accounting illustration missing');
+for (const label of ['自治体向け', '財務会計', '予算管理', '予算執行', '支出負担行為', '支出命令', '登録・検索・更新']) assert.ok(accountingCard.includes(label), `Missing verified accounting scope: ${label}`);
+for (const card of featuredCards) assert.ok(!/EC運営|商品リサーチ|出品管理|在庫確認|diagram-commerce/.test(card), 'EC material must not remain in the featured cases');
+assert.match(html, /id="case-ec-operations"/, 'Existing EC case must remain in the full portfolio');
 assert.match(html, /<details\b[^>]*id="all-works"/, 'Full portfolio must be accessible through a native disclosure');
 assert.ok(!html.includes('20年以上'), 'Personal career claim must not appear');
 assert.ok(!html.includes('>SKILLS<'), 'Resume-style section label must not appear');
@@ -87,4 +97,4 @@ assert.ok(publicCaseKnowledge.includes('税務上の最終判断は税理士'), 
 assert.ok(!/Playwright|1名体制|10年以上/.test(publicCaseKnowledge), 'Retired facts must not return in AI context');
 const aiSource = await readFile(new URL('../src/services/ai/studio-knowledge.ts', import.meta.url), 'utf8');
 assert.ok(aiSource.includes("from '../../data/case-studies.js'") && aiSource.includes('${publicCaseKnowledge}'), 'AI must consume the shared public case source');
-console.log(`Homepage verification passed: ${ids.length} unique IDs; 3 independent domains; original hero art; no decorative service numbers; 8 detailed cases, shared AI facts, anchors, contact and chat.`);
+console.log(`Homepage verification passed: ${ids.length} unique IDs; 3 independent domains; original hero art; no decorative service numbers; featured accounting case; 8 detailed cases, shared AI facts, anchors, contact and chat.`);
