@@ -1,0 +1,81 @@
+---
+// An explanatory diagram, not a screenshot or a promise of unattended operation.
+const inputs = ['業務データ', '外部ツール', '地図情報'];
+---
+<figure class="project-diagram diagram-hero">
+  <div class="workflow-illustration" aria-hidden="true">
+    <div class="workflow-inputs">
+      {inputs.map((label, index) => (
+        <div class="workflow-input">
+          <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" focusable="false">
+            {index === 0 && <><ellipse cx="16" cy="8" rx="10" ry="4" /><path d="M6 8v16c0 5.3 20 5.3 20 0V8M6 16c0 5.3 20 5.3 20 0" /></>}
+            {index === 1 && <><rect x="4" y="5" width="24" height="22" rx="2" /><path d="M4 11h24M10 17l-3 3 3 3m12-6 3 3-3 3m-4-8-4 10" /></>}
+            {index === 2 && <><path d="m3 8 8-3 10 4 8-3v19l-8 3-10-4-8 3V8Zm8-3v19m10-15v19" /></>}
+          </svg>
+          <span>{label}</span>
+        </div>
+      ))}
+    </div>
+    <div class="workflow-core">
+      <div class="workflow-titlebar">
+        <span class="workflow-dots"><i></i><i></i><i></i></span>
+        <span>業務をつなぐ仕組み</span>
+      </div>
+      <div class="workflow-body">
+        <p class="workflow-heading">AIエージェント</p>
+        <div class="workflow-steps">
+          <div><span class="workflow-number">01</span><span>情報を参照・整理</span></div>
+          <span class="workflow-arrow">→</span>
+          <div><span class="workflow-number">02</span><span>必要な処理を実行</span></div>
+        </div>
+        <div class="workflow-review">
+          <span class="workflow-check">✓</span>
+          <span>人が結果・判断の根拠を確認</span>
+        </div>
+      </div>
+    </div>
+    <div class="workflow-output">
+      <span class="workflow-output-arrow">↓</span>
+      <p>確認した結果を、<strong>日々の業務へ。</strong></p>
+    </div>
+  </div>
+  <figcaption><span class="sr-only">業務データ・外部ツール・地図情報を参照し、AIエージェントが処理を実行。人が結果や判断の根拠を確認して業務につなぐ、</span>活用イメージ</figcaption>
+</figure>
+<style>
+  .diagram-hero { width: 100%; min-width: 0; margin: 0; }
+  .workflow-illustration { width: 100%; padding: .5rem 0 0; }
+  .workflow-inputs { position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .8rem; padding-bottom: 1.6rem; }
+  .workflow-inputs::after { position: absolute; bottom: .8rem; left: 16.66%; right: 16.66%; height: .8rem; border: 1px solid #8bb7c8; border-top: 0; content: ''; }
+  .workflow-input { display: flex; min-width: 0; min-height: 92px; flex-direction: column; justify-content: center; align-items: center; gap: .55rem; padding: 1rem .4rem; border: 1px solid #c9dfe8; border-radius: 5px; background: #ffffffd9; color: #205675; font-size: .87rem; font-weight: 700; }
+  .workflow-input svg { width: 30px; height: 30px; }
+  .workflow-core { position: relative; width: 94%; margin-inline: auto; border: 1px solid #a9c6d3; border-radius: 7px; background: #fff; box-shadow: 0 18px 36px #102a3d0d; }
+  .workflow-core::before { position: absolute; bottom: 100%; left: 50%; height: 1.6rem; border-left: 1px solid #8bb7c8; content: ''; }
+  .workflow-titlebar { display: flex; align-items: center; gap: .8rem; padding: .65rem 1rem; border-radius: 6px 6px 0 0; background: #102a3d; color: #fff; font-size: .75rem; letter-spacing: .04em; }
+  .workflow-dots { display: flex; gap: 4px; }
+  .workflow-dots i { width: 4px; height: 4px; border-radius: 50%; background: #93cadb; }
+  .workflow-body { padding: clamp(1rem, 2vw, 1.75rem); }
+  .workflow-heading { margin: 0 0 1.2rem; font-size: clamp(1.1rem, 1.8vw, 1.4rem); font-weight: 700; }
+  .workflow-steps { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: .6rem; }
+  .workflow-steps > div { display: flex; min-width: 0; flex-direction: column; gap: .5rem; font-size: clamp(.8rem, 1.2vw, .95rem); font-weight: 600; }
+  .workflow-number { color: #0c6581; font-family: 'Manrope', sans-serif; font-size: .75rem; letter-spacing: .08em; }
+  .workflow-arrow { padding-inline: .2rem; color: #0c6581; }
+  .workflow-review { display: flex; align-items: center; gap: .7rem; margin-top: 1.4rem; padding: .85rem .9rem; border: 1px solid #c0e0e9; border-radius: 4px; background: #edf8fb; color: #17455a; font-size: clamp(.8rem, 1.25vw, .95rem); font-weight: 600; }
+  .workflow-check { display: grid; width: 22px; height: 22px; flex-shrink: 0; place-items: center; border-radius: 50%; background: #0c6581; color: #fff; font-size: .8rem; }
+  .workflow-output { display: flex; align-items: center; justify-content: center; gap: 1rem; padding-top: 1.4rem; }
+  .workflow-output-arrow { display: grid; width: 34px; height: 34px; flex-shrink: 0; place-items: center; border: 1px solid #b8d8e4; border-radius: 50%; color: #205675; font-size: 1.1rem; }
+  .workflow-output p { margin: 0; color: #345064; font-size: .9rem; }
+  .workflow-output strong { display: block; margin-top: .1rem; color: #102a3d; font-size: 1.2rem; font-weight: 700; }
+  figcaption { margin-top: 1rem; color: #4f6677; text-align: right; font-size: .75rem; }
+  @media (max-width: 480px) {
+    .workflow-inputs { gap: .45rem; }
+    .workflow-input { min-height: 80px; padding: .8rem .25rem; font-size: .75rem; }
+    .workflow-input svg { width: 25px; height: 25px; }
+    .workflow-core { width: 100%; }
+    .workflow-body { padding: 1rem .8rem; }
+    .workflow-steps { gap: .25rem; }
+    .workflow-steps > div { font-size: .75rem; }
+    .workflow-review { padding: .7rem .6rem; font-size: .75rem; gap: .5rem; }
+    .workflow-output p { font-size: .8rem; }
+    .workflow-output strong { font-size: 1.05rem; }
+  }
+</style>
