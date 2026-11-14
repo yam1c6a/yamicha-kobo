@@ -29,13 +29,21 @@ for (const match of html.matchAll(/\bhref=["']#([^"']*)["']/g)) {
 for (const match of html.matchAll(/\baria-labelledby=["']([^"']+)["']/g)) {
   for (const id of match[1].split(/\s+/)) assert.ok(ids.includes(id), `Broken accessible label: ${id}`);
 }
-for (const id of ['services', 'works', 'skills', 'about', 'consult', 'contact', 'chat-form', 'chat-input']) {
+for (const id of ['services', 'system-development', 'ai-solutions', 'geospatial', 'works', 'skills', 'about', 'consult', 'contact', 'chat-form', 'chat-input']) {
   assert.ok(ids.includes(id), `Missing section or existing chat element: ${id}`);
 }
 assert.equal((html.match(/<h1\b/g) || []).length, 1, 'Homepage must have one main heading');
-assert.match(html, /<h1\b[^>]*>AIエージェントと、<br\s*\/?\s*>システム開発で、<br\s*\/?\s*><span[^>]*>業務の課題を解決。<\/span><\/h1>/, 'Homepage headline missing');
+const headline = html.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/)?.[1].replace(/<[^>]*>/g, '').replace(/\s+/g, '');
+assert.equal(headline, 'システム開発で、業務の課題を解決。', 'Homepage headline must describe the overall development business');
 assert.ok(html.includes('href="mailto:contact@yamicha.com?'), 'Existing email link missing');
-assert.ok(html.includes('class="project-diagram diagram-hero"') && html.includes('活用イメージ'), 'Labeled hero diagram missing');
+// These are three peer services, not data sources flowing into an AI agent.
+const domainNavigation = html.match(/<nav\b[^>]*class="business-navigation"[^>]*>([\s\S]*?)<\/nav>/)?.[1];
+assert.ok(domainNavigation, 'Independent development-domain navigation missing');
+assert.equal((domainNavigation.match(/<ul\b/g) || []).length, 1, 'Domains must share one flat list');
+assert.equal((domainNavigation.match(/<li\b/g) || []).length, 3, 'Expected three peer development domains');
+assert.deepEqual([...domainNavigation.matchAll(/href="#([^"]+)"/g)].map((m) => m[1]), ['system-development', 'ai-solutions', 'geospatial'], 'Each domain must have its own destination');
+for (const label of ['業務システム開発', 'AIエージェント開発', '地理空間システム', 'GIS・地図ビューア・道路データ']) assert.ok(domainNavigation.includes(label), `Missing independent domain label: ${label}`);
+assert.ok(!html.includes('workflow-inputs') && !html.includes('workflow-core') && !html.includes('diagram-hero'), 'The misleading all-services-to-AI hero must not return');
 assert.ok(html.includes('開発に関わった実績'), 'Portfolio heading missing');
 assert.equal((html.match(/説明用イメージ/g) || []).length, 3, 'Expected three labeled case diagrams');
 const featuredLinks = [...html.matchAll(/<a\b[^>]*href="#case-([^"]+)"[^>]*\bdata-case-link\b/g)].map((match) => match[1]);
@@ -72,4 +80,4 @@ assert.ok(publicCaseKnowledge.includes('税務上の最終判断は税理士'), 
 assert.ok(!/Playwright|1名体制|10年以上/.test(publicCaseKnowledge), 'Retired facts must not return in AI context');
 const aiSource = await readFile(new URL('../src/services/ai/studio-knowledge.ts', import.meta.url), 'utf8');
 assert.ok(aiSource.includes("from '../../data/case-studies.js'") && aiSource.includes('${publicCaseKnowledge}'), 'AI must consume the shared public case source');
-console.log(`Homepage verification passed: ${ids.length} unique IDs; 8 detailed cases, shared AI facts, anchors, contact, labeled diagrams and chat.`);
+console.log(`Homepage verification passed: ${ids.length} unique IDs; 3 independent domains; 8 detailed cases, shared AI facts, anchors, contact, labeled case diagrams and chat.`);

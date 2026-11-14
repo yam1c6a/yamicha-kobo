@@ -1,7 +1,7 @@
 ---
 import BrandMark from '../components/BrandMark.astro';
 import ChatConsultation from '../components/ChatConsultation.astro';
-import HeroWorkflow from '../components/HeroWorkflow.astro';
+import BusinessHero from '../components/BusinessHero.astro';
 import Portfolio from '../components/Portfolio.astro';
 import ServiceIcon from '../components/ServiceIcon.astro';
 import Layout from '../layouts/Layout.astro';
@@ -45,8 +45,8 @@ const contactHref = 'mailto:' + contactEmail + '?subject=' + encodeURIComponent(
 ---
 
 <Layout
-  title="やみちゃ工房｜AIエージェント開発・業務システム・地図データ活用"
-  description="AIエージェント開発を強みに、業務システムの新規開発・改修、データ連携、地図データの活用まで。課題の整理から開発・運用まで、業務に合う仕組みづくりを支援します。"
+  title="やみちゃ工房｜業務システム開発・AIエージェント・地理空間"
+  description="業務システムの新規開発・改修、AIエージェント開発、地理空間システム。課題の整理から開発・運用まで、それぞれの業務に合う仕組みづくりを支援します。"
   themeColor="#ffffff"
 >
   <div class="corporate-site" id="top">
@@ -70,27 +70,7 @@ const contactHref = 'mailto:' + contactEmail + '?subject=' + encodeURIComponent(
     </header>
 
     <main id="main-content" tabindex="-1">
-      <section class="hero" aria-labelledby="hero-heading">
-        <div class="shell hero-grid">
-          <div class="hero-copy">
-            <p class="hero-kicker">AIエージェント開発 / 業務システム / 地理空間</p>
-            <h1 id="hero-heading">AIエージェントと、<br />システム開発で、<br /><span>業務の課題を解決。</span></h1>
-            <p class="hero-lead">AIエージェント開発を強みに、業務システムの新規開発・改修、データ連携、地図データの活用まで。課題の整理から開発・運用まで、業務に合う仕組みづくりを支援します。</p>
-            <div class="hero-actions">
-              <a class="button button-primary" href="#contact">業務の困りごとを相談する <span aria-hidden="true">→</span></a>
-              <a class="text-link" href="#works">開発実績を見る <span aria-hidden="true">→</span></a>
-            </div>
-            <div class="hero-assist">
-              <span>まずは、考えを整理したい方へ</span>
-              <a class="text-link" href="#consult" data-focus-chat>AI相談室を試す <span aria-hidden="true">↗</span></a>
-            </div>
-          </div>
-          <div class="hero-visual">
-            <p class="hero-visual-label">業務に合わせて、仕組みをつなぐ。</p>
-            <HeroWorkflow />
-          </div>
-        </div>
-      </section>
+      <BusinessHero />
 
       <section class="section services" id="services" aria-labelledby="services-heading">
         <div class="shell">
