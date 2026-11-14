@@ -24,3 +24,10 @@ jobs:
       - run: node --test tests/*.test.mjs
       - run: npm run build
       - run: node scripts/verify-home.mjs
+      - name: Export design preview
+        if: github.ref == 'refs/heads/design/corporate-refresh-20261114'
+        uses: actions/upload-artifact@v4
+        with:
+          name: corporate-design-preview
+          path: dist/
+          retention-days: 1
