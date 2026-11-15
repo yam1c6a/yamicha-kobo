@@ -10,7 +10,7 @@ import '../styles/home.css';
 const services = [
   { id: 'system-development', icon: 'system', title: '手作業を減らしたい', text: '繰り返す入力や集計、ファイル処理を自動化。今あるシステムの改修や、ツール同士の連携にも対応します。' },
   { id: 'ai-solutions', icon: 'ai', title: 'AIエージェントをつくりたい', text: '業務データや外部ツールと連携し、情報の照合や必要な処理を進めるAIエージェントを開発します。人が結果を確認する手順も設計します。' },
-  { id: 'geospatial', icon: 'gis', title: '地図データを活用したい', text: '位置情報と業務データを地図で確認。地図ビューアや、道路データの差分比較・履歴管理を支援します。' },
+  { id: 'cloud-aws', icon: 'cloud', title: 'AWSでシステムを構築したい', text: 'AWS EC2上のWindows Server・IIS環境の構築や、既存システムとの接続・動作検証を支援します。' },
 ] as const;
 
 const navigation = [
@@ -45,8 +45,8 @@ const contactHref = 'mailto:' + contactEmail + '?subject=' + encodeURIComponent(
 ---
 
 <Layout
-  title="やみちゃ工房｜業務システム開発・AIエージェント・地理空間"
-  description="業務システムの新規開発・改修、AIエージェント開発、地理空間システム。課題の整理から開発・運用まで、それぞれの業務に合う仕組みづくりを支援します。"
+  title="やみちゃ工房｜業務システム開発・AIエージェント・AWS構築"
+  description="業務システムの新規開発・改修、AIエージェント開発、AWSを活用したシステム構築。課題の整理から開発・運用まで、それぞれの業務に合う仕組みづくりを支援します。"
   themeColor="#ffffff"
 >
   <div class="corporate-site" id="top">
