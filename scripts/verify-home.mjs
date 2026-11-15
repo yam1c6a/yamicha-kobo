@@ -62,7 +62,7 @@ const featuredCards = [...html.matchAll(/<article\b[^>]*class="featured-card"[^>
 assert.equal(featuredCards.length, 3, 'Expected three featured cases');
 const maintenanceCard = featuredCards.find((card) => card.includes('href="#case-geospatial-versions"'));
 assert.ok(maintenanceCard, 'Maintenance case must be featured');
-assert.match(maintenanceCard, /<h3\\b[^>]*>既存システムの改修・保守<\\/h3>/, 'Maintenance heading missing');
+assert.ok(maintenanceCard.includes('>既存システムの改修・保守</h3>'), 'Maintenance heading missing');
 assert.ok(maintenanceCard.includes('diagram-maintenance') && maintenanceCard.includes('説明用イメージ'), 'Maintenance illustration missing');
 assert.ok(maintenanceCard.includes('C++') && maintenanceCard.includes('不具合'), 'Maintenance scope must be grounded in the existing case');
 assert.ok(!featuredCards.some((card) => card.includes('経理システム')), 'Accounting must not remain featured');
