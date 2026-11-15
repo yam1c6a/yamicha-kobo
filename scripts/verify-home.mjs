@@ -42,13 +42,13 @@ assert.ok(domainNavigation, 'Independent development-domain navigation missing')
 assert.equal((domainNavigation.match(/<ul\b/g) || []).length, 1, 'Domains must share one flat list');
 assert.equal((domainNavigation.match(/<li\b/g) || []).length, 3, 'Expected three peer development domains');
 assert.deepEqual([...domainNavigation.matchAll(/href="#([^"]+)"/g)].map((m) => m[1]), ['system-development', 'ai-solutions', 'cloud-aws'], 'Each domain must have its own destination');
-for (const label of ['業務システム開発', 'AIエージェント開発', 'クラウド・AWS構築', 'AWS EC2・Windows Server・IIS']) assert.ok(domainNavigation.includes(label), `Missing independent domain label: ${label}`);
+for (const label of ['業務システム開発', 'AIエージェント開発', 'クラウド・AWS構築', 'AWS・サーバー環境構築']) assert.ok(domainNavigation.includes(label), `Missing independent domain label: ${label}`);
 assert.ok(!html.includes('workflow-inputs') && !html.includes('workflow-core'), 'The misleading all-services-to-AI hero must not return');
 // Restore the original illustration, not the rejected replacement workflow.
 const heroDiagram = html.match(/<figure\b[^>]*class="project-diagram diagram-hero"[^>]*>([\s\S]*?)<\/figure>/)?.[1];
 assert.ok(heroDiagram && heroDiagram.includes('活用イメージ'), 'Original labeled hero illustration missing');
 for (const name of ['workflow-window', 'agent-window', 'cloud-window']) assert.ok(heroDiagram.includes(name), `Missing hero illustration panel: ${name}`);
-assert.ok(heroDiagram.includes('AWS・クラウド') && heroDiagram.includes('EC2 / Windows Server'), 'AWS illustration missing');
+assert.ok(heroDiagram.includes('AWS・クラウド') && heroDiagram.includes('AWS / クラウド基盤'), 'AWS illustration missing');
 assert.ok(!heroDiagram.includes('地図データ'), 'Hero should no longer show a map panel');
 const serviceCards = [...html.matchAll(/<article\b[^>]*class="service-card"[^>]*>[\s\S]*?<\/article>/g)].map((m) => m[0]);
 assert.equal(serviceCards.length, 3, 'Expected three independent service cards');
