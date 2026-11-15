@@ -42,11 +42,19 @@ const commerce = ['商品情報', '出品管理', '在庫確認', '問い合わ�
       </div>
     )}
     {variant === 'hero' && (
-      <div class="diagram-window map-window">
+      <div class="diagram-window map-window cloud-window">
         <div class="window-bar"><i></i><i></i><i></i></div>
         <div class="window-content">
-          <b class="window-heading">地図データ</b>
-          <div class="map-frame"><MapDiagram /></div>
+          <b class="window-heading">AWS・クラウド</b>
+          <div class="cloud-frame">
+            <svg viewBox="0 0 120 65" fill="none" aria-hidden="true" focusable="false">
+              <path d="M34 42c-10 0-16-7-16-15 0-8 6-14 14-15 5-10 20-12 28-2 9-4 21 3 21 13 9 1 15 7 15 15 0 8-7 14-16 14H34" fill="#dff2f8" stroke="#267a9c" stroke-width="2.5" stroke-linejoin="round"/>
+              <rect x="40" y="23" width="38" height="28" rx="3" fill="#fff" stroke="#205675" stroke-width="2"/>
+              <path d="M40 31h38M46 37h13M46 43h13" stroke="#267a9c" stroke-width="2"/>
+              <circle cx="70" cy="38" r="2" fill="#26a6be"/><circle cx="70" cy="44" r="2" fill="#26a6be"/>
+            </svg>
+            <span>EC2 / Windows Server</span>
+          </div>
         </div>
       </div>
     )}
@@ -131,6 +139,9 @@ const commerce = ['商品情報', '出品管理', '在庫確認', '問い合わ�
   .agent-steps li span { display: grid; flex: 0 0 max(10px, 3.15cqi); aspect-ratio: 1; place-items: center; border-radius: 50%; background: #205675; color: #fff; font-size: max(7px, 1.7cqi); }
   .agent-steps li:last-child span { background: #08788d; }
   .map-frame { overflow: hidden; aspect-ratio: 1.4; border-radius: .7cqi; }
+  .cloud-frame { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .3cqi; aspect-ratio: 1.4; background: #eaf6fa; border-radius: .7cqi; }
+  .cloud-frame svg { display: block; width: 88%; max-height: 70%; }
+  .cloud-frame span { color: #205675; font-size: max(7px, 1.7cqi); font-weight: 700; }
   .project-diagram:not(.diagram-hero) { overflow: hidden; border-radius: 8px; background: linear-gradient(135deg, #d7edf6, #edf8fb); }
   .project-diagram:not(.diagram-hero) .diagram-scene { min-height: 8.75rem; aspect-ratio: 1.9; }
   .project-diagram:not(.diagram-hero) figcaption { position: absolute; z-index: 2; right: .5rem; bottom: .5rem; padding: .18rem .42rem; border: 1px solid #d2e0e8; border-radius: 4px; background: #f9fdff; font-size: .64rem; }
