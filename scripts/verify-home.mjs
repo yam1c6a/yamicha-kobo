@@ -48,7 +48,7 @@ assert.ok(!html.includes('workflow-inputs') && !html.includes('workflow-core'), 
 const heroDiagram = html.match(/<figure\b[^>]*class="project-diagram diagram-hero"[^>]*>([\s\S]*?)<\/figure>/)?.[1];
 assert.ok(heroDiagram && heroDiagram.includes('活用イメージ'), 'Original labeled hero illustration missing');
 for (const name of ['workflow-window', 'agent-window', 'cloud-window']) assert.ok(heroDiagram.includes(name), `Missing hero illustration panel: ${name}`);
-assert.ok(heroDiagram.includes('AWS・クラウド') && heroDiagram.includes('EC2 / Windows Server'), 'AWS illustration missing');
+assert.ok(heroDiagram.includes('AWS・クラウド') && heroDiagram.includes('AWS / クラウド基盤'), 'AWS illustration missing');
 assert.ok(!heroDiagram.includes('地図データ'), 'Hero should no longer show a map panel');
 const serviceCards = [...html.matchAll(/<article\b[^>]*class="service-card"[^>]*>[\s\S]*?<\/article>/g)].map((m) => m[0]);
 assert.equal(serviceCards.length, 3, 'Expected three independent service cards');
