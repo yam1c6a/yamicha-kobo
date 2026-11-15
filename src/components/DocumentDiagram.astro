@@ -1,0 +1,31 @@
+---
+const labels = ['文書管理', '自動分類', '自然文検索', '回答生成'];
+---
+<figure class="document-diagram">
+  <div class="document-scene" aria-hidden="true">
+    <div class="document-window">
+      <div class="document-bar"><i></i><i></i><i></i></div>
+      <div class="document-content">
+        <strong>公開文書の管理・検索</strong>
+        <div class="document-search"><span>文書を検索</span><span>⌕</span></div>
+        <ul>{labels.map(label => <li>{label}</li>)}</ul>
+      </div>
+    </div>
+  </div>
+  <figcaption>説明用イメージ</figcaption>
+</figure>
+<style>
+.document-diagram{position:relative;width:100%;min-width:0;margin:0;overflow:hidden;border-radius:8px;background:linear-gradient(135deg,#d7edf6,#edf8fb);container-type:inline-size}
+.document-scene{position:relative;min-height:8.75rem;aspect-ratio:1.9}
+.document-window{position:absolute;inset:9% 11% 11%;overflow:hidden;border:1px solid #1b4763;border-radius:1.6cqi;background:#fcfeff;color:#17394e;box-shadow:0 1.4cqi 3.4cqi #113a5323}
+.document-bar{display:flex;gap:1cqi;padding:1.6cqi 1.5cqi;background:linear-gradient(110deg,#123c58,#235877)}
+.document-bar i{width:1.1cqi;aspect-ratio:1;border-radius:50%;background:#d7f5fb}
+.document-bar i:first-child{background:#79d3e5}
+.document-content{padding:2.2cqi 3cqi}
+.document-content strong{display:block;font-size:max(10px,3.2cqi)}
+.document-search{display:flex;justify-content:space-between;align-items:center;margin:1.5cqi 0;padding:.7cqi 1.6cqi;border:1px solid #bcd9e5;border-radius:1cqi;color:#527185;font-size:max(8px,2.6cqi)}
+.document-search span:last-child{font-size:4cqi}
+.document-content ul{display:grid;grid-template-columns:1fr 1fr;gap:1cqi;margin:0;padding:0;list-style:none}
+.document-content li{padding:.7cqi 1cqi;background:#e9f4f8;border-left:2px solid #3b9ab7;font-size:max(8px,2.4cqi);font-weight:600}
+figcaption{position:absolute;right:.5rem;bottom:.5rem;padding:.18rem .42rem;border:1px solid #d2e0e8;border-radius:4px;background:#f9fdff;color:#465d6b;font-size:.64rem;line-height:1.45}
+</style>

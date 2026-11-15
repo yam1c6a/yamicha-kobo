@@ -54,7 +54,7 @@ for (const card of serviceCards) assert.ok(!/<span\b[^>]*>\s*0[123]\s*<\/span>/.
 assert.ok(html.includes('開発に関わった実績'), 'Portfolio heading missing');
 assert.equal((html.match(/説明用イメージ/g) || []).length, 3, 'Expected three labeled case diagrams');
 const featuredLinks = [...html.matchAll(/<a\b[^>]*href="#case-([^"]+)"[^>]*\bdata-case-link\b/g)].map((match) => match[1]);
-assert.deepEqual(featuredLinks, ['ai-agent-platform', 'public-accounting', 'geospatial-versions'], 'Featured cards must link to their full existing cases');
+assert.deepEqual(featuredLinks, ['ai-agent-platform', 'public-accounting', 'public-documents'], 'Featured cards must link to their full existing cases');
 // Promote the verified municipal accounting case without deleting the EC case.
 const featuredCards = [...html.matchAll(/<article\b[^>]*class="featured-card"[^>]*>[\s\S]*?<\/article>/g)].map((m) => m[0]);
 assert.equal(featuredCards.length, 3, 'Expected three featured cases');
