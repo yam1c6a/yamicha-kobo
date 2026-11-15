@@ -92,7 +92,7 @@ const featured = [
     if (target) requestAnimationFrame(() => target.scrollIntoView());
   }
 
-  document.querySelectorAll<HTMLAnchorElement>('[data-case-link]').forEach((link) => {
+  document.querySelectorAll<HTMLAnchorElement>('[data-case-link], .maintenance-detail a[href^="#case-"]').forEach((link) => {
     link.addEventListener('click', (event) => {
       if (event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) {
         const target = revealTarget(link.hash);
