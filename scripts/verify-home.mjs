@@ -29,7 +29,7 @@ for (const match of html.matchAll(/\bhref=["']#([^"']*)["']/g)) {
 for (const match of html.matchAll(/\baria-labelledby=["']([^"']+)["']/g)) {
   for (const id of match[1].split(/\s+/)) assert.ok(ids.includes(id), `Broken accessible label: ${id}`);
 }
-for (const id of ['services', 'system-development', 'ai-solutions', 'geospatial', 'works', 'skills', 'about', 'consult', 'contact', 'chat-form', 'chat-input']) {
+for (const id of ['services', 'system-development', 'ai-solutions', 'cloud-aws', 'works', 'skills', 'about', 'consult', 'contact', 'chat-form', 'chat-input']) {
   assert.ok(ids.includes(id), `Missing section or existing chat element: ${id}`);
 }
 assert.equal((html.match(/<h1\b/g) || []).length, 1, 'Homepage must have one main heading');
@@ -41,8 +41,8 @@ const domainNavigation = html.match(/<nav\b[^>]*class="business-navigation"[^>]*
 assert.ok(domainNavigation, 'Independent development-domain navigation missing');
 assert.equal((domainNavigation.match(/<ul\b/g) || []).length, 1, 'Domains must share one flat list');
 assert.equal((domainNavigation.match(/<li\b/g) || []).length, 3, 'Expected three peer development domains');
-assert.deepEqual([...domainNavigation.matchAll(/href="#([^"]+)"/g)].map((m) => m[1]), ['system-development', 'ai-solutions', 'geospatial'], 'Each domain must have its own destination');
-for (const label of ['業務システム開発', 'AIエージェント開発', '地理空間システム', 'GIS・地図ビューア・道路データ']) assert.ok(domainNavigation.includes(label), `Missing independent domain label: ${label}`);
+assert.deepEqual([...domainNavigation.matchAll(/href="#([^"]+)"/g)].map((m) => m[1]), ['system-development', 'ai-solutions', 'cloud-aws'], 'Each domain must have its own destination');
+for (const label of ['業務システム開発', 'AIエージェント開発', 'クラウド・AWS構築', 'AWS EC2・Windows Server・IIS']) assert.ok(domainNavigation.includes(label), `Missing independent domain label: ${label}`);
 assert.ok(!html.includes('workflow-inputs') && !html.includes('workflow-core'), 'The misleading all-services-to-AI hero must not return');
 // Restore the original illustration, not the rejected replacement workflow.
 const heroDiagram = html.match(/<figure\b[^>]*class="project-diagram diagram-hero"[^>]*>([\s\S]*?)<\/figure>/)?.[1];
