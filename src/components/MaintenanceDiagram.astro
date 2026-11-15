@@ -1,0 +1,33 @@
+---
+const lines = [
+  { label: '既存コードの調査', mark: 'C++' },
+  { label: '機能改善・拡張', mark: '改修' },
+  { label: '不具合の調査・修正', mark: '保守' },
+];
+---
+<figure class="diagram-maintenance">
+  <div class="maintenance-scene" aria-hidden="true">
+    <div class="maintenance-window">
+      <div class="maintenance-bar"><i></i><i></i><i></i></div>
+      <div class="maintenance-body">
+        <div class="maintenance-heading">既存システムの改修・保守</div>
+        {lines.map((item) => <div class="maintenance-line"><span>{item.label}</span><b>{item.mark}</b></div>)}
+      </div>
+    </div>
+  </div>
+  <figcaption>説明用イメージ</figcaption>
+</figure>
+<style>
+.diagram-maintenance{position:relative;width:100%;min-width:0;margin:0;overflow:hidden;border-radius:8px;background:linear-gradient(135deg,#d7edf6,#edf8fb);container-type:inline-size}
+.maintenance-scene{position:relative;min-height:8.75rem;aspect-ratio:1.9}
+.maintenance-window{position:absolute;inset:9% 11% 11%;overflow:hidden;border:1px solid #1b4763;border-radius:1.6cqi;background:#fcfeff;color:#17394e;box-shadow:0 1.4cqi 3.4cqi #113a5323}
+.maintenance-bar{display:flex;gap:1cqi;padding:1.6cqi 1.5cqi;background:linear-gradient(110deg,#123c58,#235877)}
+.maintenance-bar i{width:1.1cqi;aspect-ratio:1;border-radius:50%;background:#d7f5fb}
+.maintenance-bar i:first-child{background:#79d3e5}
+.maintenance-body{padding:2.3cqi 3cqi}
+.maintenance-heading{margin-bottom:1.2cqi;font-size:max(10px,3.2cqi);font-weight:700}
+.maintenance-line{display:flex;justify-content:space-between;align-items:center;gap:1cqi;padding:1cqi 1.3cqi;border-bottom:1px solid #d9e8ef;font-size:max(8px,2.65cqi);font-weight:600}
+.maintenance-line:nth-child(even){background:#edf7fa}
+.maintenance-line b{padding:.3cqi 1cqi;border-radius:.6cqi;background:#d4ebf3;color:#175c79;font-size:max(8px,2.1cqi)}
+figcaption{position:absolute;right:.5rem;bottom:.5rem;padding:.18rem .42rem;border:1px solid #d2e0e8;border-radius:4px;background:#f9fdff;color:#465d6b;font-size:.64rem;line-height:1.45}
+</style>
