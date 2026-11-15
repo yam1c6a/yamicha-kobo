@@ -6,7 +6,7 @@ import { caseStudies } from '../data/case-studies.js';
 
 const featured = [
   { id: 'ai-agent-platform', variant: 'agent', title: '業務を支援するAIエージェント', text: '取引や関連資料を照合し、勘定科目の候補や判断材料を提示します。税務上の最終判断は税理士が行います。' },
-  { id: 'geospatial-versions', variant: 'maintenance', title: '既存システムの改修・保守', text: 'C++で構築された既存システムの機能改善や不具合の調査・修正に対応。運用上の要望を踏まえ、継続的な保守・拡張を支援します。' },
+  { id: 'legacy-maintenance', variant: 'maintenance', title: '既存システムの改修・保守', text: 'レガシーシステムや古い開発環境にも対応。既存コードの解析、不具合修正、機能追加から、新しい環境への移行まで、システムの継続利用と改善を支援します。' },
   { id: 'public-documents', variant: 'documents', title: 'AI文書管理システム', text: '自治体向けの公開文書を管理・自動分類し、自然文検索とRAGによる回答生成につなげます。' },
 ] as const;
 
@@ -27,6 +27,16 @@ const featured = [
         </article>
       ))}
     </div>
+    <section class="maintenance-detail" id="case-legacy-maintenance" aria-labelledby="maintenance-detail-heading">
+      <h3 id="maintenance-detail-heading">既存システムの改修・保守について</h3>
+      <p>古い開発環境やレガシーコードを含む既存システムを調査し、現行の業務を止めずに改善を進めるための開発支援です。</p>
+      <ul>
+        <li>既存コードや仕様、依存関係の調査・解析</li>
+        <li>不具合の調査・修正、機能追加・改善</li>
+        <li>既存資産を活かした継続保守と、新しい開発環境への移行支援</li>
+      </ul>
+      <p>実績例：<a href="#case-geospatial-versions">地理空間データの世代管理システムでの継続的な機能改善・保守</a>。対応範囲は対象システムの構成・状態を確認して判断します。</p>
+    </section>
     <details class="all-works disclosure" id="all-works">
       <summary>すべての開発実績を見る（{caseStudies.length}件）</summary>
       <p>守秘義務に配慮し、発注元・サービス固有名・実画面・非公開の詳細仕様は掲載していません。</p>
@@ -82,7 +92,7 @@ const featured = [
     if (target) requestAnimationFrame(() => target.scrollIntoView());
   }
 
-  document.querySelectorAll<HTMLAnchorElement>('[data-case-link]').forEach((link) => {
+  document.querySelectorAll<HTMLAnchorElement>('[data-case-link], .maintenance-detail a[href^="#case-"]').forEach((link) => {
     link.addEventListener('click', (event) => {
       if (event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) {
         const target = revealTarget(link.hash);
@@ -111,6 +121,10 @@ const featured = [
   .featured-card h3 { margin: .8rem 0 .35rem; font-size: clamp(1rem, 1.75vw, 1.23rem); line-height: 1.5; font-weight: 800; }
   .featured-card p { flex-grow: 1; margin: 0; color: var(--ink-soft); font-size: .88rem; line-height: 1.75; }
   .featured-card a { margin-top: .2rem; }
+  .maintenance-detail { margin-top: 1.25rem; padding: clamp(1rem, 2vw, 1.5rem); border: 1px solid #dce9f0; border-radius: 10px; background: #fff; scroll-margin-top: 5rem; }
+  .maintenance-detail h3 { margin: 0 0 .6rem; font-size: 1.1rem; }
+  .maintenance-detail p, .maintenance-detail li { color: var(--ink-soft); font-size: .9rem; line-height: 1.8; }
+  .maintenance-detail ul { padding-left: 1.3rem; }
   .all-works { margin-top: 1.25rem; border-bottom: 1px solid var(--line-strong); }
   .all-works > summary { color: var(--pink-700); }
   .all-works[open] { padding-bottom: 1.1rem; }
