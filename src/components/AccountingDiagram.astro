@@ -1,0 +1,49 @@
+---
+// Illustrative labels from the existing public-accounting case, not real records.
+const areas = ['予算管理', '予算執行', '支出負担行為', '支出命令'];
+---
+
+<figure class="project-diagram diagram-accounting">
+  <div class="accounting-scene" aria-hidden="true">
+    <div class="accounting-window">
+      <div class="accounting-bar"><i></i><i></i><i></i></div>
+      <div class="accounting-content">
+        <div class="accounting-sidebar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" focusable="false">
+            <rect x="4" y="3" width="16" height="18" rx="1" />
+            <path d="M8 7h8M8 11h8M8 15h8M8 18h5" />
+          </svg>
+          <i></i><i></i><i></i>
+        </div>
+        <div class="accounting-body">
+          <b class="accounting-heading">財務会計</b>
+          <ul class="accounting-rows">
+            {areas.map((label) => <li><span>{label}</span><i></i></li>)}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <figcaption><span class="sr-only">自治体向け財務会計システムの予算管理・予算執行・支出負担行為・支出命令を表す、</span>説明用イメージ</figcaption>
+</figure>
+
+<style>
+  /* Match the existing case illustrations without changing the original hero. */
+  .diagram-accounting { position: relative; width: 100%; min-width: 0; margin: 0; overflow: hidden; border-radius: 8px; background: linear-gradient(135deg, #d7edf6, #edf8fb); container-type: inline-size; }
+  .accounting-scene { position: relative; width: 100%; min-height: 8.75rem; aspect-ratio: 1.9; }
+  .accounting-window { position: absolute; inset: 9% 11% 11%; overflow: hidden; border: 1px solid #1b4763; border-radius: 1.6cqi; background: #fcfeff; color: #17394e; box-shadow: 0 1.4cqi 3.4cqi #113a5323; }
+  .accounting-bar { display: flex; align-items: center; gap: 1cqi; padding: 1.6cqi 1.5cqi; background: linear-gradient(110deg, #123c58, #235877); }
+  .accounting-bar i { width: 1.1cqi; aspect-ratio: 1; border-radius: 50%; background: #d7f5fb; }
+  .accounting-bar i:first-child { background: #79d3e5; }
+  .accounting-content { display: grid; grid-template-columns: 17% minmax(0, 1fr); height: 100%; }
+  .accounting-sidebar { display: grid; grid-auto-rows: max-content; gap: 2.5cqi; padding: 3cqi 2cqi; background: linear-gradient(#1d536f, #337c9f); color: #fff; }
+  .accounting-sidebar svg { width: 6cqi; }
+  .accounting-sidebar i { height: .9cqi; border-radius: 10px; background: #aad4e4; }
+  .accounting-sidebar i:last-child { width: 65%; }
+  .accounting-body { min-width: 0; padding: 2.3cqi 2.5cqi; }
+  .accounting-heading { display: block; padding-bottom: 1.05cqi; font-size: max(10px, 3.2cqi); line-height: 1.35; }
+  .accounting-rows { margin: 0; padding: 0; list-style: none; }
+  .accounting-rows li { display: flex; align-items: center; gap: 1.5cqi; min-height: 6.4cqi; padding: .35cqi 1cqi; border-bottom: 1px solid #dcebf0; font-size: max(8px, 2.65cqi); font-weight: 600; line-height: 1.5; }
+  .accounting-rows i { width: 17%; height: 1cqi; flex-shrink: 0; margin-left: auto; border-radius: 10px; background: #b1d0dd; }
+  figcaption { position: absolute; right: .5rem; bottom: .5rem; padding: .18rem .42rem; border: 1px solid #d2e0e8; border-radius: 4px; background: #f9fdff; color: #465d6b; font-size: .64rem; line-height: 1.45; }
+</style>
