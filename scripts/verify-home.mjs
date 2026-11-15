@@ -56,15 +56,17 @@ for (const card of serviceCards) assert.ok(!/<span\b[^>]*>\s*0[123]\s*<\/span>/.
 assert.ok(html.includes('開発に関わった実績'), 'Portfolio heading missing');
 assert.equal((html.match(/説明用イメージ/g) || []).length, 3, 'Expected three labeled case diagrams');
 const featuredLinks = [...html.matchAll(/<a\b[^>]*href="#case-([^"]+)"[^>]*\bdata-case-link\b/g)].map((match) => match[1]);
-assert.deepEqual(featuredLinks, ['ai-agent-platform', 'public-accounting', 'public-documents'], 'Featured cards must link to their full existing cases');
+assert.deepEqual(featuredLinks, ['ai-agent-platform', 'geospatial-versions', 'public-documents'], 'Featured cards must link to their full existing cases');
 // Promote the verified municipal accounting case without deleting the EC case.
 const featuredCards = [...html.matchAll(/<article\b[^>]*class="featured-card"[^>]*>[\s\S]*?<\/article>/g)].map((m) => m[0]);
 assert.equal(featuredCards.length, 3, 'Expected three featured cases');
-const accountingCard = featuredCards.find((card) => card.includes('href="#case-public-accounting"'));
-assert.ok(accountingCard, 'Accounting must be one of the featured cases');
-assert.match(accountingCard, /<h3\b[^>]*>経理システム<\/h3>/, 'Accounting card heading missing');
-assert.ok(accountingCard.includes('diagram-accounting') && accountingCard.includes('説明用イメージ'), 'Accounting illustration missing');
-for (const label of ['自治体向け', '財務会計', '予算管理', '予算執行', '支出負担行為', '支出命令', '登録・検索・更新']) assert.ok(accountingCard.includes(label), `Missing verified accounting scope: ${label}`);
+const maintenanceCard = featuredCards.find((card) => card.includes('href="#case-geospatial-versions"'));
+assert.ok(maintenanceCard, 'Maintenance case must be featured');
+assert.match(maintenanceCard, /<h3\\b[^>]*>既存システムの改修・保守<\\/h3>/, 'Maintenance heading missing');
+assert.ok(maintenanceCard.includes('diagram-maintenance') && maintenanceCard.includes('説明用イメージ'), 'Maintenance illustration missing');
+assert.ok(maintenanceCard.includes('C++') && maintenanceCard.includes('不具合'), 'Maintenance scope must be grounded in the existing case');
+assert.ok(!featuredCards.some((card) => card.includes('経理システム')), 'Accounting must not remain featured');
+assert.ok(html.includes('id="case-public-accounting"'), 'Accounting case must remain in all works');
 for (const card of featuredCards) assert.ok(!/EC運営|商品リサーチ|出品管理|在庫確認|diagram-commerce/.test(card), 'EC material must not remain in the featured cases');
 assert.match(html, /id="case-ec-operations"/, 'Existing EC case must remain in the full portfolio');
 assert.match(html, /<details\b[^>]*id="all-works"/, 'Full portfolio must be accessible through a native disclosure');
