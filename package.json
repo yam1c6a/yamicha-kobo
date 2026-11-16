@@ -22,6 +22,7 @@
     "esbuild": true
   },
   "devDependencies": {
+    "@phosphor-icons/core": "^2.1.1",
     "@types/node": "^26.4.1",
     "wrangler": "^4.129.0"
   }

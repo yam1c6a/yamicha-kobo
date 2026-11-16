@@ -1,5 +1,4 @@
 ---
-import BrandMark from './BrandMark.astro';
 import { CHAT_LIMITS } from '../services/ai/consultation-limits.js';
 const suggestions = [
   ['AWSの構成', 'AWSで業務システムを動かすとき、構成はどう選べばよいですか？'],
@@ -9,7 +8,7 @@ const suggestions = [
 ];
 ---
 <section class="chat-card" aria-labelledby="chat-title">
-  <div class="chat-topbar"><div class="chat-agent"><BrandMark compact /><span class="status"><span aria-hidden="true"></span>AI相談室</span></div><span class="private-note">会話本文はサイトに保存しません</span></div>
+  <div class="chat-topbar"><div class="chat-agent"><span class="chat-wordmark">やみちゃ工房</span><span class="status"><span aria-hidden="true"></span>AI相談室</span></div><span class="private-note">会話本文はサイトに保存しません</span></div>
   <div class="chat-heading"><p class="eyebrow">システム開発・AI活用の技術相談</p><h2 id="chat-title">つくり方から、相談できます。</h2><p>AWS・LLM・RAGの構成や選び方、業務改善まで。</p></div>
   <div class="suggestion-list" aria-label="相談例">{suggestions.map(([label, question]) => <button type="button" class="suggestion" data-question={question}>{label}<span aria-hidden="true"> →</span></button>)}</div>
   <p class="knowledge-note">登録済みの技術ノートと公開実績を参照します。リアルタイムのWeb検索は行いません。</p>

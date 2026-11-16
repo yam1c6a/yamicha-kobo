@@ -1,0 +1,142 @@
+---
+const email = 'contact@yamicha.com';
+const directMail = `mailto:${email}?subject=${encodeURIComponent('やみちゃ工房へのお問い合わせ')}`;
+---
+
+<form class="contact-form" id="contact-form" action={directMail} method="post" enctype="text/plain" aria-describedby="contact-form-note">
+  <div class="contact-form-pair">
+    <div class="field"><label for="contact-name">お名前<span>必須</span></label><input id="contact-name" name="name" autocomplete="name" maxlength="100" required /></div>
+    <div class="field"><label for="contact-email">メールアドレス<span>必須</span></label><input id="contact-email" name="email" type="email" inputmode="email" autocomplete="email" maxlength="254" required /></div>
+  </div>
+  <div class="field"><label for="contact-company">会社名・屋号<span>任意</span></label><input id="contact-company" name="company" autocomplete="organization" maxlength="200" /></div>
+  <div class="field"><label for="contact-message">ご相談内容<span>必須</span></label><textarea id="contact-message" name="message" rows="6" maxlength="4000" placeholder="今の仕事、困っていること、相談したいことを自由に書いてください" required aria-describedby="contact-handoff-status"></textarea></div>
+  <p class="handoff-notice" id="contact-handoff-note" hidden>AI相談室の内容を引き継げます。<button type="button" class="inline-button" id="contact-apply-handoff">相談内容に追加する</button></p>
+  <p class="form-note" id="contact-handoff-status" role="status" aria-atomic="true"></p>
+  <p class="form-note" id="contact-form-note">入力した内容を確認して、メールアプリから送信できます。<button type="button" class="inline-button" data-open-privacy>入力内容の取り扱い</button></p>
+  <div class="contact-submit"><button class="button button-primary" type="submit">相談メールを作成する<img class="ui-icon" src="/icons/arrow-right.svg" alt="" width="24" height="24" /></button></div>
+  <p class="direct-contact">直接メールでもご相談いただけます <a href={directMail}>{email}</a></p>
+</form>
+
+<dialog class="atelier-dialog" id="contact-preview" aria-labelledby="contact-preview-title">
+  <div class="dialog-heading"><p class="section-kicker">ご相談内容の確認</p><button type="button" class="icon-button" data-close-dialog aria-label="確認画面を閉じる"><img src="/icons/x.svg" alt="" width="24" height="24" /></button></div>
+  <h2 id="contact-preview-title">この内容で、メールを作成します。</h2>
+  <p>宛先：<a href={directMail}>{email}</a></p>
+  <label for="contact-preview-body">メール本文</label>
+  <textarea id="contact-preview-body" rows="10" readonly></textarea>
+  <p class="form-note">メールアプリが開いたら、内容を確認して送信してください。</p>
+  <div class="dialog-actions"><a class="button button-primary" id="contact-mail-link" href={directMail}>メールアプリを開く<img class="ui-icon" src="/icons/arrow-up-right.svg" alt="" width="22" height="22" /></a><button class="text-link" type="button" id="copy-contact-body">本文をコピー<img class="ui-icon" src="/icons/copy.svg" alt="" width="20" height="20" /></button></div>
+  <p class="copy-status" id="contact-copy-status" role="status"></p>
+  <p class="form-note">メールアプリが開かない場合は、本文をコピーして上記アドレスへお送りください。</p>
+  <button type="button" class="inline-button" data-close-dialog>入力内容を修正する</button>
+</dialog>
+
+<dialog class="atelier-dialog privacy-dialog" id="contact-privacy" aria-labelledby="contact-privacy-title">
+  <div class="dialog-heading"><p class="section-kicker">ご相談について</p><button type="button" class="icon-button" data-close-dialog aria-label="入力内容の取り扱いを閉じる"><img src="/icons/x.svg" alt="" width="24" height="24" /></button></div>
+  <h2 id="contact-privacy-title">入力内容の取り扱い</h2>
+  <p>このフォームは、お使いのブラウザ内で相談メールの本文を作成します。フォームの入力内容をサイトのサーバーへ送信したり、サイトに保存したりすることはありません。</p>
+  <p>「メールアプリを開く」からご自身のメールアプリで送信すると、入力した内容がやみちゃ工房のメール窓口へ届きます。</p>
+  <p>AI相談室へ送信した内容は、Cloudflare Workers AIでの応答処理に利用されます。詳細はAI相談室の「入力内容の取り扱い」をご覧ください。</p>
+  <p>このサイトからGoogle Fontsのフォントを読み込みます。</p>
+  <button type="button" class="button button-secondary" data-close-dialog>閉じる</button>
+</dialog>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('#contact-form');
+  const preview = document.querySelector<HTMLDialogElement>('#contact-preview');
+  const privacy = document.querySelector<HTMLDialogElement>('#contact-privacy');
+  const body = document.querySelector<HTMLTextAreaElement>('#contact-preview-body');
+  const mailLink = document.querySelector<HTMLAnchorElement>('#contact-mail-link');
+  const message = document.querySelector<HTMLTextAreaElement>('#contact-message');
+  const copyStatus = document.querySelector<HTMLElement>('#contact-copy-status');
+  const handoffStatus = document.querySelector<HTMLElement>('#contact-handoff-status');
+
+  function openDialog(dialog: HTMLDialogElement | null) {
+    if (!dialog || dialog.open) return;
+    dialog.showModal();
+    document.documentElement.classList.add('has-atelier-dialog');
+  }
+
+  document.querySelectorAll<HTMLDialogElement>('.atelier-dialog').forEach((dialog) => {
+    dialog.querySelectorAll('[data-close-dialog]').forEach((button) => button.addEventListener('click', () => dialog.close()));
+    dialog.addEventListener('close', () => document.documentElement.classList.remove('has-atelier-dialog'));
+    dialog.addEventListener('click', (event) => {
+      if (event.target !== dialog) return;
+      const box = dialog.getBoundingClientRect();
+      if (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom) dialog.close();
+    });
+  });
+  document.querySelectorAll('[data-open-privacy]').forEach((button) => button.addEventListener('click', () => openDialog(privacy)));
+
+  form?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    if (!form.reportValidity() || !body || !mailLink) return;
+    const data = new FormData(form);
+    const name = String(data.get('name') || '').trim();
+    const sender = String(data.get('email') || '').trim();
+    const company = String(data.get('company') || '').trim();
+    const consultation = String(data.get('message') || '').trim();
+    if (!name || !consultation) {
+      const field = document.querySelector<HTMLInputElement | HTMLTextAreaElement>(!name ? '#contact-name' : '#contact-message');
+      field?.setCustomValidity('内容を入力してください。');
+      field?.reportValidity();
+      field?.addEventListener('input', () => field.setCustomValidity(''), { once: true });
+      return;
+    }
+    const emailBody = ['やみちゃ工房 ご担当者さま', '', 'ホームページからご相談です。', '', `お名前：${name}`, `メールアドレス：${sender}`, ...(company ? [`会社名・屋号：${company}`] : []), '', '【ご相談内容】', consultation].join('\n');
+    body.value = emailBody;
+    mailLink.href = `mailto:contact@yamicha.com?subject=${encodeURIComponent('やみちゃ工房へのご相談')}&body=${encodeURIComponent(emailBody)}`;
+    if (copyStatus) copyStatus.textContent = '';
+    openDialog(preview);
+  });
+
+  document.querySelector('#copy-contact-body')?.addEventListener('click', async () => {
+    if (!body || !copyStatus) return;
+    try {
+      await navigator.clipboard.writeText(body.value);
+      copyStatus.textContent = '本文をコピーしました。';
+    } catch {
+      body.focus();
+      body.select();
+      copyStatus.textContent = '本文を選択しました。コピーしてご利用ください。';
+    }
+  });
+
+  function clipHandoffExcerpt(value: string, limit = 3400) {
+    let excerpt = '';
+    // Keep complete code points while respecting textarea's UTF-16 length limit.
+    for (const codePoint of value) {
+      if (excerpt.length + codePoint.length > limit) break;
+      excerpt += codePoint;
+    }
+    return excerpt;
+  }
+
+  let handoffText = '';
+  function applyHandoff() {
+    if (!message || !handoffText) return;
+    const combined = [message.value.trim(), handoffText].filter(Boolean).join('\n\n');
+    if (combined.length > message.maxLength) {
+      document.querySelector('#contact-handoff-note')?.removeAttribute('hidden');
+      if (handoffStatus) handoffStatus.textContent = `合計が${message.maxLength}文字を超えるため、追加できません。入力済みの相談内容を短くしてから、もう一度「相談内容に追加する」を押してください。`;
+      message.focus();
+      return;
+    }
+    message.value = combined;
+    message.setCustomValidity('');
+    document.querySelector('#contact-handoff-note')?.setAttribute('hidden', '');
+    if (handoffStatus) handoffStatus.textContent = 'AI相談室の内容を相談内容に追加しました。';
+    handoffText = '';
+  }
+  window.addEventListener('yamicha:consultation-handoff', (event) => {
+    const state = (event as CustomEvent).detail;
+    if (!Array.isArray(state?.messages)) return;
+    const questions = state.messages.filter((entry: {role?: string; content?: unknown}) => entry?.role === 'user' && typeof entry.content === 'string').map((entry: {content: string}) => entry.content);
+    const excerpt = questions.join('\n\n');
+    const clippedExcerpt = clipHandoffExcerpt(excerpt);
+    handoffText = `【AI相談室で相談したこと】\n${clippedExcerpt}${excerpt.length > clippedExcerpt.length ? '\n（相談内容の一部を抜粋しています）' : ''}`;
+    if (handoffStatus) handoffStatus.textContent = '';
+    if (!message?.value.trim()) applyHandoff();
+    else document.querySelector('#contact-handoff-note')?.removeAttribute('hidden');
+  });
+  document.querySelector('#contact-apply-handoff')?.addEventListener('click', applyHandoff);
+</script>

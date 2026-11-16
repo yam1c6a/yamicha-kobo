@@ -1,0 +1,42 @@
+{
+  "about": {
+    "height": 139.64584350585938,
+    "lineHeight": "69.831px"
+  },
+  "contact": {
+    "lineHeight": "68.5135px",
+    "spanHeights": [
+      68.51042175292969,
+      68.51042175292969
+    ],
+    "y": 4168.7294921875
+  },
+  "overflow": 0,
+  "serviceRows": [
+    {
+      "height": 45.0625,
+      "lineHeight": "45.0699px",
+      "text": "AI活用・業務自動化"
+    },
+    {
+      "height": 45.0625,
+      "lineHeight": "45.0699px",
+      "text": "業務システムの開発"
+    },
+    {
+      "height": 45.0625,
+      "lineHeight": "45.0699px",
+      "text": "既存システムの改修・保守"
+    }
+  ],
+  "services": {
+    "lineHeight": "57.9729px",
+    "titleHeight": 57.96875
+  },
+  "viewport": {
+    "clientWidth": 899,
+    "dpr": 1.5,
+    "height": 624,
+    "width": 909
+  }
+}

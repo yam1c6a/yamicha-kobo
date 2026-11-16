@@ -1,35 +1,35 @@
 ---
-import MaintenanceDiagram from './MaintenanceDiagram.astro';
-import DocumentDiagram from './DocumentDiagram.astro';
-import ProjectDiagram from './ProjectDiagram.astro';
 import { caseStudies } from '../data/case-studies.js';
 
 const featured = [
-  { id: 'ai-agent-platform', variant: 'agent', title: '業務を支援するAIエージェント', text: '取引や関連資料を照合し、勘定科目の候補や判断材料を提示します。税務上の最終判断は税理士が行います。' },
-  { id: 'geospatial-versions', variant: 'maintenance', title: '既存システムの改修・保守', text: 'レガシーシステムや古い開発環境にも対応。既存コードの解析、不具合修正、機能追加から、新しい環境への移行まで、システムの継続利用と改善を支援します。' },
-  { id: 'public-documents', variant: 'documents', title: 'AI文書管理システム', text: '自治体向けの公開文書を管理・自動分類し、自然文検索とRAGによる回答生成につなげます。' },
+  { id: 'ai-agent-platform', title: '業務を支援するAIエージェント', text: '取引や関連資料を照合し、勘定科目の候補や判断材料を提示します。税務上の最終判断は税理士が行います。' },
+  { id: 'geospatial-versions', title: '既存システムの改修・保守', text: 'レガシーシステムや古い開発環境にも対応。既存コードの解析、不具合修正、機能追加から、新しい環境への移行まで、システムの継続利用と改善を支援します。' },
+  { id: 'public-documents', title: 'AI文書管理システム', text: '自治体向けの公開文書を管理・自動分類し、自然文検索とRAGによる回答生成につなげます。' },
 ] as const;
 
 ---
 
 <section class="section portfolio-section" id="works" aria-labelledby="portfolio-heading">
   <div class="shell">
-    <h2 class="section-title" id="portfolio-heading">開発に関わった実績</h2>
+    <header class="portfolio-intro">
+      <p class="section-kicker">これまでの仕事</p>
+      <h2 class="section-title" id="portfolio-heading">開発に関わった実績</h2>
+    </header>
     <div class="featured-grid">
       {featured.map((project) => (
         <article class="featured-card">
-          {project.variant === 'maintenance' ? <MaintenanceDiagram /> : project.variant === 'documents' ? <DocumentDiagram /> : <ProjectDiagram variant={project.variant} />}
           <h3>{project.title}</h3>
           <p>{project.text}</p>
           <a class="text-link" href={`#case-${project.id}`} data-case-link>
-            詳しく見る<span class="sr-only">（{project.title}）</span><span aria-hidden="true">→</span>
+            詳しく見る<span class="sr-only">（{project.title}）</span>
+            <img class="portfolio-arrow" src="/icons/arrow-right.svg" alt="" width="22" height="22" aria-hidden="true" />
           </a>
         </article>
       ))}
     </div>
+    <p class="portfolio-disclaimer">守秘義務に配慮し、発注元・サービス固有名・実画面・非公開の詳細仕様は掲載していません。</p>
     <details class="all-works disclosure" id="all-works">
-      <summary>すべての開発実績を見る（{caseStudies.length}件）</summary>
-      <p>守秘義務に配慮し、発注元・サービス固有名・実画面・非公開の詳細仕様は掲載していません。</p>
+      <summary>すべての開発実績を見る（{caseStudies.length}件）<img class="ui-icon disclosure-icon" src="/icons/caret-down.svg" alt="" width="22" height="22" /></summary>
       <div class="portfolio-grid">
         {caseStudies.map((project) => (
           <article class="portfolio-card" tabindex="-1" id={`case-${project.id}`} aria-labelledby={`case-title-${project.id}`}>
@@ -96,58 +96,88 @@ const featured = [
 </script>
 
 <style>
-  .portfolio-section { background: var(--tint); }
-  .featured-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+  .portfolio-section { color: var(--ink); background: transparent; }
+  .portfolio-intro { margin-bottom: clamp(2rem, 4vw, 3.25rem); }
+  .portfolio-intro .section-title { margin-bottom: 0; font-family: var(--serif); font-weight: 500; }
+  .featured-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0;
+    border-top: 1px solid var(--line-strong);
+    border-bottom: 1px solid var(--line-strong);
+  }
   .featured-card {
     display: flex;
     min-width: 0;
     flex-direction: column;
     align-items: flex-start;
-    padding: clamp(.8rem, 1.35vw, 1rem);
-    border: 1px solid #dce9f0;
-    border-radius: 10px;
-    background: #fff;
+    padding: clamp(1.75rem, 3vw, 2.5rem) clamp(1.25rem, 2.75vw, 2.5rem);
   }
-  .featured-card h3 { margin: .8rem 0 .35rem; font-size: clamp(1rem, 1.75vw, 1.23rem); line-height: 1.5; font-weight: 800; }
-  .featured-card p { flex-grow: 1; margin: 0; color: var(--ink-soft); font-size: .88rem; line-height: 1.75; }
-  .featured-card a { margin-top: .2rem; }
-  .all-works { margin-top: 1.25rem; border-bottom: 1px solid var(--line-strong); }
-  .all-works > summary { color: var(--pink-700); }
-  .all-works[open] { padding-bottom: 1.1rem; }
-  .all-works .portfolio-grid { margin-top: .2rem; }
-  .portfolio-card:target { border-color: #2392b4; }
-  .portfolio-grid { display: grid; grid-template-columns: minmax(0, 1fr); align-items: stretch; gap: 1.25rem; }
-  .portfolio-card { min-width: 0; padding: clamp(1.5rem, 3vw, 2.25rem); border: 1px solid var(--line-strong); border-radius: 8px; background: #fff; }
-  .portfolio-meta { display: flex; justify-content: space-between; gap: 1rem; color: var(--pink-700); font-size: .72rem; font-weight: 700; }
-  .portfolio-card h3 { margin: 1.25rem 0 .9rem; font-size: clamp(1.15rem, 2vw, 1.4rem); line-height: 1.6; overflow-wrap: anywhere; }
-  .portfolio-overview { margin: 0; color: var(--ink-soft); font-size: .9rem; line-height: 1.95; }
-  .portfolio-purpose { margin: 1.25rem 0 0; padding: 1rem 1.1rem; border-left: 3px solid var(--pink-600); background: var(--pink-50); }
-  .portfolio-purpose dt { color: var(--pink-700); font-size: .72rem; font-weight: 700; }
-  .portfolio-purpose dd { margin: .4rem 0 0; color: var(--ink-soft); font-size: .85rem; line-height: 1.85; }
-  .portfolio-details { margin: 1.2rem 0 1.5rem; color: var(--ink-soft); font-size: .85rem; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-  .portfolio-details summary { min-height: 48px; padding: .85rem .25rem; color: var(--pink-700); cursor: pointer; font-weight: 600; line-height: 1.7; }
-  .portfolio-details summary:hover { color: var(--ink); }
-  .portfolio-details summary:focus-visible { outline: 2px solid var(--pink-700); outline-offset: 4px; }
-  .portfolio-detail-content { padding: .2rem 0 1.4rem; }
-  .portfolio-detail-content > section + section { margin-top: 1.5rem; padding-top: 1.3rem; border-top: 1px solid var(--line); }
-  .portfolio-detail-content h4 { margin: 0 0 .85rem; font-size: .9rem; color: var(--ink); }
+  .featured-card:first-child { padding-left: 0; }
+  .featured-card:last-child { padding-right: 0; }
+  .featured-card + .featured-card { border-left: 1px solid var(--line); }
+  .featured-card h3 {
+    margin: 0 0 1.25rem;
+    font-family: var(--serif);
+    font-size: clamp(1.5rem, 2.2vw, 1.9rem);
+    line-height: 1.65;
+    font-weight: 500;
+    letter-spacing: .02em;
+  }
+  .featured-card p { flex-grow: 1; margin: 0; color: var(--ink-soft); font-size: 1rem; line-height: 1.95; }
+  .featured-card .text-link { margin-top: 1.5rem; color: var(--olive); font-size: 1rem; }
+  .portfolio-arrow { flex-shrink: 0; }
+  .portfolio-disclaimer { max-width: 60rem; margin: 1.5rem 0 0; color: var(--muted); font-size: 1rem; line-height: 1.9; }
+  .all-works { margin-top: 2rem; border-bottom: 1px solid var(--line-strong); scroll-margin-top: 7rem; }
+  .all-works > summary { color: var(--olive); font-size: 1rem; }
+  .all-works[open] { padding-bottom: 1rem; }
+  .all-works .portfolio-grid { margin-top: .5rem; }
+  .portfolio-grid { display: grid; grid-template-columns: minmax(0, 1fr); }
+  .portfolio-card { min-width: 0; padding: clamp(2rem, 4vw, 3rem) 0; border-top: 1px solid var(--line); scroll-margin-top: 7rem; }
+  .portfolio-card:target { outline: 1px solid var(--olive); outline-offset: .75rem; }
+  .portfolio-meta { color: var(--olive); font-size: .875rem; font-weight: 600; letter-spacing: .05em; }
+  .portfolio-card h3 {
+    margin: .75rem 0 1.25rem;
+    font-family: var(--serif);
+    font-size: clamp(1.5rem, 2.5vw, 2rem);
+    line-height: 1.65;
+    font-weight: 500;
+    overflow-wrap: anywhere;
+  }
+  .portfolio-overview { max-width: 58rem; margin: 0; color: var(--ink-soft); font-size: 1rem; line-height: 1.95; }
+  .portfolio-purpose { display: grid; grid-template-columns: 7rem minmax(0, 1fr); gap: 1.25rem; margin: 1.5rem 0 0; padding: 1.25rem 0; border-top: 1px solid var(--line); }
+  .portfolio-purpose dt { color: var(--olive); font-size: 1rem; font-weight: 600; line-height: 1.9; }
+  .portfolio-purpose dd { margin: 0; color: var(--ink-soft); font-size: 1rem; line-height: 1.9; }
+  .portfolio-details { margin: .5rem 0 1.5rem; color: var(--ink-soft); font-size: 1rem; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .portfolio-details summary { min-height: 48px; padding: 1rem 0; color: var(--olive); cursor: pointer; font-weight: 600; line-height: 1.7; }
+  .portfolio-details summary:hover, .all-works > summary:hover { color: var(--ink); }
+  .portfolio-details summary:focus-visible, .all-works > summary:focus-visible, .featured-card .text-link:focus-visible { outline: 2px solid var(--olive); outline-offset: 5px; }
+  .portfolio-detail-content { max-width: 58rem; padding: .5rem 0 1.75rem; }
+  .portfolio-detail-content > section + section { margin-top: 2rem; padding-top: 1.75rem; border-top: 1px solid var(--line); }
+  .portfolio-detail-content h4 { margin: 0 0 1rem; font-family: var(--serif); font-size: 1.35rem; line-height: 1.6; font-weight: 500; color: var(--ink); }
   .case-feature-list { margin: 0; }
-  .case-feature-list > div + div { margin-top: .95rem; }
-  .case-feature-list dt { color: var(--ink); font-size: .84rem; font-weight: 600; }
-  .case-feature-list dd { margin: .3rem 0 0; line-height: 1.9; }
-  .case-design-list { margin: 0; padding-left: 1.2rem; line-height: 1.9; }
-  .case-design-list li + li { margin-top: .65rem; }
-  .case-design-list li::marker { color: var(--pink-600); }
+  .case-feature-list > div + div { margin-top: 1.25rem; }
+  .case-feature-list dt { color: var(--ink); font-size: 1rem; font-weight: 600; line-height: 1.8; }
+  .case-feature-list dd { margin: .35rem 0 0; font-size: 1rem; line-height: 1.95; }
+  .case-design-list { margin: 0; padding-left: 1.25rem; font-size: 1rem; line-height: 1.95; }
+  .case-design-list li + li { margin-top: .85rem; }
+  .case-design-list li::marker { color: var(--olive); }
   .case-stack { margin: 0; }
-  .case-stack > div { display: grid; grid-template-columns: 7rem minmax(0, 1fr); gap: .75rem; padding: .75rem 0; border-bottom: 1px solid var(--line); }
+  .case-stack > div { display: grid; grid-template-columns: 9rem minmax(0, 1fr); gap: 1.25rem; padding: 1rem 0; border-bottom: 1px solid var(--line); }
   .case-stack > div:first-child { border-top: 1px solid var(--line); }
-  .case-stack dt { color: var(--muted); font-size: .75rem; line-height: 1.9; }
-  .case-stack dd { min-width: 0; margin: 0; font-size: .8rem; line-height: 1.9; overflow-wrap: anywhere; }
-  .portfolio-tech { display: flex; flex-wrap: wrap; gap: .4rem; margin: 0; padding: 0; list-style: none; }
-  .portfolio-tech li { padding: .35rem .55rem; border-radius: 3px; background: var(--pink-50); color: var(--ink-soft); font-size: .72rem; }
-  @media (max-width: 720px) { .featured-grid { grid-template-columns: 1fr; } }
-  @media (max-width: 480px) {
-    .portfolio-card { padding: 1.25rem; }
-    .case-stack > div { grid-template-columns: 1fr; gap: .25rem; }
+  .case-stack dt { color: var(--muted); font-size: 1rem; line-height: 1.9; }
+  .case-stack dd { min-width: 0; margin: 0; font-size: 1rem; line-height: 1.9; overflow-wrap: anywhere; }
+  .portfolio-tech { display: flex; flex-wrap: wrap; column-gap: 1rem; row-gap: .5rem; margin: 0; padding: 0; list-style: none; }
+  .portfolio-tech li { color: var(--muted); font-size: .875rem; line-height: 1.7; }
+  @media (max-width: 800px) {
+    .featured-grid { grid-template-columns: minmax(0, 1fr); }
+    .featured-card, .featured-card:first-child, .featured-card:last-child { padding: 1.75rem 0; }
+    .featured-card + .featured-card { border-left: 0; border-top: 1px solid var(--line); }
+    .featured-card h3 { margin-bottom: .8rem; font-size: 1.6rem; }
+    .featured-card .text-link { margin-top: .75rem; }
+  }
+  @media (max-width: 560px) {
+    .portfolio-purpose, .case-stack > div { grid-template-columns: minmax(0, 1fr); gap: .35rem; }
+    .portfolio-card:target { outline-offset: .35rem; }
   }
 </style>
