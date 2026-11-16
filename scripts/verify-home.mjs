@@ -41,7 +41,7 @@ assert.ok(contactForm, 'Contact form missing');
 for (const id of ['contact-name', 'contact-email', 'contact-message']) {
   assert.ok(contactForm.includes(`id="${id}"`) && contactForm.includes(`for="${id}"`), `Contact field or its label missing: ${id}`);
 }
-assert.match(html, /<a\b[^>]*\bhref=["']\/yamios\/["']/, 'YAMIOS development page link missing');
+assert.ok(!html.includes('YAMIOS') && !html.includes('href="/yamios/"'), 'YAMIOS must not be promoted on the corporate homepage');
 // Keep the independent service destinations while allowing the selected visual design.
 const serviceRows = [...html.matchAll(/<article\b[^>]*\bclass=["'][^"']*\bservice-row\b[^"']*["'][^>]*>[\s\S]*?<\/article>/g)].map((m) => m[0]);
 assert.equal(serviceRows.length, 3, 'Expected three service rows');
