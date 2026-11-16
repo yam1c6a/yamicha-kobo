@@ -34,7 +34,9 @@ for (const id of ['services', 'system-development', 'ai-solutions', 'legacy-main
 }
 assert.equal((html.match(/<h1\b/g) || []).length, 1, 'Homepage must have one main heading');
 const headline = html.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/)?.[1].replace(/<[^>]*>/g, '').replace(/\s+/g, '');
-assert.equal(headline, 'いつもの仕事に、ちょうどいいAIを。', 'Selected atelier headline missing');
+assert.equal(headline, 'いつもの仕事に、ちょうどいい仕組みを', 'Selected atelier headline missing');
+assert.ok(!html.includes('AIとシステム開発</p>'), 'Redundant hero kicker must be removed');
+assert.ok(html.includes('業務システムの開発・改修、AWS構築まで。'), 'Hero must mention system development and AWS');
 assert.match(html, /\bhref=["']mailto:contact@yamicha\.com(?:[?"'])/, 'Existing email link missing');
 const contactForm = html.match(/<form\b[^>]*\bid=["']contact-form["'][^>]*>[\s\S]*?<\/form>/)?.[0];
 assert.ok(contactForm, 'Contact form missing');
