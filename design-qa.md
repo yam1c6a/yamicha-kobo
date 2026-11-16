@@ -2,6 +2,16 @@
 
 final result: blocked
 
+## Current review update
+
+The local-preview access blocker was resolved for visual QA by the repository's existing Cloudflare Git integration. It automatically produced an HTTPS preview for the authorized design branch: `https://39a26efe-yamicha-kobo.yam1c6a.workers.dev/`. This is a branch preview, not a change to the production main branch.
+
+The browser loaded that preview successfully. The first actual screenshot is `/workspace/shared/atelier-qa/desktop-v1.jpg` (1348 × 6176 pixels; CSS viewport reported 1363 × 936, DPR 1). Source and implementation were combined in `/workspace/shared/atelier-qa/comparison-desktop-v1.jpg`. The 15px scrollbar/capture-width difference must be normalized correctly in the final comparison; it is not a design defect.
+
+The first visual comparison found actionable P2 typography and spacing differences: the hero's line spacing and top gap were too large; wordmark, navigation, hero copy, CTA and service text were too small; the service botanical accent was undersized. The next revision tightens the headline rhythm, increases desktop type to match the mock, adjusts the art/copy grid, enlarges the botanical accent and removes redundant service metadata from the main rows. The facts remain in the existing technical detail area. A post-fix capture is still required.
+
+The earlier infrastructure notes below are retained as history and no longer prevent the HTTP/HTTPS visual review. Final status remains blocked until the visual iteration and mobile/interaction checks are complete.
+
 ## Comparison targets
 
 Source visual truth:

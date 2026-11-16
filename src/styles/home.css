@@ -41,9 +41,9 @@ html.has-atelier-dialog { overflow: hidden; }
 .atelier-site .shell { width: min(calc(100% - 96px), var(--max-width)); margin-inline: auto; }
 .atelier-site .section { padding: 0 0 94px; }
 .atelier-site .section-rule { border-top: 1px solid var(--line-strong); padding-top: 44px; }
-.atelier-site .section-kicker { margin: 0 0 31px; color: var(--olive); font-family: inherit; font-size: 17px; font-weight: 600; letter-spacing: .075em; line-height: 1.6; }
+.atelier-site .section-kicker { margin: 0 0 31px; color: var(--olive); font-family: inherit; font-size: clamp(20px, 2.2vw, 28px); font-weight: 600; letter-spacing: .075em; line-height: 1.5; }
 .atelier-site .section-kicker::after { content: ''; display: block; width: 40px; height: 3px; margin-top: 13px; background: var(--peach); }
-.atelier-site .section-title { margin: 0 0 36px; font-size: clamp(30px, 4.1vw, 52px); line-height: 1.65; letter-spacing: .015em; }
+.atelier-site .section-title { margin: 0 0 36px; font-size: clamp(30px, 5vw, 64px); line-height: 1.45; letter-spacing: .015em; }
 .atelier-site .ui-icon { display: inline-block; width: 23px; height: 23px; flex: 0 0 auto; object-fit: contain; }
 .atelier-site .button { min-height: 62px; padding: 16px 25px; border: 1px solid transparent; border-radius: 4px; box-shadow: none; font-size: 17px; font-weight: 500; letter-spacing: .025em; line-height: 1.65; gap: 24px; transition: background 160ms ease, border-color 160ms ease; }
 .atelier-site .button:hover { transform: none; }
@@ -63,10 +63,10 @@ html.has-atelier-dialog { overflow: hidden; }
 .site-header { position: relative; z-index: 10; }
 .header-inner { display: flex; justify-content: space-between; align-items: center; gap: 24px; min-height: 124px; }
 .wordmark { display: flex; width: max-content; flex-direction: column; flex-shrink: 0; gap: 1px; color: var(--ink); text-decoration: none; }
-.wordmark > span { font-family: var(--serif); font-weight: 600; font-size: 36px; line-height: 1.5; letter-spacing: .075em; }
-.wordmark > small { padding-left: 4px; font-size: 10px; font-weight: 600; letter-spacing: .28em; line-height: 1.8; }
+.wordmark > span { font-family: var(--serif); font-weight: 600; font-size: clamp(30px, 3.5vw, 48px); line-height: 1.5; letter-spacing: .075em; }
+.wordmark > small { padding-left: 4px; font-size: 12px; font-weight: 600; letter-spacing: .28em; line-height: 1.8; }
 .desktop-nav { display: flex; align-items: center; gap: clamp(24px, 3.2vw, 48px); }
-.desktop-nav a { font-size: 16px; font-weight: 500; text-decoration: none; text-underline-offset: 8px; letter-spacing: .04em; }
+.desktop-nav a { font-size: clamp(14px, 1.85vw, 24px); font-weight: 500; text-decoration: none; text-underline-offset: 8px; letter-spacing: .04em; }
 .desktop-nav a:hover { text-decoration: underline; color: var(--olive); }
 .mobile-menu { display: none; position: relative; }
 .mobile-menu summary { display: flex; align-items: center; gap: 12px; padding: 9px 0 9px 10px; list-style: none; font-size: 14px; font-weight: 500; cursor: pointer; }
@@ -79,45 +79,45 @@ html.has-atelier-dialog { overflow: hidden; }
 .mobile-menu nav a:last-child { border: 0; color: var(--olive); font-weight: 600; }
 
 /* The reference's large Mincho headline and window-side paper collage. */
-.atelier-hero { padding-top: 56px; padding-bottom: 46px; overflow: clip; }
-.atelier-hero .section-kicker { margin-bottom: 32px; font-size: 20px; }
-.atelier-hero h1 { margin: 0; font-size: clamp(56px, 7.65vw, 108px); line-height: 1.45; letter-spacing: .025em; }
+.atelier-hero { padding-top: 32px; padding-bottom: 46px; overflow: clip; }
+.atelier-hero .section-kicker { margin-bottom: 16px; font-size: clamp(20px, 2.4vw, 31px); line-height: 1.25; }
+.atelier-hero h1 { margin: 0; font-size: clamp(56px, 7.65vw, 108px); line-height: 1.2; letter-spacing: .025em; }
 .atelier-hero h1 > span { display: block; white-space: nowrap; }
-.hero-composition { display: grid; grid-template-columns: 1.43fr 1fr; gap: 24px; align-items: center; margin-top: 5px; }
-.hero-art { display: block; min-width: 0; margin-left: -35px; margin-right: -13px; }
+.hero-composition { display: grid; grid-template-columns: 1.53fr 1fr; gap: 52px; align-items: center; margin-top: 5px; }
+.hero-art { display: block; min-width: 0; margin-left: -15px; margin-right: 0; }
 .hero-art img { display: block; width: 100%; height: auto; }
-.hero-copy { padding-bottom: 25px; }
-.hero-copy > p { margin: 0; font-size: clamp(19px, 1.8vw, 25px); line-height: 1.85; letter-spacing: .025em; }
-.hero-copy > p + p { margin-top: 8px; }
-.atelier-site .hero-cta { display: flex; width: 100%; margin-top: 36px; padding-inline: 22px; gap: 15px; justify-content: space-between; font-size: 18px; white-space: nowrap; }
-.atelier-site .hero-secondary { margin: 22px 0 0 12px; font-size: 18px; letter-spacing: .05em; }
+.hero-copy { padding-bottom: 35px; }
+.hero-copy > p { margin: 0; font-size: clamp(20px, 2.5vw, 32px); line-height: 1.7; letter-spacing: .025em; }
+.hero-copy > p + p { margin-top: 0; }
+.atelier-site .hero-cta { display: flex; width: 100%; min-height: 86px; margin-top: 36px; padding: 22px 26px; gap: 15px; justify-content: space-between; font-size: clamp(18px, 2.2vw, 29px); white-space: nowrap; }
+.atelier-site .hero-secondary { margin: 22px 0 0 12px; font-size: clamp(18px, 2.2vw, 28px); letter-spacing: .05em; }
 
 /* Services are editorial rows, with useful details one level quieter. */
-.services-heading { display: grid; grid-template-columns: minmax(0, 1fr) 220px; align-items: end; gap: 24px; }
-.service-botanical { display: block; width: 100%; height: auto; margin-bottom: 28px; }
+.services-heading { display: grid; grid-template-columns: minmax(0, 1fr) 280px; align-items: center; gap: 24px; }
+.service-botanical { display: block; width: 350px; max-width: none; height: auto; justify-self: end; margin-bottom: 16px; }
 .services .section-title { margin-bottom: 35px; }
-.service-row { display: grid; grid-template-columns: 1fr 1.22fr; gap: 42px; align-items: baseline; padding: 28px 2px 25px; border-top: 1px solid var(--line); scroll-margin-top: 30px; }
+.service-row { display: grid; grid-template-columns: 1fr 1.22fr; gap: 42px; align-items: baseline; padding: 25px 2px 24px; border-top: 1px solid var(--line); scroll-margin-top: 30px; }
 .service-row:last-child { border-bottom: 1px solid var(--line); }
-.service-row h3 { margin: 0; font-size: clamp(22px, 2.35vw, 31px); line-height: 1.6; }
-.service-row p { margin: 0; font-size: 17px; line-height: 1.85; }
+.service-row h3 { margin: 0; font-size: clamp(26px, 3.5vw, 44px); line-height: 1.6; }
+.service-row p { margin: 0; font-size: clamp(18px, 2.1vw, 28px); line-height: 1.6; }
 .service-row .service-detail { margin-top: 10px; color: var(--muted); font-size: 13px; line-height: 1.8; }
 .atelier-site .section-tail-link { margin-top: 25px; font-size: 15px; }
 
 /* The studio's experience and its self-developed work. */
 .about-grid { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(230px, .8fr); align-items: center; gap: 35px; }
-.about-copy .section-title { font-size: clamp(30px, 3.9vw, 49px); margin-bottom: 28px; }
-.about-copy p { margin: 0 0 12px; font-size: 17px; line-height: 2; }
+.about-copy .section-title { font-size: clamp(36px, 5.55vw, 76px); margin-bottom: 32px; }
+.about-copy p { margin: 0 0 12px; font-size: clamp(20px, 2.2vw, 30px); line-height: 1.8; }
 .about-copy .studio-signature { margin-top: 30px; letter-spacing: .04em; }
 .about-art { display: block; width: 100%; height: auto; max-width: 380px; justify-self: end; }
 .workshop-project { margin-top: 52px; padding-top: 34px; border-top: 1px solid var(--line); }
-.workshop-project .section-kicker { margin-bottom: 24px; font-size: 16px; }
+.workshop-project .section-kicker { margin-bottom: 24px; font-size: clamp(20px, 2.2vw, 28px); }
 .workshop-project .section-kicker::after { display: none; }
-.project-introduction { display: grid; grid-template-columns: 290px 1fr; gap: 44px; align-items: center; }
-.project-introduction h3 { margin: 0; color: var(--olive); font-size: 56px; line-height: 1.4; letter-spacing: .03em; }
+.project-introduction { display: grid; grid-template-columns: 340px 1fr; gap: 44px; align-items: center; }
+.project-introduction h3 { margin: 0; color: var(--olive); font-size: clamp(48px, 5.7vw, 76px); line-height: 1.4; letter-spacing: .03em; }
 .project-introduction > div + div { padding-left: 43px; border-left: 1px solid var(--line-strong); }
-.project-introduction p { margin: 0; font-size: 17px; line-height: 1.9; }
-.project-introduction .project-status { font-size: 14px; color: var(--olive); letter-spacing: .05em; }
-.project-introduction .text-link { margin-top: 17px; font-size: 16px; }
+.project-introduction p { margin: 0; font-size: clamp(20px, 2.1vw, 28px); line-height: 1.8; }
+.project-introduction .project-status { font-size: 20px; color: var(--olive); letter-spacing: .05em; }
+.project-introduction .text-link { margin-top: 17px; font-size: 22px; }
 
 .atelier-site .disclosure { border-top: 1px solid var(--line); }
 .atelier-site .disclosure > summary { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 22px 0; font-size: 16px; font-weight: 500; line-height: 1.75; list-style: none; cursor: pointer; }
@@ -144,9 +144,9 @@ html.has-atelier-dialog { overflow: hidden; }
 
 /* A real inquiry path using the studio's existing email address. */
 .contact-intro { max-width: 960px; }
-.contact-intro .section-title { margin-bottom: 20px; font-size: clamp(33px, 4.5vw, 58px); }
+.contact-intro .section-title { margin-bottom: 24px; font-size: clamp(40px, 6vw, 78px); }
 .contact-intro h2 > span { display: block; }
-.contact-intro > p:last-child { margin: 0; font-size: 17px; line-height: 1.95; }
+.contact-intro > p:last-child { margin: 0; font-size: clamp(20px, 2.1vw, 28px); line-height: 1.8; }
 .contact-form { margin-top: 48px; }
 .contact-form-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
 .field { min-width: 0; margin-bottom: 23px; }
@@ -206,24 +206,25 @@ html.has-atelier-dialog { overflow: hidden; }
 .footer-inner nav a:hover, .footer-inner nav button:hover { text-decoration: underline; text-underline-offset: 4px; }
 .copyright { width: 100%; color: var(--muted); text-align: right; font-size: 11px; letter-spacing: .04em; }
 
-@media (min-width: 1600px) { .atelier-hero { padding-top: 60px; } }
+@media (min-width: 1600px) { .atelier-hero { padding-top: 36px; } }
 @media (max-width: 1100px) {
   .atelier-site .shell { width: calc(100% - 64px); }
-  .wordmark > span { font-size: 31px; }
+  .wordmark > span { font-size: clamp(27px, 3.5vw, 38px); }
   .desktop-nav { gap: 22px; }
-  .desktop-nav a { font-size: 14px; }
+  .desktop-nav a { font-size: clamp(14px, 1.85vw, 21px); }
   .hero-composition { grid-template-columns: 1.22fr 1fr; gap: 20px; }
-  .hero-copy > p { font-size: 19px; }
-  .atelier-site .hero-cta { font-size: 15px; padding: 15px 16px; gap: 10px; }
+  .hero-copy > p { font-size: clamp(20px, 2.4vw, 26px); }
+  .atelier-site .hero-cta { min-height: 68px; font-size: clamp(17px, 2.15vw, 23px); padding: 16px 18px; gap: 10px; }
   .hero-art { margin-left: -22px; }
   .hero-copy { padding-bottom: 0; }
   .wide-break { display: none; }
-  .about-copy .section-title { font-size: 36px; }
+  .about-copy .section-title { font-size: clamp(36px, 5.3vw, 58px); }
   .about-grid { grid-template-columns: minmax(0,1.7fr) minmax(190px,.7fr); gap: 20px; }
-  .project-introduction { grid-template-columns: 230px 1fr; gap: 30px; }
+  .project-introduction { grid-template-columns: 280px 1fr; gap: 30px; }
   .project-introduction > div + div { padding-left: 30px; }
   .service-row { gap: 30px; }
-  .services-heading { grid-template-columns: minmax(0, 1fr) 150px; gap: 18px; }
+  .services-heading { grid-template-columns: minmax(0, 1fr) 190px; gap: 18px; }
+  .service-botanical { width: 250px; }
   .process-list { gap: 25px; }
   .process-list article + article { padding-left: 25px; }
 }
