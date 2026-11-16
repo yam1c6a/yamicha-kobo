@@ -91,13 +91,6 @@ const contactHref = 'mailto:contact@yamicha.com?subject=' + encodeURIComponent('
             </div>
             <img class="about-art" src="/images/atelier/studio-notebook.webp" alt="ノートと緑の鉛筆、葉を重ねた紙のコラージュ" width="1254" height="1254" loading="lazy" decoding="async" />
           </div>
-          <div class="workshop-project" id="yamios">
-            <p class="section-kicker">工房で育てているもの</p>
-            <div class="project-introduction">
-              <div><h3>YAMIOS</h3><p class="project-status">自主開発・開発中</p></div>
-              <div><p>対話と記憶を通じて、<br class="desktop-break" />人の仕事を支えるAIの仕組みを開発しています。</p><a class="text-link" href="/yamios/">YAMIOSの概要と連携について<img class="ui-icon" src="/icons/arrow-up-right.svg" alt="" width="22" height="22" /></a></div>
-            </div>
-          </div>
           <details class="disclosure technical-solutions" id="skills">
             <summary>対応できる技術・開発範囲<img class="ui-icon disclosure-icon" src="/icons/caret-down.svg" alt="" width="22" height="22" /></summary>
             <dl class="skill-list">{solutions.map((solution) => <div id={solution.id}><dt>{solution.name}</dt><dd>{solution.text}<span>{solution.tech}</span></dd></div>)}</dl>
