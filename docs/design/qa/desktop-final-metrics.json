@@ -1,0 +1,80 @@
+{
+  "fonts": {
+    "body": "\"Noto Sans JP\", \"Hiragino Kaku Gothic ProN\", sans-serif",
+    "heading": "\"Noto Serif JP\", \"Yu Mincho\", \"Hiragino Mincho ProN\", serif",
+    "status": "loaded"
+  },
+  "images": [
+    {
+      "complete": true,
+      "naturalWidth": 1374,
+      "src": "/images/atelier/hero-workshop.webp"
+    },
+    {
+      "complete": true,
+      "naturalWidth": 900,
+      "src": "/images/atelier/service-botanical.webp"
+    },
+    {
+      "complete": true,
+      "naturalWidth": 1254,
+      "src": "/images/atelier/studio-notebook.webp"
+    },
+    {
+      "complete": true,
+      "naturalWidth": 900,
+      "src": "/images/atelier/service-botanical.webp"
+    }
+  ],
+  "overflow": 0,
+  "sections": {
+    "#about": {
+      "height": 1249.5625,
+      "width": 1348,
+      "x": 0,
+      "y": 2924.34375
+    },
+    "#contact": {
+      "height": 1694.109375,
+      "width": 1348,
+      "x": 0,
+      "y": 4934.375
+    },
+    "#services": {
+      "height": 900.078125,
+      "width": 1348,
+      "x": 0,
+      "y": 1145.203125
+    },
+    ".atelier-hero": {
+      "height": 1021.203125,
+      "width": 1348,
+      "x": 0,
+      "y": 124
+    },
+    ".contact-form": {
+      "height": 902.359375,
+      "width": 1252,
+      "x": 48,
+      "y": 5467.34375
+    },
+    ".site-footer": {
+      "height": 180.28125,
+      "width": 1348,
+      "x": 0,
+      "y": 6628.484375
+    },
+    ".workshop-project": {
+      "height": 280.375,
+      "width": 1252,
+      "x": 48,
+      "y": 3685.53125
+    }
+  },
+  "viewport": {
+    "clientWidth": 1348,
+    "dpr": 1,
+    "height": 936,
+    "width": 1363
+  }
+}

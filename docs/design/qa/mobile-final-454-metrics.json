@@ -1,0 +1,22 @@
+{
+  "about": {
+    "height": 1154.421875,
+    "y": 2639.09912109375
+  },
+  "contact": {
+    "height": 1323.8802490234375,
+    "y": 4790.05224609375
+  },
+  "height": 6323,
+  "overflow": 0,
+  "services": {
+    "height": 47.88021087646485,
+    "lineHeight": "47.8867px"
+  },
+  "viewport": {
+    "clientWidth": 449,
+    "dpr": 3,
+    "height": 312,
+    "width": 454
+  }
+}
