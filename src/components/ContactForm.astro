@@ -102,6 +102,7 @@ const directMail = `mailto:${email}?subject=${encodeURIComponent('やみちゃ�
     if (previewContent) previewContent.hidden = false;
     if (previewHeading) previewHeading.hidden = false;
     if (successPanel) successPanel.hidden = true;
+    preview?.setAttribute('aria-labelledby', 'contact-preview-title');
     openDialog(preview);
     void prepareDirectSend();
   });
@@ -192,6 +193,7 @@ const directMail = `mailto:${email}?subject=${encodeURIComponent('やみちゃ�
         if (previewContent) previewContent.hidden = true;
         if (previewHeading) previewHeading.hidden = true;
         if (successPanel) successPanel.hidden = false;
+        preview?.setAttribute('aria-labelledby', 'contact-success-title');
         document.querySelector<HTMLButtonElement>('#contact-success [data-close-dialog]')?.focus();
       }
       else { token = ''; if (widgetId) turnstileWindow.turnstile?.reset(widgetId); }
