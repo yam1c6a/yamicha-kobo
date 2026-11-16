@@ -18,7 +18,8 @@ const directMail = `mailto:${email}?subject=${encodeURIComponent('やみちゃ�
 </form>
 
 <dialog class="atelier-dialog" id="contact-preview" aria-labelledby="contact-preview-title">
-  <div class="dialog-heading"><p class="section-kicker">ご相談内容の確認</p><button type="button" class="icon-button" data-close-dialog aria-label="確認画面を閉じる"><img src="/icons/x.svg" alt="" width="24" height="24" /></button></div>
+  <div class="dialog-heading" id="contact-preview-heading"><p class="section-kicker">ご相談内容の確認</p><button type="button" class="icon-button" data-close-dialog aria-label="確認画面を閉じる"><img src="/icons/x.svg" alt="" width="24" height="24" /></button></div>
+  <div id="contact-preview-content">
   <h2 id="contact-preview-title">この内容で、送信します。</h2>
   <p>宛先：<a href={directMail}>{email}</a></p>
   <label for="contact-preview-body">メール本文</label>
@@ -26,8 +27,14 @@ const directMail = `mailto:${email}?subject=${encodeURIComponent('やみちゃ�
   <p class="form-note">内容を確認して送信してください。</p>
   <div id="contact-turnstile" hidden></div><p id="contact-send-status" class="form-note" role="status" aria-live="polite"></p><div class="dialog-actions"><button type="button" class="button button-primary" id="contact-direct-send" hidden>この内容で送信する</button><a class="button button-primary" id="contact-mail-link" href={directMail}>メールアプリを開く<img class="ui-icon" src="/icons/arrow-up-right.svg" alt="" width="22" height="22" /></a><button class="text-link" type="button" id="copy-contact-body">本文をコピー<img class="ui-icon" src="/icons/copy.svg" alt="" width="20" height="20" /></button></div>
   <p class="copy-status" id="contact-copy-status" role="status"></p>
-  <p class="form-note">メールアプリから送る場合は、本文をコピーして上記アドレスへお送りいただくこともできます。</p>
+  <p class="form-note" id="contact-mail-fallback-note">メールアプリから送る場合は、本文をコピーして上記アドレスへお送りいただくこともできます。</p>
   <button type="button" class="inline-button" data-close-dialog>入力内容を修正する</button>
+  </div>
+  <section id="contact-success" aria-labelledby="contact-success-title" hidden>
+    <h2 id="contact-success-title">送信しました</h2>
+    <p>お問い合わせを受け付けました。</p>
+    <button type="button" class="button button-primary" data-close-dialog>閉じる</button>
+  </section>
 </dialog>
 
 <dialog class="atelier-dialog privacy-dialog" id="contact-privacy" aria-labelledby="contact-privacy-title">
@@ -48,6 +55,11 @@ const directMail = `mailto:${email}?subject=${encodeURIComponent('やみちゃ�
   const mailLink = document.querySelector<HTMLAnchorElement>('#contact-mail-link');
   const message = document.querySelector<HTMLTextAreaElement>('#contact-message');
   const copyStatus = document.querySelector<HTMLElement>('#contact-copy-status');
+  const previewContent = document.querySelector<HTMLElement>('#contact-preview-content');
+  const successPanel = document.querySelector<HTMLElement>('#contact-success');
+  const previewHeading = document.querySelector<HTMLElement>('#contact-preview-heading');
+  const mailFallbackNote = document.querySelector<HTMLElement>('#contact-mail-fallback-note');
+  const copyBody = document.querySelector<HTMLButtonElement>('#copy-contact-body');
   const handoffStatus = document.querySelector<HTMLElement>('#contact-handoff-status');
 
   function openDialog(dialog: HTMLDialogElement | null) {
@@ -86,6 +98,10 @@ const directMail = `mailto:${email}?subject=${encodeURIComponent('やみちゃ�
     body.value = emailBody;
     mailLink.href = `mailto:contact@yamicha.com?subject=${encodeURIComponent('やみちゃ工房へのご相談')}&body=${encodeURIComponent(emailBody)}`;
     if (copyStatus) copyStatus.textContent = '';
+    if (sendStatus) sendStatus.textContent = '';
+    if (previewContent) previewContent.hidden = false;
+    if (previewHeading) previewHeading.hidden = false;
+    if (successPanel) successPanel.hidden = true;
     openDialog(preview);
     void prepareDirectSend();
   });
@@ -124,6 +140,9 @@ const directMail = `mailto:${email}?subject=${encodeURIComponent('やみちゃ�
   }
   async function prepareDirectSend() {
     if (!ready || !turnstileHolder || !directSend) return;
+    if (mailLink) mailLink.hidden = true;
+    if (copyBody) copyBody.hidden = true;
+    if (mailFallbackNote) mailFallbackNote.hidden = true;
     try {
       await loadTurnstile();
       if (!turnstileWindow.turnstile) throw new Error('Turnstile unavailable');
@@ -134,7 +153,13 @@ const directMail = `mailto:${email}?subject=${encodeURIComponent('やみちゃ�
         callback: (value) => { token = value; },
         'expired-callback': () => { token = ''; },
       });
-    } catch { if (sendStatus) sendStatus.textContent = '認証を読み込めません。メールアプリから送信してください。'; }
+    } catch {
+      if (mailLink) mailLink.hidden = false;
+      if (copyBody) copyBody.hidden = false;
+      if (mailFallbackNote) mailFallbackNote.hidden = false;
+      directSend.hidden = true;
+      if (sendStatus) sendStatus.textContent = '認証を読み込めません。メールアプリから送信してください。';
+    }
   }
   fetch('/api/contact', { cache: 'no-store' }).then(async (response) => {
     if (!response.ok) return;
@@ -158,7 +183,17 @@ const directMail = `mailto:${email}?subject=${encodeURIComponent('やみちゃ�
       });
       const result = await response.json() as { message?: string };
       sendStatus.textContent = result.message || '送信結果を確認できませんでした。';
-      if (response.ok) { form.reset(); directSend.hidden = true; turnstileHolder?.setAttribute('hidden', ''); }
+      if (response.ok) {
+        form.reset();
+        token = '';
+        if (widgetId) turnstileWindow.turnstile?.reset(widgetId);
+        directSend.hidden = true;
+        turnstileHolder?.setAttribute('hidden', '');
+        if (previewContent) previewContent.hidden = true;
+        if (previewHeading) previewHeading.hidden = true;
+        if (successPanel) successPanel.hidden = false;
+        document.querySelector<HTMLButtonElement>('#contact-success [data-close-dialog]')?.focus();
+      }
       else { token = ''; if (widgetId) turnstileWindow.turnstile?.reset(widgetId); }
     } catch { sendStatus.textContent = '通信に失敗しました。メールアプリからの送信も利用できます。'; }
     finally { directSend.disabled = false; }
