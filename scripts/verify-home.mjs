@@ -26,44 +26,40 @@ assert.equal(new Set(ids).size, ids.length, 'Duplicate HTML IDs');
 for (const match of html.matchAll(/\bhref=["']#([^"']*)["']/g)) {
   assert.ok(match[1] && ids.includes(match[1]), `Broken anchor: #${match[1]}`);
 }
-for (const match of html.matchAll(/\baria-labelledby=["']([^"']+)["']/g)) {
+for (const match of html.matchAll(/\baria-(?:labelledby|describedby|controls)=["']([^"']+)["']/g)) {
   for (const id of match[1].split(/\s+/)) assert.ok(ids.includes(id), `Broken accessible label: ${id}`);
 }
-for (const id of ['services', 'system-development', 'ai-solutions', 'cloud-aws', 'works', 'skills', 'about', 'consult', 'contact', 'chat-form', 'chat-input']) {
+for (const id of ['services', 'system-development', 'ai-solutions', 'legacy-maintenance', 'cloud-aws', 'works', 'skills', 'about', 'consult', 'contact', 'contact-form', 'contact-name', 'contact-email', 'contact-message', 'chat-form', 'chat-input']) {
   assert.ok(ids.includes(id), `Missing section or existing chat element: ${id}`);
 }
 assert.equal((html.match(/<h1\b/g) || []).length, 1, 'Homepage must have one main heading');
 const headline = html.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/)?.[1].replace(/<[^>]*>/g, '').replace(/\s+/g, '');
-assert.equal(headline, 'システム開発で、業務の課題を解決。', 'Homepage headline must describe the overall development business');
-assert.ok(html.includes('href="mailto:contact@yamicha.com?'), 'Existing email link missing');
-// These are three peer services, not data sources flowing into an AI agent.
-const domainNavigation = html.match(/<nav\b[^>]*class="business-navigation"[^>]*>([\s\S]*?)<\/nav>/)?.[1];
-assert.ok(domainNavigation, 'Independent development-domain navigation missing');
-assert.equal((domainNavigation.match(/<ul\b/g) || []).length, 1, 'Domains must share one flat list');
-assert.equal((domainNavigation.match(/<li\b/g) || []).length, 3, 'Expected three peer development domains');
-assert.deepEqual([...domainNavigation.matchAll(/href="#([^"]+)"/g)].map((m) => m[1]), ['system-development', 'ai-solutions', 'cloud-aws'], 'Each domain must have its own destination');
-for (const label of ['業務システム開発', 'AIエージェント開発', 'クラウド・AWS構築', 'AWS・サーバー環境構築']) assert.ok(domainNavigation.includes(label), `Missing independent domain label: ${label}`);
+assert.equal(headline, 'いつもの仕事に、ちょうどいいAIを。', 'Selected atelier headline missing');
+assert.match(html, /\bhref=["']mailto:contact@yamicha\.com(?:[?"'])/, 'Existing email link missing');
+const contactForm = html.match(/<form\b[^>]*\bid=["']contact-form["'][^>]*>[\s\S]*?<\/form>/)?.[0];
+assert.ok(contactForm, 'Contact form missing');
+for (const id of ['contact-name', 'contact-email', 'contact-message']) {
+  assert.ok(contactForm.includes(`id="${id}"`) && contactForm.includes(`for="${id}"`), `Contact field or its label missing: ${id}`);
+}
+assert.match(html, /<a\b[^>]*\bhref=["']\/yamios\/["']/, 'YAMIOS development page link missing');
+// Keep the independent service destinations while allowing the selected visual design.
+const serviceRows = [...html.matchAll(/<article\b[^>]*\bclass=["'][^"']*\bservice-row\b[^"']*["'][^>]*>[\s\S]*?<\/article>/g)].map((m) => m[0]);
+assert.equal(serviceRows.length, 3, 'Expected three service rows');
+assert.deepEqual(serviceRows.map((row) => row.match(/\bid=["']([^"']+)["']/)?.[1]).sort(), ['ai-solutions', 'legacy-maintenance', 'system-development'], 'Each service must retain its own destination');
+for (const row of serviceRows) assert.ok(!/<span\b[^>]*>\s*0[123]\s*<\/span>/.test(row), 'Decorative service numbering must not return');
+const technicalDetails = html.match(/<details\b[^>]*\bid=["']skills["'][^>]*>([\s\S]*?)<\/details>/)?.[1];
+assert.ok(technicalDetails && /\bid=["']cloud-aws["']/.test(technicalDetails) && technicalDetails.includes('AWS'), 'AWS information and anchor must remain in the technical details');
 assert.ok(!html.includes('workflow-inputs') && !html.includes('workflow-core'), 'The misleading all-services-to-AI hero must not return');
-// Restore the original illustration, not the rejected replacement workflow.
-const heroDiagram = html.match(/<figure\b[^>]*class="project-diagram diagram-hero"[^>]*>([\s\S]*?)<\/figure>/)?.[1];
-assert.ok(heroDiagram && heroDiagram.includes('活用イメージ'), 'Original labeled hero illustration missing');
-for (const name of ['workflow-window', 'agent-window', 'cloud-window']) assert.ok(heroDiagram.includes(name), `Missing hero illustration panel: ${name}`);
-assert.ok(heroDiagram.includes('AWS・クラウド') && heroDiagram.includes('AWS / クラウド基盤'), 'AWS illustration missing');
-assert.ok(!heroDiagram.includes('地図データ'), 'Hero should no longer show a map panel');
-const serviceCards = [...html.matchAll(/<article\b[^>]*class="service-card"[^>]*>[\s\S]*?<\/article>/g)].map((m) => m[0]);
-assert.equal(serviceCards.length, 3, 'Expected three independent service cards');
-for (const card of serviceCards) assert.ok(!/<span\b[^>]*>\s*0[123]\s*<\/span>/.test(card), 'Decorative service numbering must not return');
+assert.match(html, /<img\b[^>]*\bsrc=["']\/images\/atelier\/hero-workshop\.webp["']/, 'Selected atelier hero artwork missing');
 assert.ok(html.includes('開発に関わった実績'), 'Portfolio heading missing');
-assert.equal((html.match(/説明用イメージ/g) || []).length, 3, 'Expected three labeled case diagrams');
 const featuredLinks = [...html.matchAll(/<a\b[^>]*href="#case-([^"]+)"[^>]*\bdata-case-link\b/g)].map((match) => match[1]);
-assert.deepEqual(featuredLinks, ['ai-agent-platform', 'geospatial-versions', 'public-documents'], 'Featured cards must link to their full existing cases');
-// Promote the verified municipal accounting case without deleting the EC case.
+assert.deepEqual(featuredLinks.sort(), ['ai-agent-platform', 'geospatial-versions', 'public-documents'], 'Featured cards must link to their full existing cases');
+// Preserve the featured case selection and all eight detailed cases without requiring diagrams.
 const featuredCards = [...html.matchAll(/<article\b[^>]*class="featured-card"[^>]*>[\s\S]*?<\/article>/g)].map((m) => m[0]);
 assert.equal(featuredCards.length, 3, 'Expected three featured cases');
 const maintenanceCard = featuredCards.find((card) => card.includes('href="#case-geospatial-versions"'));
 assert.ok(maintenanceCard, 'Maintenance case must be featured');
 assert.ok(maintenanceCard.includes('>既存システムの改修・保守</h3>'), 'Maintenance heading missing');
-assert.ok(maintenanceCard.includes('diagram-maintenance') && maintenanceCard.includes('説明用イメージ'), 'Maintenance illustration missing');
 assert.ok(maintenanceCard.includes('レガシーシステム') && maintenanceCard.includes('不具合'), 'Maintenance scope must be grounded in the existing case');
 assert.ok(!html.includes('maintenance-detail'), 'Redundant maintenance detail section must not return');
 assert.ok(!featuredCards.some((card) => card.includes('経理システム')), 'Accounting must not remain featured');
@@ -71,6 +67,7 @@ assert.ok(html.includes('id="case-public-accounting"'), 'Accounting case must re
 for (const card of featuredCards) assert.ok(!/EC運営|商品リサーチ|出品管理|在庫確認|diagram-commerce/.test(card), 'EC material must not remain in the featured cases');
 assert.match(html, /id="case-ec-operations"/, 'Existing EC case must remain in the full portfolio');
 assert.match(html, /<details\b[^>]*id="all-works"/, 'Full portfolio must be accessible through a native disclosure');
+assert.ok(html.includes('守秘義務に配慮'), 'Public portfolio confidentiality notice missing');
 assert.ok(!html.includes('20年以上'), 'Personal career claim must not appear');
 assert.ok(!html.includes('>SKILLS<'), 'Resume-style section label must not appear');
 const cards = [...html.matchAll(/<article\b[^>]*\bclass=["']portfolio-card["'][^>]*>[\s\S]*?<\/article>/g)].map((match) => match[0]);
@@ -102,4 +99,4 @@ assert.ok(publicCaseKnowledge.includes('税務上の最終判断は税理士'), 
 assert.ok(!/Playwright|1名体制|10年以上/.test(publicCaseKnowledge), 'Retired facts must not return in AI context');
 const aiSource = await readFile(new URL('../src/services/ai/studio-knowledge.ts', import.meta.url), 'utf8');
 assert.ok(aiSource.includes("from '../../data/case-studies.js'") && aiSource.includes('${publicCaseKnowledge}'), 'AI must consume the shared public case source');
-console.log(`Homepage verification passed: ${ids.length} unique IDs; 3 independent domains; original hero art; no decorative service numbers; featured accounting case; 8 detailed cases, shared AI facts, anchors, contact and chat.`);
+console.log(`Homepage verification passed: ${ids.length} unique IDs; 3 service destinations; atelier hero art; AWS details; 3 featured and 8 detailed cases; shared AI facts, confidentiality, anchors, contact form and existing chat.`);

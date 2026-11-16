@@ -1,219 +1,157 @@
 ---
-import BrandMark from '../components/BrandMark.astro';
 import ChatConsultation from '../components/ChatConsultation.astro';
-import BusinessHero from '../components/BusinessHero.astro';
+import AtelierHero from '../components/AtelierHero.astro';
+import ContactForm from '../components/ContactForm.astro';
 import Portfolio from '../components/Portfolio.astro';
-import ServiceIcon from '../components/ServiceIcon.astro';
 import Layout from '../layouts/Layout.astro';
 import '../styles/home.css';
 
-const services = [
-  { id: 'system-development', icon: 'system', title: '手作業を減らしたい', text: '繰り返す入力や集計、ファイル処理を自動化。今あるシステムの改修や、ツール同士の連携にも対応します。' },
-  { id: 'ai-solutions', icon: 'ai', title: 'AIエージェントをつくりたい', text: '業務データや外部ツールと連携し、情報の照合や必要な処理を進めるAIエージェントを開発します。人が結果を確認する手順も設計します。' },
-  { id: 'cloud-aws', icon: 'cloud', title: 'AWSでシステムを構築したい', text: 'AWSを活用したクラウド環境の構築や、既存システムとの連携・動作検証を支援します。' },
-] as const;
-
 const navigation = [
-  { href: '#services', label: '相談できること' },
-  { href: '#works', label: '開発実績' },
-  { href: '#about', label: '事業紹介' },
+  { href: '#services', label: 'できること' },
+  { href: '#works', label: '仕事の紹介' },
+  { href: '#about', label: '工房について' },
 ];
-
+const services = [
+  { id: 'ai-solutions', title: 'AI活用・業務自動化', text: '探す、整理する、転記する。毎日の作業を、仕事に合う仕組みで支えます。', detail: 'AIエージェント・文書検索・データ整理・定型作業の自動化' },
+  { id: 'system-development', title: '業務システムの開発', text: '必要な機能と日々の運用を整理して、使いやすいシステムをつくります。', detail: 'Web・デスクトップアプリ・データ連携・AWS構築' },
+  { id: 'legacy-maintenance', title: '既存システムの改修・保守', text: 'これまでの仕組みを理解し、必要なところから整えていきます。', detail: '既存コードの調査・機能追加・不具合修正・環境移行' },
+];
 const solutions = [
-  { name: 'AIエージェント開発', text: '業務データや外部ツールを参照し、必要な処理を選択・実行する仕組みを開発します。結果や判断の根拠を人が確認できるよう設計します。', tech: 'Tool Calling / 外部API連携 / 人による確認' },
-  { name: '業務に合わせたアプリケーション開発', text: 'デスクトップからWebまで、業務フローと運用環境に合わせて設計。既存システムの改修や機能拡張にも対応します。', tech: 'C++ / C# / VB / Java / Python / JavaScript / TypeScript / React' },
-  { name: 'データをつなぐ基盤・API連携', text: 'データベース、Web API、外部サービスを連携し、情報を業務で活用できる仕組みを構築します。', tech: 'FastAPI / Node.js / Jinja2 / Oracle / PostgreSQL / SQLite / AWS EC2' },
-  { name: '社内情報の検索・ナレッジ活用', text: '文書や対話の情報を整理し、検索・参照・回答につなげる仕組みを構築。用途に応じてローカルLLMも活用します。', tech: 'RAG / pgvector / Ollama / Microsoft Graph API / 外部API連携' },
-  { name: '開発から運用・改善までの支援', text: '要件の整理から進捗・品質管理、稼働後の保守まで。実際の運用を踏まえ、継続して使えるシステムを支えます。', tech: '要件定義 / 設計・開発 / プロジェクト管理 / 運用・保守' },
+  { name: 'AIエージェント・ナレッジ活用', text: '業務データや外部ツールを参照し、検索・回答・必要な処理につなげます。結果や根拠を人が確認する手順も設計します。', tech: 'RAG / Tool Calling / Ollama / Microsoft Graph API' },
+  { name: '業務アプリケーションの開発・改修', text: 'デスクトップからWebまで、業務フローと運用環境に合わせて設計します。既存システムの保守や機能拡張にも対応します。', tech: 'C++ / C# / VB / Java / Python / JavaScript / TypeScript / React' },
+  { name: 'データ基盤・外部サービスとの連携', text: 'データベースやWeb APIをつなぎ、情報を日々の業務で活用できる仕組みをつくります。', tech: 'FastAPI / Node.js / Oracle / PostgreSQL / SQLite / 外部API連携' },
+  { id: 'cloud-aws', name: 'クラウド・AWS構築', text: 'AWSを活用したクラウド環境の構築や、既存システムとの連携・動作検証を支援します。', tech: 'AWS EC2 / クラウド・オンプレミスの基盤構築 / 運用・保守' },
 ];
-
-const consultationTopics = [
-  { title: '現状の課題', text: '手間がかかる作業や、利用中のツールを確認します。' },
-  { title: '対応する範囲', text: '改善したいことと、優先する機能を整理します。' },
-  { title: '費用と期間', text: '機能や既存環境を踏まえ、見積もりに必要な条件を確認します。' },
-  { title: '開発と運用', text: '確認方法や、稼働後の使い方・保守について話し合います。' },
+const process = [
+  { title: '今の仕事を知る', text: '困っていることも、変えたくないことも。今のやり方を聞くところから始めます。' },
+  { title: '小さく確かめる', text: '必要な機能と対応範囲を整理して、使い方や実現方法を一緒に確認します。' },
+  { title: '使いながら整える', text: '実際の運用を踏まえ、開発、その後の改修・保守まで支えます。' },
 ];
-
 const questions = [
   { question: '仕様が決まっていなくても相談できますか？', answer: 'はい。手間がかかっている作業や、できるようにしたいことをお聞かせください。課題と必要な機能を整理するところからご相談いただけます。' },
   { question: '今使っているシステムも改修できますか？', answer: '既存システムの改修・機能追加・保守に対応します。利用中のシステムや運用環境を確認し、対応できる範囲を検討します。' },
   { question: 'AIを使う必要はありますか？', answer: '業務や運用環境に合わせ、通常のプログラムや既存サービス、AIから適した方法を選びます。組み合わせて使うこともできます。' },
 ];
-
-const contactEmail = 'contact@yamicha.com';
-const contactHref = 'mailto:' + contactEmail + '?subject=' + encodeURIComponent('やみちゃ工房へのお問い合わせ');
+const contactHref = 'mailto:contact@yamicha.com?subject=' + encodeURIComponent('やみちゃ工房へのお問い合わせ');
 ---
 
-<Layout
-  title="やみちゃ工房｜業務システム開発・AIエージェント・AWS構築"
-  description="業務システムの新規開発・改修、AIエージェント開発、AWSを活用したシステム構築。課題の整理から開発・運用まで、それぞれの業務に合う仕組みづくりを支援します。"
-  themeColor="#ffffff"
->
-  <div class="corporate-site" id="top">
+<Layout title="やみちゃ工房｜AI活用・業務自動化・システム開発" description="いつもの仕事に、ちょうどいいAIを。繰り返し作業の自動化から、業務システムの開発・改修、AWS構築まで。仕事の流れを理解し、使い続けられる仕組みをつくる技術工房です。" themeColor="#f4f0e7">
+  <div class="atelier-site" id="top">
     <a class="skip-link" href="#main-content">本文へ移動</a>
     <header class="site-header">
       <div class="shell header-inner">
-        <a class="logo-link" href="#top" aria-label="やみちゃ工房 ホーム"><BrandMark /></a>
+        <a class="wordmark" href="#top" aria-label="やみちゃ工房 ホーム"><span>やみちゃ工房</span><small>AI &amp; SOFTWARE STUDIO</small></a>
         <nav class="desktop-nav" aria-label="メインナビゲーション">
           {navigation.map((item) => <a href={item.href}>{item.label}</a>)}
-          <a class="header-cta" href="#contact">お問い合わせ</a>
+          <a href="#contact">相談する</a>
         </nav>
         <details class="mobile-menu">
-          <summary><span class="menu-lines" aria-hidden="true"></span><span>メニュー</span></summary>
+          <summary><span>メニュー</span><img class="menu-open-icon" src="/icons/list.svg" alt="" width="26" height="26" /><img class="menu-close-icon" src="/icons/x.svg" alt="" width="26" height="26" /></summary>
           <nav aria-label="モバイルナビゲーション">
             {navigation.map((item) => <a href={item.href}>{item.label}</a>)}
             <a href="#consult" data-focus-chat>AI相談室</a>
-            <a href="#contact">お問い合わせ</a>
+            <a href="#contact">仕事の困りごとを相談する</a>
           </nav>
         </details>
       </div>
     </header>
 
     <main id="main-content" tabindex="-1">
-      <BusinessHero />
+      <AtelierHero />
 
       <section class="section services" id="services" aria-labelledby="services-heading">
-        <div class="shell">
-          <div class="section-intro">
-            <p class="section-kicker">事業内容</p>
-            <h2 class="section-title" id="services-heading">こんな課題をご相談いただけます</h2>
+        <div class="shell section-rule">
+          <div class="services-heading">
+            <div><p class="section-kicker">できること</p><h2 class="section-title" id="services-heading">今の仕事に合う、つくり方を。</h2></div>
+            <img class="service-botanical" src="/images/atelier/service-botanical.webp" alt="" width="900" height="450" loading="lazy" decoding="async" />
           </div>
-          <div class="service-grid">
+          <div class="service-list">
             {services.map((service) => (
-              <article class="service-card" id={service.id}>
-                <div class="service-topline"><ServiceIcon name={service.icon} /></div>
-                <div>
-                  <h3>{service.title}</h3>
-                  <p>{service.text}</p>
-                </div>
+              <article class="service-row" id={service.id}>
+                <h3>{service.title}</h3>
+                <div><p>{service.text}</p><p class="service-detail">{service.detail}</p></div>
               </article>
             ))}
           </div>
+          <a class="text-link section-tail-link" href="#skills">対応できる技術について<img class="ui-icon" src="/icons/arrow-right.svg" alt="" width="22" height="22" /></a>
         </div>
       </section>
 
       <Portfolio />
 
       <section class="section about-section" id="about" aria-labelledby="about-heading">
-        <div class="shell">
-          <p class="section-kicker">事業紹介</p>
-          <h2 class="section-title" id="about-heading">やみちゃ工房について</h2>
+        <div class="shell section-rule">
+          <p class="section-kicker">工房について</p>
           <div class="about-grid">
-            <div class="about-identity">
-              <img src="/ym-logo.png" alt="" width="104" height="104" loading="lazy" decoding="async" />
-              <div>
-                <p>やみちゃ工房</p>
-                <span>業務システム開発・AIエージェント・地理空間情報</span>
-              </div>
+            <div class="about-copy" id="philosophy">
+              <h2 class="section-title" id="about-heading">つくる側と、使う側。<br />その両方の経験から。</h2>
+              <p>システム開発に加え、経理や総務の実務にも携わってきました。</p>
+              <p>画面の向こうにある日々の仕事まで考えながら、<br class="desktop-break" />相談から開発、その後の改善まで向き合います。</p>
+              <p class="studio-signature">やみちゃ工房は、ひとりの技術工房です。</p>
             </div>
-            <div class="about-content" id="philosophy">
-              <p>やみちゃ工房は、業務システム開発、AIエージェント開発・業務自動化、地理空間情報の活用を手がけるIT開発事業です。お客様の業務や運用環境に合わせ、企画・設計から開発・運用まで支援します。</p>
-              <dl class="business-info">
-                <div id="infrastructure"><dt>対応範囲</dt><dd>新規開発、既存システムの改修・機能追加、データ連携、クラウド・オンプレミスの基盤構築、運用・保守</dd></div>
-                <div><dt>連絡先</dt><dd><a href={contactHref}>{contactEmail}</a></dd></div>
-              </dl>
-              <details class="disclosure technical-solutions" id="skills">
-                <summary>技術・ソリューション</summary>
-                <dl class="skill-list">
-                  {solutions.map((solution) => (
-                    <div>
-                      <dt>{solution.name}</dt>
-                      <dd>{solution.text}<span>{solution.tech}</span></dd>
-                    </div>
-                  ))}
-                </dl>
-              </details>
+            <img class="about-art" src="/images/atelier/studio-notebook.webp" alt="ノートと緑の鉛筆、葉を重ねた紙のコラージュ" width="1254" height="1254" loading="lazy" decoding="async" />
+          </div>
+          <div class="workshop-project" id="yamios">
+            <p class="section-kicker">工房で育てているもの</p>
+            <div class="project-introduction">
+              <div><h3>YAMIOS</h3><p class="project-status">自主開発・開発中</p></div>
+              <div><p>対話と記憶を通じて、<br class="desktop-break" />人の仕事を支えるAIの仕組みを開発しています。</p><a class="text-link" href="/yamios/">YAMIOSの概要と連携について<img class="ui-icon" src="/icons/arrow-up-right.svg" alt="" width="22" height="22" /></a></div>
             </div>
           </div>
+          <details class="disclosure technical-solutions" id="skills">
+            <summary>対応できる技術・開発範囲<img class="ui-icon disclosure-icon" src="/icons/caret-down.svg" alt="" width="22" height="22" /></summary>
+            <dl class="skill-list">{solutions.map((solution) => <div id={solution.id}><dt>{solution.name}</dt><dd>{solution.text}<span>{solution.tech}</span></dd></div>)}</dl>
+            <dl class="business-info" id="infrastructure"><div><dt>事業名</dt><dd>やみちゃ工房</dd></div><div><dt>連絡先</dt><dd><a href={contactHref}>contact@yamicha.com</a></dd></div></dl>
+          </details>
         </div>
       </section>
 
-      <section class="section consultation-topics" aria-labelledby="topics-heading">
-        <div class="shell">
-          <h2 class="section-title" id="topics-heading">相談時に確認すること</h2>
-          <ol class="topic-list">
-            {consultationTopics.map((topic, index) => (
-              <li>
-                <span class="topic-step" aria-hidden="true">{index + 1}</span>
-                <h3>{topic.title}</h3>
-                <p>{topic.text}</p>
-              </li>
-            ))}
-          </ol>
+      <section class="section process-section" aria-labelledby="process-heading">
+        <div class="shell section-rule">
+          <p class="section-kicker">仕事の進め方</p>
+          <h2 class="section-title" id="process-heading">まず、仕事の話を聞かせてください。</h2>
+          <div class="process-list">{process.map((item) => <article><h3>{item.title}</h3><p>{item.text}</p></article>)}</div>
+          <div class="faq-list" aria-label="ご相談の前によくあるご質問">{questions.map(({question, answer}) => <details class="disclosure"><summary>{question}<img class="ui-icon disclosure-icon" src="/icons/caret-down.svg" alt="" width="22" height="22" /></summary><p>{answer}</p></details>)}</div>
         </div>
       </section>
 
-      <section class="section faq-section" aria-labelledby="faq-heading">
-        <div class="shell faq-grid">
-          <div><p class="section-kicker">ご相談の前に</p><h2 class="section-title" id="faq-heading">よくあるご質問</h2></div>
-          <div class="faq-list">
-            {questions.map(({ question, answer }) => (
-              <details class="disclosure">
-                <summary>{question}</summary>
-                <p>{answer}</p>
-              </details>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section class="section consultation-section" id="consult" aria-labelledby="consult-heading">
-        <div class="shell consultation-grid">
-          <div>
-            <p class="section-kicker">まずは気軽に</p>
-            <h2 class="section-title" id="consult-heading">AI相談室</h2>
-            <p>「この作業を自動化したい」「AIで何ができる？」など、普段の言葉で入力すると、課題や改善方法を整理できます。</p>
-            <p class="consultation-disclaimer">AIによるご案内は参考情報です。具体的な仕様・費用・納期は、個別のご相談で確認します。</p>
-            <a class="text-link" href="#contact">直接お問い合わせする <span aria-hidden="true">→</span></a>
-          </div>
-          <ChatConsultation />
-        </div>
-      </section>
-
-      <section class="contact-section" id="contact" aria-labelledby="contact-heading">
-        <div class="shell contact-card">
-          <p class="contact-kicker">お問い合わせ</p>
-          <h2 id="contact-heading">今、手間がかかっていることを教えてください。</h2>
-          <p>今困っている作業、利用中のツール、できるようにしたいことを、わかる範囲でお知らせください。仕様が決まっていない段階からご相談いただけます。</p>
-          <div class="contact-actions">
-            <a class="button button-primary" href={contactHref}>メールでお問い合わせ <span aria-hidden="true">→</span></a>
-            <a class="contact-email" href={contactHref}>{contactEmail}</a>
-          </div>
-          <a class="text-link" href="#consult" data-focus-chat>AI相談室で考えを整理する <span aria-hidden="true">→</span></a>
+      <section class="section contact-section" id="contact" aria-labelledby="contact-heading">
+        <div class="shell section-rule">
+          <div class="contact-intro"><p class="section-kicker">ご相談</p><h2 class="section-title" id="contact-heading"><span>「こんなこと、できる？」</span><span>からで大丈夫。</span></h2><p>まだ仕様が決まっていなくても、<br />今の仕事や困っていることから聞かせてください。</p></div>
+          <ContactForm />
+          <details class="consultation-disclosure" id="consult">
+            <summary><span><small>まずは気軽に</small>AI相談室で考えを整理する</span><img class="ui-icon disclosure-icon" src="/icons/caret-down.svg" alt="" width="26" height="26" /></summary>
+            <div class="consultation-content"><p class="consultation-intro">AWS・LLM・RAGの構成や選び方、業務改善について、普段の言葉で相談できます。具体的な仕様・費用・納期は、個別のご相談で確認します。</p><ChatConsultation /></div>
+          </details>
         </div>
       </section>
     </main>
 
-    <footer class="site-footer">
-      <div class="shell footer-inner">
-        <a class="logo-link" href="#top" aria-label="やみちゃ工房 ホーム"><BrandMark compact /></a>
-        <nav aria-label="フッターナビゲーション">
-          {navigation.map((item) => <a href={item.href}>{item.label}</a>)}
-          <a href="#consult" data-focus-chat>AI相談室</a>
-        </nav>
-        <small>© {new Date().getFullYear()} Yamicha Kobo</small>
-      </div>
-    </footer>
+    <footer class="site-footer"><div class="shell footer-inner"><a class="wordmark footer-wordmark" href="#top" aria-label="やみちゃ工房 ホーム"><span>やみちゃ工房</span><small>AI &amp; SOFTWARE STUDIO</small></a><nav aria-label="フッターナビゲーション"><a href="#about">工房について</a><a href="#skills">事業者情報</a><button type="button" class="inline-button" data-open-privacy>入力内容の取り扱い</button><a href="#consult" data-focus-chat>AI相談室</a></nav><small class="copyright">© {new Date().getFullYear()} Yamicha Kobo</small></div></footer>
   </div>
 </Layout>
 
 <script>
   const skills = document.querySelector<HTMLDetailsElement>('#skills');
-  function revealSkills() {
-    if (location.hash === '#skills' && skills) skills.open = true;
-  }
-  revealSkills();
-  window.addEventListener('hashchange', revealSkills);
-
+  const consultation = document.querySelector<HTMLDetailsElement>('#consult');
   const menu = document.querySelector<HTMLDetailsElement>('.mobile-menu');
-  menu?.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => { menu.open = false; }));
-  document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && menu?.open) {
-      menu.open = false;
-      menu.querySelector('summary')?.focus();
-    }
-  });
+  function revealTarget() {
+    if (['#skills', '#cloud-aws', '#infrastructure'].includes(location.hash) && skills) skills.open = true;
+    if (location.hash === '#consult' && consultation) consultation.open = true;
+    const target = document.getElementById(location.hash.slice(1));
+    if (target && !location.hash.startsWith('#case-')) requestAnimationFrame(() => target.scrollIntoView({block:'start'}));
+  }
+  if (location.hash) revealTarget();
+  window.addEventListener('hashchange', revealTarget);
   document.addEventListener('click', (event) => {
-    if (menu?.open && event.target instanceof Node && !menu.contains(event.target)) menu.open = false;
+    if (!(event.target instanceof Element)) return;
+    const link = event.target.closest<HTMLAnchorElement>('a[href^="#"]');
+    if (link?.hash === '#consult' && consultation) consultation.open = true;
+    if (link && ['#skills', '#cloud-aws', '#infrastructure'].includes(link.hash) && skills) skills.open = true;
+    if (menu?.open && !menu.contains(event.target)) menu.open = false;
+  }, true);
+  menu?.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => {menu.open = false;}));
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && menu?.open) {menu.open = false; menu.querySelector('summary')?.focus();}
   });
 </script>
