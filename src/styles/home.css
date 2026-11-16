@@ -80,8 +80,7 @@ html.has-atelier-dialog { overflow: hidden; }
 
 /* The reference's large Mincho headline and window-side paper collage. */
 .atelier-hero { padding-top: 32px; padding-bottom: 46px; overflow: clip; }
-.atelier-hero .section-kicker { margin-bottom: 16px; font-size: clamp(20px, 2.4vw, 31px); line-height: 1.25; }
-.atelier-hero h1 { margin: 0; font-size: clamp(56px, 7.65vw, 108px); line-height: 1.2; letter-spacing: .025em; }
+.atelier-hero h1 { margin: 0; font-size: clamp(48px, 6.8vw, 96px); line-height: 1.2; letter-spacing: .025em; }
 .atelier-hero h1 > span { display: block; white-space: nowrap; }
 .hero-composition { display: grid; grid-template-columns: 1.53fr 1fr; gap: 52px; align-items: center; margin-top: 5px; }
 .hero-art { display: block; min-width: 0; margin-left: -15px; margin-right: 0; }
@@ -247,7 +246,7 @@ html.has-atelier-dialog { overflow: hidden; }
   .desktop-nav { display: none; }
   .mobile-menu { display: block; }
   .atelier-hero { padding-top: 20px; padding-bottom: 34px; }
-  .atelier-hero h1 { font-size: clamp(32px, 10.1vw, 58px); line-height: 1.35; letter-spacing: .01em; }
+  .atelier-hero h1 { font-size: clamp(28px, 8.5vw, 50px); line-height: 1.35; letter-spacing: .01em; }
   .hero-composition { display: flex; flex-direction: column; align-items: stretch; gap: 14px; margin-top: 18px; }
   .hero-copy { order: -1; padding: 0; }
   .hero-copy > p { font-size: clamp(16px, 4.4vw, 18px); line-height: 1.7; letter-spacing: 0; }
@@ -262,7 +261,6 @@ html.has-atelier-dialog { overflow: hidden; }
   .atelier-site .section { padding-bottom: 57px; }
   .atelier-site .section-rule { padding-top: 29px; }
   .atelier-site .section-kicker { font-size: 15px; margin-bottom: 23px; }
-  .atelier-site .atelier-hero .section-kicker { font-size: clamp(16px, 4.4vw, 18px); margin-bottom: 6px; }
   .atelier-site .section-kicker::after { margin-top: 10px; width: 32px; height: 2px; }
   .atelier-site .section-title { font-size: 29px; line-height: 1.7; margin-bottom: 26px; }
   .atelier-site .services .section-title { font-size: clamp(20px, 6.2vw, 29px); letter-spacing: 0; }
