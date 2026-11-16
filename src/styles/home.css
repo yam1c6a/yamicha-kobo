@@ -87,8 +87,9 @@ html.has-atelier-dialog { overflow: hidden; }
 .hero-art { display: block; min-width: 0; margin-left: -15px; margin-right: 0; }
 .hero-art img { display: block; width: 100%; height: auto; }
 .hero-copy { padding-bottom: 35px; }
-.hero-copy > p { margin: 0; font-size: clamp(20px, 2.5vw, 32px); line-height: 1.7; letter-spacing: .025em; }
+.hero-copy > p { margin: 0; font-size: clamp(20px, 2.5vw, 30px); line-height: 1.7; letter-spacing: .025em; }
 .hero-copy > p + p { margin-top: 0; }
+.hero-description-mobile { display: none; }
 .atelier-site .hero-cta { display: flex; width: 100%; min-height: 86px; margin-top: 36px; padding: 22px 26px; gap: 15px; justify-content: space-between; font-size: clamp(18px, 2.2vw, 29px); white-space: nowrap; }
 .atelier-site .hero-secondary { margin: 22px 0 0 12px; font-size: clamp(18px, 2.2vw, 28px); letter-spacing: .05em; }
 
@@ -116,8 +117,8 @@ html.has-atelier-dialog { overflow: hidden; }
 .project-introduction h3 { margin: 0; color: var(--olive); font-size: clamp(48px, 5.7vw, 76px); line-height: 1.4; letter-spacing: .03em; }
 .project-introduction > div + div { padding-left: 43px; border-left: 1px solid var(--line-strong); }
 .project-introduction p { margin: 0; font-size: clamp(20px, 2.1vw, 28px); line-height: 1.8; }
-.project-introduction .project-status { font-size: 20px; color: var(--olive); letter-spacing: .05em; }
-.project-introduction .text-link { margin-top: 17px; font-size: 22px; }
+.project-introduction .project-status { font-size: clamp(20px, 2.1vw, 28px); color: var(--olive); letter-spacing: .05em; }
+.project-introduction .text-link { margin-top: 17px; font-size: clamp(20px, 2.1vw, 28px); }
 
 .atelier-site .disclosure { border-top: 1px solid var(--line); }
 .atelier-site .disclosure > summary { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 22px 0; font-size: 16px; font-weight: 500; line-height: 1.75; list-style: none; cursor: pointer; }
@@ -143,25 +144,30 @@ html.has-atelier-dialog { overflow: hidden; }
 .faq-list { margin-top: 54px; border-bottom: 1px solid var(--line); }
 
 /* A real inquiry path using the studio's existing email address. */
-.contact-intro { max-width: 960px; }
+.contact-heading-grid { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 24px; align-items: end; }
+.contact-intro { min-width: 0; }
+.contact-botanical { display: block; width: 340px; max-width: none; height: auto; justify-self: end; margin-bottom: 8px; }
 .contact-intro .section-title { margin-bottom: 24px; font-size: clamp(40px, 6vw, 78px); }
 .contact-intro h2 > span { display: block; }
 .contact-intro > p:last-child { margin: 0; font-size: clamp(20px, 2.1vw, 28px); line-height: 1.8; }
 .contact-form { margin-top: 48px; }
 .contact-form-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
 .field { min-width: 0; margin-bottom: 23px; }
-.field label { display: block; margin-bottom: 9px; font-weight: 500; }
-.field label > span { margin-left: 14px; color: var(--muted); font-size: 12px; font-weight: 400; }
+.field label { display: block; margin-bottom: 10px; font-size: clamp(18px, 2vw, 26px); font-weight: 500; }
+.field label > span { margin-left: 14px; color: var(--muted); font-size: 16px; font-weight: 400; }
 .atelier-site input, .atelier-site .contact-form textarea, .atelier-dialog textarea { display: block; width: 100%; min-width: 0; border: 1px solid #898e78; border-radius: 4px; background: #fbf9f24d; color: var(--ink); padding: 12px 15px; font: inherit; font-size: 16px; line-height: 1.85; transition: border-color 160ms ease, background 160ms ease; }
 .atelier-site input { min-height: 54px; }
+.atelier-site .contact-form input, .atelier-site .contact-form textarea { font-size: clamp(18px, 1.8vw, 24px); }
+.atelier-site .contact-form input { min-height: 64px; }
 .atelier-site .contact-form textarea { min-height: 180px; resize: vertical; }
 .atelier-site input:focus, .atelier-site .contact-form textarea:focus { border-color: var(--olive); background: #fffdf57a; outline: 2px solid #45553e40; outline-offset: 2px; }
 .atelier-site textarea::placeholder { color: var(--muted); opacity: 1; }
 .form-note { margin: 12px 0; color: var(--ink-soft); font-size: 14px; line-height: 1.9; }
+.contact-form > .form-note { font-size: clamp(16px, 1.7vw, 23px); }
 .form-note .inline-button { margin-left: 14px; }
 .contact-submit { display: flex; justify-content: center; margin-top: 33px; }
-.contact-submit .button { min-width: 380px; justify-content: space-between; }
-.direct-contact { display: flex; justify-content: center; flex-wrap: wrap; gap: 5px 14px; margin: 23px 0 0; color: var(--muted); font-size: 14px; }
+.contact-submit .button { min-width: 580px; min-height: 86px; padding: 20px 30px; justify-content: space-between; font-size: 28px; }
+.direct-contact { display: flex; justify-content: center; flex-wrap: wrap; gap: 5px 14px; margin: 23px 0 0; color: var(--muted); font-size: 18px; }
 .direct-contact a { color: var(--olive); text-underline-offset: 4px; }
 .handoff-notice { color: var(--olive); }
 .handoff-notice button { margin-left: 15px; }
@@ -225,31 +231,35 @@ html.has-atelier-dialog { overflow: hidden; }
   .service-row { gap: 30px; }
   .services-heading { grid-template-columns: minmax(0, 1fr) 190px; gap: 18px; }
   .service-botanical { width: 250px; }
+  .contact-heading-grid { grid-template-columns: minmax(0, 1fr) 230px; gap: 16px; }
+  .contact-botanical { width: 270px; }
   .process-list { gap: 25px; }
   .process-list article + article { padding-left: 25px; }
 }
 @media (max-width: 760px) {
   .atelier-site .shell { width: calc(100% - 48px); }
-  .header-inner { min-height: 95px; gap: 15px; }
+  .header-inner { min-height: 76px; gap: 15px; }
   .wordmark > span { font-size: 26px; letter-spacing: .04em; }
   .wordmark > small { font-size: 8px; padding-left: 2px; letter-spacing: .2em; }
   .desktop-nav { display: none; }
   .mobile-menu { display: block; }
-  .atelier-hero { padding-top: 35px; padding-bottom: 34px; }
-  .atelier-hero .section-kicker { font-size: 16px; margin-bottom: 27px; }
-  .atelier-hero h1 { font-size: clamp(34px, 7.95vw, 57px); line-height: 1.5; letter-spacing: .01em; }
-  .hero-composition { display: flex; flex-direction: column; align-items: stretch; gap: 22px; margin-top: 26px; }
+  .atelier-hero { padding-top: 20px; padding-bottom: 34px; }
+  .atelier-hero h1 { font-size: clamp(32px, 10.1vw, 58px); line-height: 1.35; letter-spacing: .01em; }
+  .hero-composition { display: flex; flex-direction: column; align-items: stretch; gap: 14px; margin-top: 18px; }
   .hero-copy { order: -1; padding: 0; }
-  .hero-copy > p { font-size: 16px; line-height: 1.9; letter-spacing: 0; }
+  .hero-copy > p { font-size: clamp(16px, 4.4vw, 18px); line-height: 1.7; letter-spacing: 0; }
   .hero-copy > p + p { margin-top: 1px; }
+  .hero-description-desktop { display: none; }
+  .hero-description-mobile { display: block; }
   .hero-copy .desktop-break, .wide-break { display: none; }
-  .atelier-site .hero-cta { min-height: 55px; margin-top: 25px; padding: 14px 18px; font-size: 16px; justify-content: space-between; }
-  .atelier-site .hero-secondary { margin: 17px 0 0 4px; font-size: 16px; }
+  .atelier-site .hero-cta { min-height: 56px; margin-top: 25px; padding: 12px 18px; font-size: clamp(16px, 4.7vw, 20px); line-height: 1.5; justify-content: space-between; }
+  .atelier-site .hero-secondary { margin: 15px 0 0 4px; padding-top: 5px; font-size: clamp(16px, 4.4vw, 19px); }
   .hero-art { margin: 0 -24px; }
   .hero-art img { width: 100%; height: 260px; object-fit: cover; object-position: center 62%; }
   .atelier-site .section { padding-bottom: 57px; }
   .atelier-site .section-rule { padding-top: 29px; }
   .atelier-site .section-kicker { font-size: 15px; margin-bottom: 23px; }
+  .atelier-site .atelier-hero .section-kicker { font-size: clamp(16px, 4.4vw, 18px); margin-bottom: 6px; }
   .atelier-site .section-kicker::after { margin-top: 10px; width: 32px; height: 2px; }
   .atelier-site .section-title { font-size: 29px; line-height: 1.7; margin-bottom: 26px; }
   .service-row { grid-template-columns: 1fr; gap: 11px; padding: 23px 0; }
@@ -270,6 +280,7 @@ html.has-atelier-dialog { overflow: hidden; }
   .project-introduction h3 { font-size: 45px; }
   .project-introduction > div + div { border-left: 0; padding-left: 0; }
   .project-introduction p { font-size: 16px; }
+  .project-introduction .project-status { font-size: 16px; }
   .project-introduction .text-link { font-size: 14px; margin-top: 12px; }
   .skill-list > div { grid-template-columns: 1fr; gap: 10px; padding: 22px 0; }
   .skill-list dd { font-size: 15px; }
@@ -284,18 +295,22 @@ html.has-atelier-dialog { overflow: hidden; }
   .atelier-site .disclosure > summary { font-size: 15px; gap: 14px; }
   .atelier-site .disclosure > p { font-size: 15px; }
   .contact-intro .section-title { font-size: clamp(25px,6.9vw,39px); line-height: 1.75; }
+  .contact-heading-grid { display: block; }
+  .contact-botanical { display: none; }
   .contact-intro h2 > span:first-child { white-space: nowrap; }
   .contact-intro > p:last-child { font-size: 16px; }
   .contact-form { margin-top: 33px; }
   .contact-form-pair { grid-template-columns: 1fr; gap: 0; }
   .field { margin-bottom: 21px; }
   .field label { font-size: 15px; }
-  .atelier-site input { min-height: 50px; }
+  .field label > span { font-size: 12px; }
+  .atelier-site input, .atelier-site .contact-form input { min-height: 50px; }
+  .atelier-site .contact-form input, .atelier-site .contact-form textarea { font-size: 16px; }
   .atelier-site .contact-form textarea { min-height: 180px; }
-  .form-note { font-size: 12px; }
+  .form-note, .contact-form > .form-note { font-size: 12px; }
   .form-note .inline-button { display: inline-block; margin-left: 0; }
   .contact-submit { margin-top: 25px; }
-  .contact-submit .button { min-width: 0; width: 100%; font-size: 16px; }
+  .contact-submit .button { min-width: 0; min-height: 56px; width: 100%; padding: 14px 18px; font-size: 16px; }
   .direct-contact { display: block; margin-top: 19px; font-size: 13px; text-align: center; }
   .direct-contact a { display: block; font-size: 16px; margin-top: 5px; }
   .consultation-disclosure { margin-top: 35px; }
@@ -322,8 +337,9 @@ html.has-atelier-dialog { overflow: hidden; }
   .wordmark > span { font-size: 22px; }
   .wordmark > small { font-size: 7px; }
   .mobile-menu summary { font-size: 12px; gap: 8px; }
-  .atelier-hero h1 { font-size: 30px; }
-  .atelier-site .hero-cta { font-size: 14px; padding-inline: 14px; }
+  .header-inner { min-height: 64px; }
+  .atelier-hero { padding-top: 12px; }
+  .atelier-site .hero-cta { padding-inline: 14px; }
   .hero-art { margin-inline: -18px; }
   .hero-art img { height: 230px; }
   .contact-intro .section-title { font-size: 23px; }

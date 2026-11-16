@@ -12,9 +12,9 @@ const navigation = [
   { href: '#about', label: '工房について' },
 ];
 const services = [
-  { id: 'ai-solutions', title: 'AI活用・業務自動化', text: '探す、整理する、転記する。毎日の作業を、仕事に合う仕組みで支えます。', detail: 'AIエージェント・文書検索・データ整理・定型作業の自動化' },
-  { id: 'system-development', title: '業務システムの開発', text: '必要な機能と日々の運用を整理して、使いやすいシステムをつくります。', detail: 'Web・デスクトップアプリ・データ連携・AWS構築' },
-  { id: 'legacy-maintenance', title: '既存システムの改修・保守', text: 'これまでの仕組みを理解し、必要なところから整えていきます。', detail: '既存コードの調査・機能追加・不具合修正・環境移行' },
+  { id: 'ai-solutions', title: 'AI活用・業務自動化', text: ['探す、整理する、転記する。', '毎日の作業を、仕事に合う仕組みで支えます。'] },
+  { id: 'system-development', title: '業務システムの開発', text: ['必要な機能と日々の運用を整理して、', '使いやすいシステムをつくります。'] },
+  { id: 'legacy-maintenance', title: '既存システムの改修・保守', text: ['これまでの仕組みを理解し、', '必要なところから整えていきます。'] },
 ];
 const solutions = [
   { name: 'AIエージェント・ナレッジ活用', text: '業務データや外部ツールを参照し、検索・回答・必要な処理につなげます。結果や根拠を人が確認する手順も設計します。', tech: 'RAG / Tool Calling / Ollama / Microsoft Graph API' },
@@ -69,7 +69,7 @@ const contactHref = 'mailto:contact@yamicha.com?subject=' + encodeURIComponent('
             {services.map((service) => (
               <article class="service-row" id={service.id}>
                 <h3>{service.title}</h3>
-                <div><p>{service.text}</p></div>
+                <div><p>{service.text[0]}<br class="desktop-break" />{service.text[1]}</p></div>
               </article>
             ))}
           </div>
@@ -85,7 +85,7 @@ const contactHref = 'mailto:contact@yamicha.com?subject=' + encodeURIComponent('
           <div class="about-grid">
             <div class="about-copy" id="philosophy">
               <h2 class="section-title" id="about-heading">つくる側と、使う側。<br />その両方の経験から。</h2>
-              <p>システム開発に加え、経理や総務の実務にも携わってきました。</p>
+              <p>システム開発に加え、経理や総務の実務にも<br class="desktop-break" />携わってきました。</p>
               <p>画面の向こうにある日々の仕事まで考えながら、<br class="desktop-break" />相談から開発、その後の改善まで向き合います。</p>
               <p class="studio-signature">やみちゃ工房は、ひとりの技術工房です。</p>
             </div>
@@ -117,7 +117,10 @@ const contactHref = 'mailto:contact@yamicha.com?subject=' + encodeURIComponent('
 
       <section class="section contact-section" id="contact" aria-labelledby="contact-heading">
         <div class="shell section-rule">
-          <div class="contact-intro"><p class="section-kicker">ご相談</p><h2 class="section-title" id="contact-heading"><span>「こんなこと、できる？」</span><span>からで大丈夫。</span></h2><p>まだ仕様が決まっていなくても、<br />今の仕事や困っていることから聞かせてください。</p></div>
+          <div class="contact-heading-grid">
+            <div class="contact-intro"><p class="section-kicker">ご相談</p><h2 class="section-title" id="contact-heading"><span>「こんなこと、できる？」</span><span>からで大丈夫。</span></h2><p>まだ仕様が決まっていなくても、<br />今の仕事や困っていることから聞かせてください。</p></div>
+            <img class="contact-botanical" src="/images/atelier/service-botanical.webp" alt="" width="900" height="450" loading="lazy" decoding="async" />
+          </div>
           <ContactForm />
           <details class="consultation-disclosure" id="consult">
             <summary><span><small>まずは気軽に</small>AI相談室で考えを整理する</span><img class="ui-icon disclosure-icon" src="/icons/caret-down.svg" alt="" width="26" height="26" /></summary>
