@@ -109,7 +109,7 @@ html.has-atelier-dialog { overflow: hidden; }
 .about-copy .section-title { font-size: clamp(36px, 5.55vw, 76px); margin-bottom: 32px; }
 .about-copy p { margin: 0 0 12px; font-size: clamp(20px, 2.2vw, 30px); line-height: 1.8; }
 .about-copy .studio-signature { margin-top: 30px; letter-spacing: .04em; }
-.about-art { display: block; width: 100%; height: auto; max-width: 380px; justify-self: end; }
+.about-art { display: block; width: 145%; height: auto; max-width: 560px; justify-self: end; }
 .workshop-project { margin-top: 52px; padding-top: 34px; border-top: 1px solid var(--line); }
 .workshop-project .section-kicker { margin-bottom: 24px; font-size: clamp(20px, 2.2vw, 28px); }
 .workshop-project .section-kicker::after { display: none; }
@@ -229,10 +229,13 @@ html.has-atelier-dialog { overflow: hidden; }
   .project-introduction { grid-template-columns: 280px 1fr; gap: 30px; }
   .project-introduction > div + div { padding-left: 30px; }
   .service-row { gap: 30px; }
+  .service-row h3 { font-size: clamp(23px, 3.1vw, 34px); }
   .services-heading { grid-template-columns: minmax(0, 1fr) 190px; gap: 18px; }
+  .atelier-site .services .section-title { font-size: clamp(28px, 4.4vw, 48px); }
   .service-botanical { width: 250px; }
-  .contact-heading-grid { grid-template-columns: minmax(0, 1fr) 230px; gap: 16px; }
-  .contact-botanical { width: 270px; }
+  .contact-heading-grid { grid-template-columns: minmax(0, 1fr) 190px; gap: 16px; }
+  .contact-intro .section-title { font-size: clamp(36px, 5.2vw, 58px); }
+  .contact-botanical { width: 230px; }
   .process-list { gap: 25px; }
   .process-list article + article { padding-left: 25px; }
 }
@@ -262,6 +265,7 @@ html.has-atelier-dialog { overflow: hidden; }
   .atelier-site .atelier-hero .section-kicker { font-size: clamp(16px, 4.4vw, 18px); margin-bottom: 6px; }
   .atelier-site .section-kicker::after { margin-top: 10px; width: 32px; height: 2px; }
   .atelier-site .section-title { font-size: 29px; line-height: 1.7; margin-bottom: 26px; }
+  .atelier-site .services .section-title { font-size: clamp(20px, 6.2vw, 29px); letter-spacing: 0; }
   .service-row { grid-template-columns: 1fr; gap: 11px; padding: 23px 0; }
   .services-heading { grid-template-columns: minmax(0, 1fr); gap: 0; }
   .service-botanical { display: none; }
