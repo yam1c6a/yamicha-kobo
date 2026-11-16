@@ -126,7 +126,6 @@ const directMail = `mailto:${email}?subject=${encodeURIComponent('やみちゃ�
   const turnstileWindow = window as typeof window & { turnstile?: TurnstileAPI };
   let token = '';
   let widgetId = '';
-  let ready = false;
   let siteKey = '';
   async function loadTurnstile() {
     if (turnstileWindow.turnstile) return;
@@ -139,35 +138,56 @@ const directMail = `mailto:${email}?subject=${encodeURIComponent('やみちゃ�
       document.head.appendChild(script);
     });
   }
+  let configurationPromise: Promise<boolean> | null = null;
+  async function getDirectSendReady(): Promise<boolean> {
+    if (!configurationPromise) {
+      configurationPromise = fetch('/api/contact', { cache: 'no-store' }).then(async (response) => {
+        if (!response.ok) return false;
+        const config = await response.json() as { ready?: boolean; siteKey?: string };
+        const isReady = config.ready === true && typeof config.siteKey === 'string' && config.siteKey.length > 0;
+        siteKey = isReady ? config.siteKey! : '';
+        return isReady;
+      }).catch(() => false).finally(() => { configurationPromise = null; });
+    }
+    return configurationPromise;
+  }
   async function prepareDirectSend() {
-    if (!ready || !turnstileHolder || !directSend) return;
-    if (mailLink) mailLink.hidden = true;
-    if (copyBody) copyBody.hidden = true;
-    if (mailFallbackNote) mailFallbackNote.hidden = true;
+    if (!turnstileHolder || !directSend || !sendStatus) return;
+    sendStatus.textContent = '送信機能を確認しています…';
+    // Always check when the dialog opens: the previous implementation raced
+    // the initial configuration request and silently fell back to mailto.
+    if (!(await getDirectSendReady())) {
+      sendStatus.textContent = '直接送信を利用できません。メールアプリから送信してください。';
+      if (mailLink) mailLink.hidden = false;
+      if (copyBody) copyBody.hidden = false;
+      if (mailFallbackNote) mailFallbackNote.hidden = false;
+      return;
+    }
     try {
       await loadTurnstile();
       if (!turnstileWindow.turnstile) throw new Error('Turnstile unavailable');
+      if (!preview?.open || successPanel?.hidden === false) return;
       turnstileHolder.hidden = false;
-      directSend.hidden = false;
       if (!widgetId) widgetId = turnstileWindow.turnstile.render(turnstileHolder, {
         sitekey: siteKey,
         callback: (value) => { token = value; },
         'expired-callback': () => { token = ''; },
       });
+      else turnstileWindow.turnstile.reset(widgetId);
+      token = '';
+      directSend.hidden = false;
+      if (mailLink) mailLink.hidden = true;
+      if (copyBody) copyBody.hidden = true;
+      if (mailFallbackNote) mailFallbackNote.hidden = true;
+      sendStatus.textContent = '';
     } catch {
       if (mailLink) mailLink.hidden = false;
       if (copyBody) copyBody.hidden = false;
       if (mailFallbackNote) mailFallbackNote.hidden = false;
       directSend.hidden = true;
-      if (sendStatus) sendStatus.textContent = '認証を読み込めません。メールアプリから送信してください。';
+      sendStatus.textContent = '認証を読み込めません。メールアプリから送信してください。';
     }
   }
-  fetch('/api/contact', { cache: 'no-store' }).then(async (response) => {
-    if (!response.ok) return;
-    const config = await response.json() as { ready?: boolean; siteKey?: string };
-    ready = config.ready === true && typeof config.siteKey === 'string';
-    siteKey = config.siteKey || '';
-  }).catch(() => { ready = false; });
   directSend?.addEventListener('click', async () => {
     if (!form || !directSend || !sendStatus) return;
     if (!token) { sendStatus.textContent = '認証を完了してから送信してください。'; return; }
